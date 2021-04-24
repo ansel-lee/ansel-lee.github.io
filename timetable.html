@@ -1,0 +1,129 @@
+<!--
+WELCOME TO MY TIMETABLE LISTER THINGY
+developed by Ansel Lee. Feel free to use this code even without giving credit; but if you do use it ethically and do not sell the code
+Please note that this does not account for school and public holidays. Always double-check if you think that this system is wrong.
+I developed it in a way so that it can be easily incorporated into a web application without having to change anything much. For example, I try to name it properly and keep all the things for this in a <div>. 
+	My Javascript is adaptable should the IDs of the elements or the timetable change.
+	For ease of CSS styling, all of the elements here have a class "timetable".
+The fact that you are reading this means that you are going to look at my code and therefore I can safely assume that you are a developer so good luck coding!
+
+-->
+
+<html>
+	<head>
+		<style>
+			* {
+				font-family: sans-serif;
+			}
+			
+			.timetable h3 {
+				font-weight: 400;
+				font-size: 2em;
+			}
+			
+			#timetableEdit {
+				font-size: 1.1em;
+			}
+			
+			.timetable#timetable {
+				padding-left: 20px;
+				padding-top: 15px;
+				padding-right: 15px;
+				padding-bottom: 15px;
+				border-radius: 0 20px;
+				background-color: #eee;
+			}
+
+			@media screen and (min-width: 900px) {
+				* {
+					font-family: sans-serif;
+					font-size: 1.1em;
+				}
+
+				.timetable h3 {
+					font-weight: 400;
+					font-size: 3.2em;
+				}
+			
+				#timetableEdit {
+					font-size: 1.8em;
+				}
+			
+				.timetable#timetable {
+					padding-left: 40px;
+					padding-top: 20px;
+					padding-right: 20px;
+					padding-bottom: 20px;
+					border-radius: 0 30px;
+					background-color: #eee;
+				}
+			}
+
+		</style>
+	</head>
+
+	<body onload="init()">
+		<div id="timetable" class="timetable">
+			<h3 class="timetable">1 Luke's timetable</h3>
+			<p id="timetableEdit" class="timetable"></p>
+			<p class="timetable">Please note that this does not account for school and public holidays. Always double-check if you think that this system is wrong.<br> Any inaccuracies? Please email me at <a href="mailto:ansellee23@gmail.com">ansellee23@gmail.com</a>. <br>Code? <a href="https://jsfiddle.net/ansellee/jg5v12ro">jsfiddle.net/ansellee/jg5v12ro</a></p>
+		</div>
+		<script>
+			'use strict'
+			function init() {
+				var editthis = document.getElementById("timetableEdit")
+				var now = new Date();
+				var timetable = ["",
+					["English", "History", "D&T", "recess", "Mother Tongue", "Science", "Geography"], //monday
+					["H-CUBE", "Geography", "English", "recess", "Mother Tongue", "Science", "math"], //tuesday
+					["START LATE", "Class time", "PE", "recess", "math", "English", "Music"],
+					["WA/ Class Time", "art", "math", "recess", "Science", "Literature", "Music", "Mother Tongue"],
+					["Mother tongue", "PE", "Math", "English", "recess", "D&T", "Chapel"],
+					["Literature", "Science", "Art", "recess", "D&T", "PE", "English"],
+					["H-CUBE", "Music", "History", "recess", "Mother Tongue", "Geography", "Math"],
+					["START LATE", "Class time", "PE", "recess", "math", "Science", "English"],
+					["WA/Class Time","math","Mother Tongue", "recess", "English", "Literature", "D&T", "Science"],
+					["English", "Art", "math", "History", "recess", "Mother Tongue", "Chapel"]
+				]
+				var weekoddeven = [{4: true, 11: false, 18: true, 25: false }, { 1: true, 8: false, 15: true, 22: false }, { 1: true, 8: false }, { 5: true, 12: false, 19: true, 26: false }, { 3: true, 10: false, 17: true, 24: false }, { 28: true }, { 5: false, 12: true, 19: false, 26: true }, { 2: false, 9: true, 16: false, 23: true, 30: false }, { 13: true, 20: false, 27: true }, { 4: false, 11: true, 18: false, 25: true }, { 1: false, 8: true, 15: false }] //ACSBR has a 10-day/2-week timetable - anchor is by the monday of that week
+
+				function roundDays(date) {
+					function get_next_weekday(date) {
+						var tomorrow = new Date(date.setDate(date.getDate() + 1));
+						return tomorrow.getDay() % 6 ?
+							tomorrow :
+							get_next_weekday(tomorrow);
+					} //credit: https://stackoverflow.com/a/39140133/13904265
+					
+					var newdate = new Date;
+					newdate.setDate(date.getHours() < 12 ? date.setDate(now.getDate()-1): now.getDate) //because getNextWeekday will add one
+					return get_next_weekday(date);
+				}
+
+				function OddEven(date) {
+					var prevMonday = date.getDate() - (date.getDay() + 6) % 7;
+					console.log(prevMonday)
+					var month = date.getMonth()
+					console.log(month)
+					var day = date.getDay()
+					var subjects;
+					if (weekoddeven[month] !== undefined) {
+					if (weekoddeven[month][prevMonday]) {
+						subjects = timetable[day]
+					} else {
+					console.log(day)
+						subjects = timetable[day + 5]
+						console.log(timetable[7])
+					}
+					editthis.innerHTML = subjects.join(" | ")
+				}
+				console.log("hi")}
+
+				OddEven(roundDays(new Date(+now))) //create a new variable of NOW so it does not reference the same one and override
+			}
+
+		</script>
+	</body>
+
+</html>
+
