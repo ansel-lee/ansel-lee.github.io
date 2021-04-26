@@ -11,115 +11,146 @@ The fact that you are reading this means that you are going to look at my code a
 
 <html>
 	<head>
+		<title>Timetable</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/gist/ansel-lee/db8b9fc82b3ff71b0a810fd8e342ade4/raw/3bdbd3b2dfbe4780352fe034184e55c9600edeaa/1lhw_favicon.svg"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<style>
 			* {
 				font-family: sans-serif;
+				font-size: 1.8vw;
 			}
-			
+
 			.timetable h3 {
 				font-weight: 400;
-				font-size: 2em;
+				font-size: 3.5vw;
 			}
 			
 			#timetableEdit {
-				font-size: 1.1em;
+				font-size: 2.5vw;
 			}
 			
 			.timetable#timetable {
-				padding-left: 20px;
-				padding-top: 15px;
-				padding-right: 15px;
-				padding-bottom: 15px;
-				border-radius: 0 20px;
+				padding-left: 20vw;
+				padding-top: 15vh;
+				padding-right: 15vw;
+				border-radius: 0 20vw; 
 				background-color: #eee;
+				height: 100%;
 			}
 
-			@media screen and (min-width: 900px) {
-				* {
-					font-family: sans-serif;
-					font-size: 1.1em;
-				}
-
-				.timetable h3 {
-					font-weight: 400;
-					font-size: 3.2em;
-				}
-			
-				#timetableEdit {
-					font-size: 1.8em;
-				}
-			
-				.timetable#timetable {
-					padding-left: 40px;
-					padding-top: 20px;
-					padding-right: 20px;
-					padding-bottom: 20px;
-					border-radius: 0 30px;
-					background-color: #eee;
-				}
+			#tocentre {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 80vh;
+				padding-top: 8vh;
+				padding-bottom: 8vh;
+				overflow: hidden;
 			}
 
 		</style>
 	</head>
 
 	<body onload="init()">
+		<div id="tocentre">
 		<div id="timetable" class="timetable">
-			<h3 class="timetable">1 Luke's timetable</h3>
+			<h3 class="timetable">What subjects are tomorrow?</h3>
 			<p id="timetableEdit" class="timetable"></p>
+			<p id="note"></p>
 			<p class="timetable">Please note that this does not account for school and public holidays. Always double-check if you think that this system is wrong.<br> Any inaccuracies? Please email me at <a href="mailto:ansellee23@gmail.com">ansellee23@gmail.com</a>. <br>Code? <a href="https://jsfiddle.net/ansellee/jg5v12ro">jsfiddle.net/ansellee/jg5v12ro</a></p>
-		</div>
+		</div></div>
 		<script>
 			'use strict'
 			function init() {
-				var editthis = document.getElementById("timetableEdit")
+				var editthis = document.getElementById("timetableEdit");
+				var notes = document.getElementById("note");
 				var now = new Date();
+				console.log(now)
+				var hoildays = [
+					[], // January - 0
+					[], // February
+					[], // March
+					[], // April
+					[1, 3, 13, 26], // May
+					[], // June - mainly due to the long term break, which will already be counted in by the weeks
+					[4, 20], // July
+					[9, 10], // August
+					[3], // September
+					[], // October
+					[4], // November
+					[] // December - practically useless
+				];
 				var timetable = ["",
+					// odd week
 					["English", "History", "D&T", "recess", "Mother Tongue", "Science", "Geography"], //monday
 					["H-CUBE", "Geography", "English", "recess", "Mother Tongue", "Science", "math"], //tuesday
-					["START LATE", "Class time", "PE", "recess", "math", "English", "Music"],
-					["WA/ Class Time", "art", "math", "recess", "Science", "Literature", "Music", "Mother Tongue"],
-					["Mother tongue", "PE", "Math", "English", "recess", "D&T", "Chapel"],
-					["Literature", "Science", "Art", "recess", "D&T", "PE", "English"],
-					["H-CUBE", "Music", "History", "recess", "Mother Tongue", "Geography", "Math"],
-					["START LATE", "Class time", "PE", "recess", "math", "Science", "English"],
-					["WA/Class Time","math","Mother Tongue", "recess", "English", "Literature", "D&T", "Science"],
-					["English", "Art", "math", "History", "recess", "Mother Tongue", "Chapel"]
-				]
-				var weekoddeven = [{4: true, 11: false, 18: true, 25: false }, { 1: true, 8: false, 15: true, 22: false }, { 1: true, 8: false }, { 5: true, 12: false, 19: true, 26: false }, { 3: true, 10: false, 17: true, 24: false }, { 28: true }, { 5: false, 12: true, 19: false, 26: true }, { 2: false, 9: true, 16: false, 23: true, 30: false }, { 13: true, 20: false, 27: true }, { 4: false, 11: true, 18: false, 25: true }, { 1: false, 8: true, 15: false }] //ACSBR has a 10-day/2-week timetable - anchor is by the monday of that week
+					["START LATE", "Class time", "PE", "recess", "math", "English", "Music"],  //wednesday
+					["WA/ Class Time", "art", "math", "recess", "Science", "Literature", "Music", "Mother Tongue"], //thursday
+					["Mother tongue", "PE", "Math", "English", "recess", "D&T", "Chapel"], //friday
 
-				function roundDays(date) {
+					// even week
+					["Literature", "Science", "Art", "recess", "D&T", "PE", "English"], //monday
+					["H-CUBE", "Music", "History", "recess", "Mother Tongue", "Geography", "Math"], //tuesday
+					["START LATE", "Class time", "PE", "recess", "math", "Science", "English"], //wednesday
+					["WA/Class Time","math","Mother Tongue", "recess", "English", "Literature", "D&T", "Science"], //thursday
+					["English", "Art", "math", "History", "recess", "Mother Tongue", "Chapel"], //friday
+
+					// fallbacks
+					["How did I end up here?"],
+					["Yay! A term break"]
+				];
+				var weekoddeven = [ // gets the first monday of the week - true denotes odd and false denotes even
+					{4: true, 11: false, 18: true, 25: false}, // January
+					{1: true, 8: false, 15: true, 22: false}, // February
+					{1: true, 8: false},  // March - partially due to the long term break
+					{5: true, 12: false, 19: true, 26: false}, // April
+					{3: true, 10: false, 17: true, 24: false},  // May
+					{28: true }, // June
+					{5: false, 12: true, 19: false, 26: true}, // July 
+					{2: false, 9: true, 16: false, 23: true, 30: false}, // August
+					{13: true, 20: false, 27: true }, // September
+					{4: false, 11: true, 18: false, 25: true}, // October
+					{1: false, 8: true, 15: false }, // November
+					{} // december
+				]; //ACSBR has a 10-day/2-week timetable - anchor is by the monday of that week
+
+
+				function displayday(date) {
 					function get_next_weekday(date) {
 						var tomorrow = new Date(date.setDate(date.getDate() + 1));
-						return tomorrow.getDay() % 6 ?
+						return (
+							(tomorrow.getDay() % 6) && !(hoildays[tomorrow.getMonth()].includes(tomorrow.getDate()))) ?
+							// 0 is a falsey value. If getDay is divisible by 6, then it is 6 (saturday) or 0 (sunday). Therefore, it will return false if it is a weekend
+							// if holidays includes the day, then return false
 							tomorrow :
 							get_next_weekday(tomorrow);
 					} //credit: https://stackoverflow.com/a/39140133/13904265
 					
-					var newdate = new Date;
-					newdate.setDate(date.getHours() < 12 ? date.setDate(now.getDate()-1): now.getDate) //because getNextWeekday will add one
+					if (date.getHours() < 12) {
+						date.setDate(date.getDate() - 1); //get next weekday will add 1 - so to include today we do this
+					}
 					return get_next_weekday(date);
 				}
 
 				function OddEven(date) {
-					var prevMonday = date.getDate() - (date.getDay() + 6) % 7;
-					console.log(prevMonday)
-					var month = date.getMonth()
-					console.log(month)
-					var day = date.getDay()
-					var subjects;
-					if (weekoddeven[month] !== undefined) {
-					if (weekoddeven[month][prevMonday]) {
-						subjects = timetable[day]
-					} else {
-					console.log(day)
-						subjects = timetable[day + 5]
-						console.log(timetable[7])
-					}
-					editthis.innerHTML = subjects.join(" | ")
+					console.log(date); // this is the second console log date, indicating the date of which it is fetching the timetable from. 
+					var prevMonday = new Date(+date);
+					prevMonday.setDate(prevMonday.getDate() - (prevMonday.getDay() + 6) % 7);
+					// subtracts the distance from the nearest monday
+					var subjects = weekoddeven[prevMonday.getMonth()][prevMonday.getDate()]
+					// returns true if odd, false if even or undefined
+						? timetable[date.getDay()] // odd
+						: weekoddeven[prevMonday.getMonth()][prevMonday.getDate()] !== false
+							? timetable[12] //undefined
+							: timetable[date.getDay() + 5]; // even
+					editthis.innerHTML = subjects.join(" | "); // format it
+					notes.innerHTML = date.getDate() + "/" + (date.getMonth()+1);
 				}
-				console.log("hi")}
 
-				OddEven(roundDays(new Date(+now))) //create a new variable of NOW so it does not reference the same one and override
+				OddEven(
+					displayday(new Date(+now)) //create a new variable of NOW so it does not reference the same one and override
+				) 
 			}
 
 		</script>
