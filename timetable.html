@@ -6,7 +6,6 @@ I developed it in a way so that it can be easily incorporated into a web applica
 	My Javascript is adaptable should the IDs of the elements or the timetable change.
 	For ease of CSS styling, all of the elements here have a class "timetable".
 The fact that you are reading this means that you are going to look at my code and therefore I can safely assume that you are a developer so good luck coding!
-
 -->
 
 <!DOCTYPE html>
@@ -21,18 +20,18 @@ The fact that you are reading this means that you are going to look at my code a
 			@media screen and (min-width: 901px) {
 				* {
 					font-family: sans-serif;
-					font-size: 1.8vw;
+					font-size: min(1.8vw, 2.7vh);
 				}
 
 				.timetable h3 {
 					font-weight: 400;
-					font-size: 3.5vw;
+					font-size: min(3.5vw, 5.25vh);
 				}
-			
+
 				#timetableEdit {
-					font-size: 2.5vw;
+					font-size: min(5vw, 7.5vh);
 				}
-			
+
 				.timetable#timetable {
 					padding-left: 20vw;
 					padding-top: 15vh;
@@ -63,11 +62,11 @@ The fact that you are reading this means that you are going to look at my code a
 					font-weight: 400;
 					font-size: 2em;
 				}
-			
+
 				#timetableEdit {
-					font-size: 1.1em;
+					font-size: 3em;
 				}
-			
+
 				.timetable#timetable {
 					padding-left: 20px;
 					padding-top: 15px;
@@ -79,8 +78,17 @@ The fact that you are reading this means that you are going to look at my code a
 			}
 
 		</style>
-	</head>
 
+    
+          
+            
+    
+
+          
+    
+    
+  
+	</head>
 	<body onload="init()">
 		<div id="tocentre">
 		<div id="timetable" class="timetable">
@@ -111,24 +119,24 @@ The fact that you are reading this means that you are going to look at my code a
 					[] // December - practically useless
 				];
 				var timetable = ["",
-					// odd week
-					["English", "History", "D&T", "recess", "Mother Tongue", "Science", "Geography"], //monday
-					["H-CUBE", "Geography", "English", "recess", "Mother Tongue", "Science", "math"], //tuesday
-					["START LATE", "Class time", "PE", "recess", "math", "English", "Music"],  //wednesday
-					["WA/ Class Time", "art", "math", "recess", "Science", "Literature", "Music", "Mother Tongue"], //thursday
-					["Mother tongue", "PE", "Math", "English", "recess", "D&T", "Chapel"], //friday
+          // odd week
+          ["English, History, D&T, <br /> Mother Tongue, Science, Geography"], //monday
+          ["H-CUBE, Geography, English, <br /> Mother Tongue, Science, math"], //tuesday
+          ["START LATE, Class time, PE, <br /> math, English, Music"], //wednesday
+          ["WA/ Class Time, art, math, <br /> Science, Literature, Music, Mother Tongue"], //thursday
+          ["Mother tongue, PE, Math, English, <br /> D&T, Chapel"], //friday
 
-					// even week
-					["Literature", "Science", "Art", "recess", "D&T", "PE", "English"], //monday
-					["H-CUBE", "Music", "History", "recess", "Mother Tongue", "Geography", "Math"], //tuesday
-					["START LATE", "Class time", "PE", "recess", "math", "Science", "English"], //wednesday
-					["WA/Class Time","math","Mother Tongue", "recess", "English", "Literature", "D&T", "Science"], //thursday
-					["English", "Art", "math", "History", "recess", "Mother Tongue", "Chapel"], //friday
+          // even week
+          ["Literature, Science, Art, <br /> D&T, PE, English"], //monday
+          ["H-CUBE, Music, History, <br /> Mother Tongue, Geography, Math"], //tuesday
+          ["START LATE, Class time, PE, <br /> math, Science, English"], //wednesday
+          ["WA/Class Time,math,Mother Tongue, <br /> English, Literature, D&T, Science"], //thursday
+          ["English, Art, math, History, <br /> Mother Tongue, Chapel"], //friday
 
-					// fallbacks
-					["How did I end up here?"],
-					["Yay! A term break"]
-				];
+          // fallbacks
+          ["How did I end up here?"],
+          ["Yay! A term break"]
+        ];
 				var weekoddeven = [ // gets the first monday of the week - true denotes odd and false denotes even
 					{4: true, 11: false, 18: true, 25: false}, // January
 					{1: true, 8: false, 15: true, 22: false}, // February
@@ -143,8 +151,6 @@ The fact that you are reading this means that you are going to look at my code a
 					{1: false, 8: true, 15: false }, // November
 					{} // december
 				]; //ACSBR has a 10-day/2-week timetable - anchor is by the monday of that week
-
-
 				function displayday(date) {
 					function get_next_weekday(date) {
 						var tomorrow = new Date(date.setDate(date.getDate() + 1));
@@ -161,7 +167,6 @@ The fact that you are reading this means that you are going to look at my code a
 					}
 					return get_next_weekday(date);
 				}
-
 				function OddEven(date) {
 					console.log(date); // this is the second console log date, indicating the date of which it is fetching the timetable from. 
 					var prevMonday = new Date(+date);
@@ -173,17 +178,13 @@ The fact that you are reading this means that you are going to look at my code a
 						: weekoddeven[prevMonday.getMonth()][prevMonday.getDate()] !== false
 							? timetable[12] //undefined
 							: timetable[date.getDay() + 5]; // even
-					editthis.innerHTML = subjects.join(" | "); // format it
+					editthis.innerHTML = subjects; // format it
 					notes.innerHTML = date.getDate() + "/" + (date.getMonth()+1);
 				}
-
 				OddEven(
 					displayday(new Date(+now)) //create a new variable of NOW so it does not reference the same one and override
 				) 
 			}
-
 		</script>
 	</body>
-
 </html>
-
