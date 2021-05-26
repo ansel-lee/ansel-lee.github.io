@@ -1,0 +1,61 @@
+* {
+	font-family: 'Roboto', sans-serif;
+	word-wrap: break-word;
+}
+
+p {
+	font-size: max(min(1em, 1vw), 1.2em);
+}
+
+h1 {
+	font-weight: 400;
+	font-size: 3em;
+}
+
+h2 {
+	font-weight: 400;
+	font-size: 2.5em;
+}
+
+h3 {
+	font-weight: 400;
+	font-size: 2.5em;
+}
+
+.emphasis {
+	font-weight: 300;
+}
+
+#tiledaboutme {
+	display: block;
+}
+
+#tiledaboutme > div {
+	padding: 10px 20px 10px 30px;
+	border-radius: 20px;
+	margin-bottom: 30px;
+}
+
+#freetimediv {
+	background-color: #fdfd96;
+}
+
+#languages {
+	background-color: #09f;
+}
+
+#projects {
+	background-color: #8e8;
+}
+
+#personality {
+	background-color: #0eb;
+}
+
+@media screen and (min-width: 900px) {
+	#tiledaboutme {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-gap: min(5vw, 30px);
+	}
+}
