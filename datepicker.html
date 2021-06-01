@@ -106,8 +106,8 @@
 		<div id="spacing"><div id="line"></div></div>
 		<p id="dmydiv">
 			<span>DAY</span><span></span><span>&nbsp;MONTH</span><span></span><span>&nbsp;YEAR</span>
-			<input type="number" id="day" value="1" class="textdateinput" />/
-			<input type="number" id="month" value="1" class="textdateinput" />/
+			<input type="number" id="day" value="01" class="textdateinput" />/
+			<input type="number" id="month" value="01" class="textdateinput" />/
 			<input type="number" id="year" value="2021" class="textdateinput" />
 		</p>
 		<br />
@@ -121,7 +121,7 @@
 		<textarea id="exportjson" rows=3 cols="auto" readonly>no dates yet?</textarea>
 		<p>
 			how are invalid values handled?<br />
-			If you have entered something more than the maxiumu number, unless it is because months have different number of days, it will take the modulus (remainder) of the number
+			If you have entered something more than the maximum number, unless it is because months have different number of days, it will take the modulus (remainder) of the number
 			 divided by the maximum allowed value<br />
 			if you have entered a negative value, then my code will use absolute value to find the positive number.<br />
 			if you did not enter any number, or if the number is 0, my code will take it as 1.
@@ -178,6 +178,7 @@
 
 					document.getElementById("day").value = ("00" + Math.abs("00" + document.getElementById("day").value.slice(-2))).slice(-2);
 					document.getElementById("month").value = ("00" + Math.abs("00" + document.getElementById("month").value.slice(-2))).slice(-2);
+					document.getElementById("year").value = ("20" +  ("0" + document.getElementById("year").value).slice(-2)).slice(-4)
 					if (document.getElementById("datepicker").value === "") {
 						document.getElementById("add").disabled = true;
 						document.getElementById("invaliddate").style.display = "block";
@@ -191,8 +192,8 @@
 			function init() {
 				updatetextarea();
 				var today = new Date();
-				document.getElementById("day").value = today.getDate();
-				document.getElementById("month").value = today.getMonth() +1;
+				document.getElementById("day").value = ("00" + today.getDate()).slice(-2);
+				document.getElementById("month").value = ("00" + (today.getMonth() +1)).slice(-2);
 				document.getElementById("year").value = today.getFullYear();
 				document.getElementById("add").addEventListener("click", additem)
 				document.getElementById("datepicker").min = new Date().toISOString().split("T")[0];
