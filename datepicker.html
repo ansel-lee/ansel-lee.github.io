@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta name="description" content="convert your date to a JSON string! Made by Ansel Lee">
+		<title>Date to JSON</title>
+		<link rel="icon" type="image/png" href=""/>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<base target="_blank">
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400&family=Roboto:wght@100;300;400;500&display=swap">
+        <style>
+            * {
+                font-family: "Roboto", sans-serif;
+                font-size: 1.1em;
+            }
+
+            body {
+                margin-left: 3vw;
+            }
+            
+            textarea {
+                width: 98%;
+                margin: 0 auto;
+                margin-top: 0.5rem
+            }
+
+            input {
+                margin-right: 0.5rem;
+            }
+
+            h1 {
+                font-size: 3em;
+            }
+
+            li {
+                margin-bottom: 10px;
+            }
+
+            .delete {
+                left: 0;
+                padding: 2px 10px;
+                margin-left: 20px;
+                border-radius: 5px;
+                background-color: #eee;
+            }
+
+            .delete:hover {
+                background-color: #ddd;
+                cursor: pointer;
+            }
+
+            .textdateinput {
+                width: 2.1em;
+                margin: 0;
+                border: 0;
+                border-bottom: 1px solid black;
+            }
+
+            .textdateinput:focus {
+                border: none;
+                border-bottom: 1px solid blue;
+                outline: none;
+            }
+
+            #year {
+                width: 3.2em;
+            }
+
+            #dmydiv {
+                display: inline-grid;
+                grid-template-rows: auto auto;
+                grid-template-columns: auto auto auto auto auto;
+                margin: 0 auto 0 0;
+                grid-gap: 0;
+                margin-left: 10px;
+            }
+
+            #dmydiv > span {
+                padding: 0;
+                margin: 0;
+                font-size: 0.5rem;
+            }
+
+            #spacing {
+                height: 80px;
+                width: 1px;
+                border-left: 1px solid black;
+                display: inline-block; 
+                margin: 0 auto;
+                position: absolute;
+            }
+
+            #invaliddate {
+                width: 60%;
+                font-size: 0.8rem;
+                display: none;
+            }
+        </style>
+	</head>
+	<body onload="init()">
+        <h1>Get list of dates as JSON string</h1>
+        <input type="date" value="2021-01-01" id="datepicker" min="">
+        <div id="spacing"><div id="line"></div></div>
+        <p id="dmydiv">
+            <span>DAY</span><span></span><span>&nbsp;MONTH</span><span></span><span>&nbsp;YEAR</span>
+            <input type="number" id="day" value="1" class="textdateinput" />/
+            <input type="number" id="month" value="1" class="textdateinput" />/
+            <input type="number" id="year" value="2021" class="textdateinput" />
+        </p>
+        <br />
+        <br />
+        <button type="button" id="add">add</button>
+        <p id="invaliddate">Not a valid date. You might have entered something similar to 31 November, 30 February etc..., or you might have an empty field. If there is any other error, please email me. 
+            <br /><a href="https://astronomy.stackexchange.com/a/43960">This article</a>, on why days are so unevely distributes between months, might be interesting</p>
+        <ol id="mylist">
+        </ol>
+        <label>export JSON string</label>
+        <textarea id="exportjson" rows=3 cols="auto" readonly>no dates yet?</textarea>
+        <p>
+            how are invalid values handled?<br />
+            If you have entered something more than the maxiumu number, unless it is because months have different number of days, it will take the modulus (remainder) of the number
+             divided by the maximum allowed value<br />
+            if you have entered a negative value, then my code will use absolute value to find the positive number.<br />
+            if you did not enter any number, or if the number is 1, my code will take it as 1
+        </p>
+        <script>
+            function additem() {
+                document.getElementById("mylist").innerHTML += 
+                "<li><span>" + document.getElementById("datepicker").value + "</span><span class='delete'>&times;</span></li>";
+                updatetextarea();
+
+                document.getElementById("mylist").children[
+                document.getElementById("mylist").children.length-1
+                ].children[1].addEventListener("click", delitem);
+            }
+
+            function updatetextarea() {
+                var items = document.getElementById("mylist").children;
+                var count = items.length;
+                var joinarray = [];
+                while (count--) {
+                    console.log(new Date(items[count].children[0].innerHTML));
+                    joinarray.push(new Date(items[count].children[0].innerHTML));
+                }
+                document.getElementById("exportjson").value = JSON.stringify(joinarray);
+            }
+
+            function delitem(e) {
+                e.currentTarget.removeEventListener("click", delitem);
+                e.currentTarget.parentNode.remove();
+                updatetextarea();
+            }
+
+            async function syncchanges(e) {
+                if (e.target.id === "datepicker") {
+                    var str = e.currentTarget.value.split("-");
+                    document.getElementById("year").value = str[0];
+                    document.getElementById("month").value = str[1];
+                    document.getElementById("day").value = str[2];
+                } else {
+                    var day = ("0" + ((((Math.abs(document.getElementById("day").value.slice(-2)) || 1)-1) %31)+1)).slice(-2);
+                    var month = ("0" + ((((Math.abs(document.getElementById("month").value.slice(-2)) || 1)-1)%12)+1)).slice(-2);
+                    document.getElementById("datepicker").value = 
+                     await ("20" +  ("0" + document.getElementById("year").value).slice(-2)).slice(-4) + "-" + 
+                     await month + "-" +
+                     await day;
+
+                    document.getElementById("day").value = ("000" + Math.abs("0000" + document.getElementById("day").value.slice(-2))).slice(-2);
+                    document.getElementById("month").value = ("000" + Math.abs("0000" + document.getElementById("month").value.slice(-2))).slice(-2);
+                    if (document.getElementById("datepicker").value === "") {
+                        document.getElementById("add").disabled = true;
+                        document.getElementById("invaliddate").style.display = "block";
+                    } else {
+                        document.getElementById("add").disabled = false;
+                        document.getElementById("invaliddate").style.display = "none";
+                    }
+                }
+            }
+
+            function init() {
+                updatetextarea();
+                var today = new Date();
+                document.getElementById("day").value = today.getDate();
+                document.getElementById("month").value = today.getMonth() +1;
+                document.getElementById("year").value = today.getFullYear();
+            }
+
+            document.getElementById("add").addEventListener("click", additem)
+            document.getElementById("datepicker").min = new Date().toISOString().split("T")[0];
+            document.getElementById("datepicker").value = new Date().toISOString().split("T")[0];
+            document.getElementById("datepicker").addEventListener("change", syncchanges);
+            document.getElementById("year").addEventListener("input", syncchanges);
+            document.getElementById("month").addEventListener("input", syncchanges);
+            document.getElementById("day").addEventListener("input", syncchanges);
+        </script>
+    </body>
+</html>
