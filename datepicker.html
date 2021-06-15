@@ -4,101 +4,11 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<meta name="description" content="convert your date to a JSON string! Made by Ansel Lee">
 		<title>Date to JSON</title>
-		<link rel="icon" type="image/png" href=""/>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<base target="_blank">
+		<link rel="stylesheet" href="files/datepicker-css.css">
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400&family=Roboto:wght@100;300;400;500&display=swap">
-		<style>
-			* {
-				font-family: "Roboto", sans-serif;
-				font-size: 1.1em;
-			}
-
-			body {
-				margin-left: 3vw;
-			}
-
-			textarea {
-				width: 98%;
-				margin: 0 auto;
-				margin-top: 0.5rem
-			}
-
-			input {
-				margin-right: 0.5rem;
-			}
-
-			h1 {
-				font-size: 3em;
-			}
-
-			li {
-				margin-bottom: 10px;
-			}
-
-			.delete {
-				left: 0;
-				padding: 2px 10px;
-				margin-left: 20px;
-				border-radius: 5px;
-				background-color: #eee;
-			}
-
-			.delete:hover {
-				background-color: #ddd;
-				cursor: pointer;
-			}
-
-			.textdateinput {
-				width: 2.1em;
-				margin: 0;
-				border: 0;
-				border-bottom: 1px solid black;
-			}
-
-			.textdateinput:focus {
-				border: none;
-				border-bottom: 1px solid blue;
-				outline: none;
-			}
-
-			#year {
-				width: 3.2em;
-			}
-
-			#dmydiv {
-				display: inline-grid;
-				grid-template-rows: auto auto;
-				grid-template-columns: auto auto auto auto auto;
-				margin: 0 auto 0 0;
-				grid-gap: 0;
-				margin-left: 10px;
-			}
-
-			#dmydiv > span {
-				padding: 0;
-				margin: 0;
-				font-size: 0.5rem;
-			}
-
-			@media screen and (min-width: 900px) {
-				#spacing {
-					height: 80px;
-					width: 1px;
-					border-left: 1px solid black;
-					display: inline-block;
-					margin: 0 auto;
-					position: absolute;
-				}
-			}
-
-			#invaliddate {
-				width: 60%;
-				font-size: 0.8rem;
-				display: none;
-			}
-		</style>
 	</head>
 	<body onload="init()">
 		<h1>Get list of dates as JSON string</h1>
@@ -123,27 +33,15 @@
 			how are invalid values handled?<br />
 			If you have entered something more than the maximum number, unless it is because months have different number of days, it will take the modulus (remainder) of the number
 			 divided by the maximum allowed value<br />
-			if you have entered a negative value, then my code will use absolute value to find the positive number.<br />
+			if you have entered a negative value, then my code will change it to 31.<br />
 			if you did not enter any number, or if the number is 0, my code will take it as 1.
 		</p>
 		<script>
 			function additem() {
-				var elms = document.getElementById("mylist").children;
-				var count = elms.length;
-				while (count--) {
-					elms[count].removeEventListener("click", delitem);
-				}
-
-				var liitem = document.createElement("LI")
+				var liitem = document.createElement("LI");
 				liitem.innerHTML = "<span>" + document.getElementById("datepicker").value + "</span><span class='delete'>&times;</span>";
 				document.getElementById("mylist").appendChild(liitem);
 				updatetextarea();
-
-				elms = document.getElementById("mylist").children;
-				count = elms.length;
-				while (count--) {
-					elms[count].addEventListener("click", delitem);
-				}
 			}
 
 			function updatetextarea() {
@@ -157,35 +55,42 @@
 			}
 
 			function delitem(e) {
-				e.target.removeEventListener("click", delitem);
-				e.target.parentNode.remove();
-				updatetextarea();
+				if (e.target.className === "delete") {
+					e.target.removeEventListener("click", delitem);
+					e.target.parentNode.remove();
+					updatetextarea();
+				}
 			}
 
-			async function syncchanges(e) {
+			function syncchanges(e) {
 				if (e.target.id === "datepicker") {
 					var str = e.currentTarget.value.split("-");
 					document.getElementById("year").value = str[0];
 					document.getElementById("month").value = str[1];
 					document.getElementById("day").value = str[2];
 				} else {
-					var day = ("0" + ((((Math.abs(document.getElementById("day").value.slice(-2)) || 1)-1) %31)+1)).slice(-2);
-					var month = ("0" + ((((Math.abs(document.getElementById("month").value.slice(-2)) || 1)-1)%12)+1)).slice(-2);
-					document.getElementById("datepicker").value =
-					 await ("20" +  ("0" + document.getElementById("year").value).slice(-2)).slice(-4) + "-" +
-					 await month + "-" +
-					 await day;
-
-					document.getElementById("day").value = ("00" + Math.abs("00" + document.getElementById("day").value.slice(-2))).slice(-2);
-					document.getElementById("month").value = ("00" + Math.abs("00" + document.getElementById("month").value.slice(-2))).slice(-2);
-					document.getElementById("year").value = ("20" +  ("0" + document.getElementById("year").value).slice(-2)).slice(-4)
-					if (document.getElementById("datepicker").value === "") {
-						document.getElementById("add").disabled = true;
-						document.getElementById("invaliddate").style.display = "block";
-					} else {
-						document.getElementById("add").disabled = false;
-						document.getElementById("invaliddate").style.display = "none";
+					function first(resolve, reject) {
+						document.getElementById("day").value = document.getElementById("day").value.slice(-2) < 0 ? 31 : ("00" + "00" + document.getElementById("day").value.slice(-2)).slice(-2);
+						document.getElementById("month").value = document.getElementById("month").value.slice(-2) < 0 ? 12 : ("00" + document.getElementById("month").value.slice(-2)).slice(-2);
+						document.getElementById("year").value = ("20" +  ("0" + document.getElementById("year").value).slice(-2)).slice(-4)
+						resolve(
+							("20" +  ("0" + document.getElementById("year").value).slice(-2)).slice(-4)+ "-" +
+							("0" + ((((Math.abs(document.getElementById("month").value.slice(-2)) || 1)-1)%12)+1)).slice(-2) + "-" +
+							("0" + ((((Math.abs(document.getElementById("day").value.slice(-2)) || 1)-1) %31)+1)).slice(-2) 
+						)
 					}
+					var mypromise = new Promise(first)
+					mypromise.then(function (e) {
+						document.getElementById("datepicker").value = e
+						if (document.getElementById("datepicker").value === "") {
+							document.getElementById("add").disabled = true;
+							document.getElementById("invaliddate").style.display = "block";
+						} else {
+							document.getElementById("add").disabled = false;
+							document.getElementById("invaliddate").style.display = "none";
+						}
+					})
+
 				}
 			}
 
@@ -202,6 +107,7 @@
 				document.getElementById("year").addEventListener("input", syncchanges);
 				document.getElementById("month").addEventListener("input", syncchanges);
 				document.getElementById("day").addEventListener("input", syncchanges);
+				document.getElementById("mylist").addEventListener("click", delitem);
 			}
 
 		</script>

@@ -1,0 +1,93 @@
+
+* {
+	font-family: "Roboto", sans-serif;
+	font-size: 1.1em;
+}
+
+body {
+	margin-left: 3vw;
+}
+
+textarea {
+	width: 98%;
+	margin: 0 auto;
+	margin-top: 0.5rem
+}
+
+input {
+	margin-right: 0.5rem;
+}
+
+h1 {
+	font-size: 3em;
+}
+
+li {
+	margin-bottom: 10px;
+}
+
+.delete {
+	left: 0;
+	padding: 2px 10px;
+	margin-left: 20px;
+	border-radius: 5px;
+	background-color: #eee;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+}
+
+.delete:hover {
+	background-color: #ddd;
+	cursor: pointer;
+}
+
+.textdateinput {
+	width: 2.1em;
+	margin: 0;
+	border: 0;
+	border-bottom: 1px solid black;
+}
+
+.textdateinput:focus {
+	border: none;
+	border-bottom: 1px solid blue;
+	outline: none;
+}
+
+#year {
+	width: 3.2em;
+}
+
+#dmydiv {
+	display: inline-grid;
+	grid-template-rows: auto auto;
+	grid-template-columns: auto auto auto auto auto;
+	margin: 0 auto 0 0;
+	grid-gap: 0;
+	margin-left: 10px;
+}
+
+#dmydiv > span {
+	padding: 0;
+	margin: 0;
+	font-size: 0.5rem;
+}
+
+@media screen and (min-width: 900px) {
+	#spacing {
+		height: 80px;
+		width: 1px;
+		border-left: 1px solid black;
+		display: inline-block;
+		margin: 0 auto;
+		position: absolute;
+	}
+}
+
+#invaliddate {
+	width: 60%;
+	font-size: 0.8rem;
+	display: none;
+}
