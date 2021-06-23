@@ -144,7 +144,7 @@
 				background-size: cover;
 				background-clip: padding-box;
 				background-position: center;
-				background-color: #eee;
+				background-color: #fafafa;
 			}
 
 			.tablewrapper {
@@ -355,10 +355,10 @@
 					</div>
 					<div class="loadingbar spantbl" id="load">Loading...</div>
 					<div class="none spantbl" id="none">There is either no homework or it has not been listed yet.</div>
-					<div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">lee_jia_hong_ansel@students.acsbr.org</a></div>
+					<div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:ansellee@googlegroups.com" target="_blank">ansellee@googlegroups.com</a></div>
 				</div>
 				<hr class="half">
-				<p>List more homework by submitting the form at <a href="https://docs.google.com/forms/d/e/1FAIpQLSd2qsOo6LK7laqOeBY8KeaA29PR4rC5bPBkLTDvVgweidyIsw/viewform?usp=sf_link" target="_blank">https://docs.google.com/forms/d/e/1FAIpQLSd2qsOo6LK7laqOeBY8KeaA29PR4rC5bPBkLTDvVgweidyIsw/viewform?usp=sf_link</a>; <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">email me</a> for a key.</p>
+				<p>List more homework by submitting the form at <a href="https://docs.google.com/forms/d/e/1FAIpQLSd2qsOo6LK7laqOeBY8KeaA29PR4rC5bPBkLTDvVgweidyIsw/viewform?usp=sf_link" target="_blank">https://docs.google.com/forms/d/e/1FAIpQLSd2qsOo6LK7laqOeBY8KeaA29PR4rC5bPBkLTDvVgweidyIsw/viewform?usp=sf_link</a>; <a href="mailto:ansellee@googlegroups.com" target="_blank">email me</a> for a key.</p>
 				<div id="share">
 					share
 					<div id="share_options">
@@ -400,7 +400,6 @@
 						<p class="announcetime">Today at 0000am</p>
 					</div>
 				</div>
-				<p class="emphasis">Official school announcements are at <a href="https://sites.google.com/a/students.acsbr.org/main/home">https://sites.google.com/a/students.acsbr.org/main/home</a></p>
 			</div>
 			<div class="spacing"></div>
 
@@ -507,7 +506,7 @@
 				{ 4: false, 11: true, 18: false, 25: true }, // October 
 				{ 1: false, 8: true, 15: false }, // November 
 				{} // december 
-				]; //ACSBR has a 10-day/2-week timetable - anchor is by the monday of that week
+				]; //my school has a 10-day/2-week timetable - anchor is by the monday of that week
 
 
 				function displayday(date) {
@@ -694,7 +693,7 @@
 									stringitup += '<div class="submitter">' + stuff[4][count] + '</div><div class="subject">' + stuff[1][count] + '</div><div class="piece">' + stuff[2][count] + '</div><div class="description">' + stuff[3][count] + '</div><div class="due">' + stuff[0][count] + '</div><div class="given">' + data[0][count] + '</div>';
 									count = count - 1;
 								}
-								document.getElementById("wrap").innerHTML = '<div class="submitter">submitter</div><div class="subject">subject</div><div class="piece">homework name</div><div class="description">description</div><div class="due">due date</div><div id="giventbl">date given</div><div class="linebreak spantbl"><hr></div><div class="loadingbar spantbl" id="load">Loading...</div><div class="none spantbl" id="none">There is either no homework or it has not been listed yet.</div><div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">lee_jia_hong_ansel@students.acsbr.org</a></div>';
+								document.getElementById("wrap").innerHTML = '<div class="submitter">submitter</div><div class="subject">subject</div><div class="piece">homework name</div><div class="description">description</div><div class="due">due date</div><div id="giventbl">date given</div><div class="linebreak spantbl"><hr></div><div class="loadingbar spantbl" id="load">Loading...</div><div class="none spantbl" id="none">There is either no homework or it has not been listed yet.</div><div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:ansellee@googlegroups.com" target="_blank">ansellee@googlegroups.com</a></div>';
 								document.getElementById("wrap").innerHTML += stringitup;
 								reflowhtml();
 							}
@@ -813,7 +812,7 @@
 							var count = stuff[5] - 1;
 							var stringitup = '';
 							document.getElementById("wrap").innerHTML = '<div class="submitter">submitter</div><div class="subject">subject</div><div class="piece">homework name</div><div class="description">description</div><div class="due">due date</div>' +
-								'<div class="linebreak spantbl"><hr></div><div class="loadingbar spantbl" id="load">Loading...</div><div class="none spantbl" id="none">There is either no homework under this filter or it has not been listed yet.</div><div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">lee_jia_hong_ansel@students.acsbr.org</a></div>';
+								'<div class="linebreak spantbl"><hr></div><div class="loadingbar spantbl" id="load">Loading...</div><div class="none spantbl" id="none">There is either no homework under this filter or it has not been listed yet.</div><div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:ansellee@googlegroups.com" target="_blank">ansellee@googlegroups.com</a></div>';
 							while (count > -1) {
 								stringitup += '<div class="submitter">' + stuff[4][count] + '</div><div class="subject">' + stuff[1][count] + '</div><div class="piece">' + stuff[2][count] + '</div><div class="description">' + stuff[3][count] + '</div><div class="due">' + stuff[0][count] + '</div>';
 								count = count - 1;
@@ -843,7 +842,7 @@
 							var count = stuff[5] - 1;
 							var stringitup = '';
 							document.getElementById("wrap").innerHTML = '<div class="submitter">submitter</div><div class="subject">subject</div><div class="piece">homework name</div><div class="description">description</div><div class="due">due date</div>' +
-								'<div id="giventbl">date given</div><div class="linebreak spantbl"><hr></div><div class="loadingbar spantbl" id="load">Loading...</div><div class="none spantbl" id="none">There is either no homework or it has not been listed yet.</div><div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">lee_jia_hong_ansel@students.acsbr.org</a></div>';
+								'<div id="giventbl">date given</div><div class="linebreak spantbl"><hr></div><div class="loadingbar spantbl" id="load">Loading...</div><div class="none spantbl" id="none">There is either no homework or it has not been listed yet.</div><div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:ansellee@googlegroups.com" target="_blank">ansellee@googlegroups.com</a></div>';
 							while (count > -1) {
 								stringitup += '<div class="submitter">' + stuff[4][count] + '</div><div class="subject">' + stuff[1][count] + '</div><div class="piece">' + stuff[2][count] + '</div><div class="description">' + stuff[3][count] + '</div><div class="due">' + stuff[0][count] + '</div><div class="given">' + stuff[6][count] + '</div>';
 								count = count - 1;
