@@ -350,6 +350,9 @@
 
 		<script>
 			function init() {
+				var today = new Date();
+				var monthnames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+				document.getElementById("date").innerHTML = today.getDate() + " " + monthnames[today.getMonth()] + " " + today.getFullYear();
 				loaddata();
 				console.log("fired")
 				document.getElementById("filter").addEventListener("click", changefilter)
