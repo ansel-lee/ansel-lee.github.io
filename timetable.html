@@ -1,5 +1,5 @@
 <!--
-WELCOME TO MY TIMETABLE LISTER THINGY
+WEnglishCOME TO MY TIMETABLE LISTER THINGY
 developed by Ansel Lee. Feel free to use this code even without giving credit; but if you do use it ethically and do not sell the code
 Please note that this does not account for school and public holidays. Always double-check if you think that this system is wrong.
 I developed it in a way so that it can be easily incorporated into a web application without having to change anything much. For example, I try to name it properly and keep all the things for this in a <div>. 
@@ -10,181 +10,196 @@ The fact that you are reading this means that you are going to look at my code a
 
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<meta name="description" content="ACSBR 1L timetable 2021 1.1">
-		<title>Timetable</title>
-		<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/gist/ansel-lee/db8b9fc82b3ff71b0a810fd8e342ade4/raw/3bdbd3b2dfbe4780352fe034184e55c9600edeaa/1lhw_favicon.svg"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<style>
-			@media screen and (min-width: 901px) {
-				* {
-					font-family: sans-serif;
-					font-size: min(1.8vw, 2.7vh);
-				}
 
-				.timetable h3 {
-					font-weight: 400;
-					font-size: min(3.5vw, 5.25vh);
-				}
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="description" content="ACSBR 1L timetable 2021 1.1">
+	<title>Timetable</title>
+	<link rel="icon" type="image/png"
+		href="https://raw.githubusercontent.com/gist/ansel-lee/db8b9fc82b3ff71b0a810fd8e342ade4/raw/3bdbd3b2dfbe4780352fe034184e55c9600edeaa/1lhw_favicon.svg" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		#timetableEdit {
+			font-size: 1em;
+		}
 
-				#timetableEdit {
-					font-size: min(5vw, 7.5vh);
-				}
+		#timetableEdit > strong {
+			font-size: 1em;
+		}
 
-				.timetable#timetable {
-					padding-left: 20vw;
-					padding-top: 15vh;
-					padding-right: 15vw;
-					border-radius: 0 20vw; 
-					background-color: #eee;
-					height: 100%;
-				}
-
-				#tocentre {
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					height: 80vh;
-					padding-top: 8vh;
-					padding-bottom: 8vh;
-					overflow: hidden;
-				}
+		@media screen and (min-width: 901px) {
+			* {
+				font-family: sans-serif;
+				font-size: min(1.8vw, 2.7vh);
 			}
 
-			@media screen and (max-width: 900px) {
-				* {
-					font-family: sans-serif;
-					font-size: 1.8vw;
-				}
-
-				.timetable h3 {
-					font-weight: 400;
-					font-size: 2em;
-				}
-
-				#timetableEdit {
-					font-size: 3em;
-				}
-
-				.timetable#timetable {
-					padding-left: 20px;
-					padding-top: 15px;
-					padding-right: 15px;
-					padding-bottom: 15px;
-					border-radius: 0 20px;
-					background-color: #eee;
-				}
+			.timetable h3 {
+				font-weight: 400;
+				font-size: min(3.5vw, 5.25vh);
 			}
 
-		</style>
+			#fontscale {
+				font-size: min(5vw, 7.5vh);
+			}
 
-    
-          
-            
-    
+			.timetable#timetable {
+				padding-left: 20vw;
+				padding-top: 15vh;
+				padding-right: 15vw;
+				border-radius: 0 20vw;
+				background-color: #eee;
+				height: 100%;
+			}
 
-          
-    
-    
-  
-	</head>
-	<body onload="init()">
-		<div id="tocentre">
+			#tocentre {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 80vh;
+				padding-top: 8vh;
+				padding-bottom: 8vh;
+				overflow: hidden;
+			}
+		}
+
+		@media screen and (max-width: 900px) {
+			* {
+				font-family: sans-serif;
+				font-size: 1.8vw;
+			}
+
+			.timetable h3 {
+				font-weight: 400;
+				font-size: 2em;
+			}
+
+			#fontscale {
+				font-size: 3rem;
+			}
+
+			.timetable#timetable {
+				padding-left: 20px;
+				padding-top: 15px;
+				padding-right: 15px;
+				padding-bottom: 15px;
+				border-radius: 0 20px;
+				background-color: #eee;
+			}
+		}
+	</style>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body onload="init()">
+	<div id="tocentre">
 		<div id="timetable" class="timetable">
 			<h3 class="timetable">What subjects are tomorrow?</h3>
-			<p id="timetableEdit" class="timetable"></p>
+			<div id="fontscale"><p id="timetableEdit" class="timetable"></p></div>
 			<p id="note"></p>
-			<p class="timetable">Please note that this does not account for school and public holidays. Always double-check if you think that this system is wrong.<br> Any inaccuracies? Please email me at <a href="mailto:ansellee23@gmail.com">ansellee23@gmail.com</a>. <br>Code? <a href="https://jsfiddle.net/ansellee/jg5v12ro">jsfiddle.net/ansellee/jg5v12ro</a></p>
-		</div></div>
-		<script>
-			'use strict'
-			function init() {
-				var editthis = document.getElementById("timetableEdit");
-				var notes = document.getElementById("note");
-				var now = new Date();
-				console.log(now)
-				var hoildays = [
-					[], // January - 0
-					[], // February
-					[], // March
-					[], // April
-					[1, 3, 13, 26], // May
-					[], // June - mainly due to the long term break, which will already be counted in by the weeks
-					[4, 20], // July
-					[9, 10], // August
-					[3], // September
-					[], // October
-					[4], // November
-					[] // December - practically useless
-				];
-				var timetable = ["",
-          // odd week
-          ["English, History, D&T, <br /> Mother Tongue, Science, Geography"], //monday
-          ["H-CUBE, Geography, English, <br /> Mother Tongue, Science, math"], //tuesday
-          ["START LATE, Class time, PE, <br /> math, English, Music"], //wednesday
-          ["WA/ Class Time, art, math, <br /> Science, Literature, Music, Mother Tongue"], //thursday
-          ["Mother tongue, PE, Math, English, <br /> D&T, Chapel"], //friday
+			<p class="timetable">Please note that this does not account for school and public holidays. Always
+				double-check if you think that this system is wrong.<br> Any inaccuracies? Please email me at <a
+					href="mailto:ansellee23@gmail.com">ansellee23@gmail.com</a>. <br>Code? <a
+					href="https://jsfiddle.net/ansellee/jg5v12ro">jsfiddle.net/ansellee/jg5v12ro</a></p>
+		</div>
+	</div>
+	<script>
+		'use strict'
+		function init() {
+			var editthis = document.getElementById("timetableEdit");
+			var notes = document.getElementById("note");
+			var now = new Date();
+			console.log(now)
+			var hoildays = [
+				[], // January - 0
+				[], // February
+				[], // March
+				[], // April
+				[1, 3, 13, 26], // May
+				[], // June - mainly due to the long term break, which will already be counted in by the weeks
+				[4, 20], // July
+				[9, 10], // August
+				[3], // September
+				[], // October
+				[4], // November
+				[] // December - practically useless
+			];
+			var timetable = ["",
+				// odd week
+				["Literature, Science, FCE, <br/> Mother Tongue, <strong>PE (pool)</strong>"], //monday
+				["H-CUBE, math, History, <br />, Mother Tongue, Art, Science, English"], //tuesday
+				["START LATE, Class time, Mother Tongue, <br /> Music, math, Geography, English"], //wednesday
+				["WA/ Class Time, FCE, math, <br /> Geography, English, Science"], //thursday
+				["Mother Tongue, English, math, <br /> Music, Chapel"], //friday
 
-          // even week
-          ["Literature, Science, Art, <br /> D&T, PE, English"], //monday
-          ["H-CUBE, Music, History, <br /> Mother Tongue, Geography, Math"], //tuesday
-          ["START LATE, Class time, PE, <br /> math, Science, English"], //wednesday
-          ["WA/Class Time,math,Mother Tongue, <br /> English, Literature, D&T, Science"], //thursday
-          ["English, Art, math, History, <br /> Mother Tongue, Chapel"], //friday
+				// even week
+				["math, English, Science, <br /> Mother Tongue, <strong>PE (Pool)</strong>"], //monday
+				["H-CUBE, Art, FCE, <br /> math, English, Literature"], //tuesday
+				["START LATE, Class time, Mother Tongue, <br /> math, History, Literature, Science"], //wednesday
+				["WA/ Class Time, Geography, Music,<br /> math, English, Science, FCE"], //thursday
+				["English , History, Art, <br />, Mother Tongue, Chapel"], //friday
 
-          // fallbacks
-          ["How did I end up here?"],
-          ["Yay! A term break"]
-        ];
-				var weekoddeven = [ // gets the first monday of the week - true denotes odd and false denotes even
-					{4: true, 11: false, 18: true, 25: false}, // January
-					{1: true, 8: false, 15: true, 22: false}, // February
-					{1: true, 8: false},  // March - partially due to the long term break
-					{5: true, 12: false, 19: true, 26: false}, // April
-					{3: true, 10: false, 17: true, 24: false},  // May
-					{28: true }, // June
-					{5: false, 12: true, 19: false, 26: true}, // July 
-					{2: false, 9: true, 16: false, 23: true, 30: false}, // August
-					{13: true, 20: false, 27: true }, // September
-					{4: false, 11: true, 18: false, 25: true}, // October
-					{1: false, 8: true, 15: false }, // November
-					{} // december
-				]; //ACSBR has a 10-day/2-week timetable - anchor is by the monday of that week
-				function displayday(date) {
-					function get_next_weekday(date) {
-						var tomorrow = new Date(date.setDate(date.getDate() + 1));
-						return (
-							(tomorrow.getDay() % 6) && !(hoildays[tomorrow.getMonth()].includes(tomorrow.getDate()))) ?
-							// 0 is a falsey value. If getDay is divisible by 6, then it is 6 (saturday) or 0 (sunday). Therefore, it will return false if it is a weekend
-							// if holidays includes the day, then return false
-							tomorrow :
-							get_next_weekday(tomorrow);
-					} //credit: https://stackoverflow.com/a/39140133/13904265
-					
-					if (date.getHours() < 12) {
-						date.setDate(date.getDate() - 1); //get next weekday will add 1 - so to include today we do this
-					}
-					return get_next_weekday(date);
+				// fallbacks
+				["How did I end up here?"],
+				["Yay! A term break"]
+			];
+			var weekoddeven = [ // gets the first monday of the week - true denotes odd and false denotes even
+				{ 4: true, 11: false, 18: true, 25: false }, // January
+				{ 1: true, 8: false, 15: true, 22: false }, // February
+				{ 1: true, 8: false },  // March - partially due to the long term break
+				{ 5: true, 12: false, 19: true, 26: false }, // April
+				{ 3: true, 10: false, 17: true, 24: false },  // May
+				{ 28: true }, // June
+				{ 5: false, 12: true, 19: false, 26: true }, // July 
+				{ 2: false, 9: true, 16: false, 23: true, 30: false }, // August
+				{ 13: true, 20: false, 27: true }, // September
+				{ 4: false, 11: true, 18: false, 25: true }, // October
+				{ 1: false, 8: true, 15: false }, // November
+				{} // december
+			]; //ACSBR has a 10-day/2-week timetable - anchor is by the monday of that week
+			function displayday(date) {
+				function get_next_weekday(date) {
+					var tomorrow = new Date(date.setDate(date.getDate() + 1));
+					return (
+						(tomorrow.getDay() % 6) && !(hoildays[tomorrow.getMonth()].includes(tomorrow.getDate()))) ?
+						// 0 is a falsey value. If getDay is divisible by 6, then it is 6 (saturday) or 0 (sunday). Therefore, it will return false if it is a weekend
+						// if holidays includes the day, then return false
+						tomorrow :
+						get_next_weekday(tomorrow);
+				} //credit: https://stackoverflow.com/a/39140133/13904265
+
+				if (date.getHours() < 12) {
+					date.setDate(date.getDate() - 1); //get next weekday will add 1 - so to include today we do this
 				}
-				function OddEven(date) {
-					console.log(date); // this is the second console log date, indicating the date of which it is fetching the timetable from. 
-					var prevMonday = new Date(+date);
-					prevMonday.setDate(prevMonday.getDate() - (prevMonday.getDay() + 6) % 7);
-					// subtracts the distance from the nearest monday
-					var subjects = weekoddeven[prevMonday.getMonth()][prevMonday.getDate()]
-					// returns true if odd, false if even or undefined
-						? timetable[date.getDay()] // odd
-						: weekoddeven[prevMonday.getMonth()][prevMonday.getDate()] !== false
-							? timetable[12] //undefined
-							: timetable[date.getDay() + 5]; // even
-					editthis.innerHTML = subjects; // format it
-					notes.innerHTML = date.getDate() + "/" + (date.getMonth()+1);
-				}
-				OddEven(
-					displayday(new Date(+now)) //create a new variable of NOW so it does not reference the same one and override
-				) 
+				return get_next_weekday(date);
 			}
-		</script>
-	</body>
+			function OddEven(date) {
+				console.log(date); // this is the second console log date, indicating the date of which it is fetching the timetable from. 
+				var prevMonday = new Date(+date);
+				prevMonday.setDate(prevMonday.getDate() - (prevMonday.getDay() + 6) % 7);
+				// subtracts the distance from the nearest monday
+				var subjects = weekoddeven[prevMonday.getMonth()][prevMonday.getDate()]
+					// returns true if odd, false if even or undefined
+					? timetable[date.getDay()] // odd
+					: weekoddeven[prevMonday.getMonth()][prevMonday.getDate()] !== false
+						? timetable[12] //undefined
+						: timetable[date.getDay() + 5]; // even
+				editthis.innerHTML = subjects; // format it
+				notes.innerHTML = date.getDate() + "/" + (date.getMonth() + 1);
+			}
+			OddEven(
+				displayday(new Date(+now)) //create a new variable of NOW so it does not reference the same one and override
+			)
+		}
+	</script>
+</body>
+
 </html>
