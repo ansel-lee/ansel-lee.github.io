@@ -27,9 +27,22 @@ The fact that you are reading this means that you are going to look at my code a
 			font-size: 1em;
 		}
 
+		p.timetable>em {
+			font-size: 1em;
+			text-decoration: none;
+			font-weight: 600;
+			font-style: normal;
+		}
+
+		#nextlesson {
+			border: 1px solid black;
+			padding: 4px 20px;
+			border-radius: 5px;
+		}
+
 		@media screen and (min-width: 901px) {
 			* {
-				font-family: sans-serif;
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 				font-size: min(1.8vw, 2.7vh);
 			}
 
@@ -64,7 +77,7 @@ The fact that you are reading this means that you are going to look at my code a
 
 		@media screen and (max-width: 900px) {
 			* {
-				font-family: sans-serif;
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 				font-size: 1.8vw;
 			}
 
@@ -78,7 +91,7 @@ The fact that you are reading this means that you are going to look at my code a
 			}
 
 			.timetable#timetable {
-				padding-left: 20px;
+				padding-left: 40px;
 				padding-top: 15px;
 				padding-right: 15px;
 				padding-bottom: 15px;
@@ -87,16 +100,6 @@ The fact that you are reading this means that you are going to look at my code a
 			}
 		}
 	</style>
-
-
-
-
-
-
-
-
-
-
 </head>
 
 <body onload="init()">
@@ -106,19 +109,42 @@ The fact that you are reading this means that you are going to look at my code a
 			<div id="fontscale">
 				<p id="timetableEdit" class="timetable"></p>
 			</div>
-			<p id="note"></p>
+			<p><span id="note"></span>&nbsp; |&nbsp; Timetable version 2.1 2022</p>
 			<p class="timetable">Please note that this does not account for school and public holidays. Always
 				double-check if you think that this system is wrong.<br> Any inaccuracies? Please email me at <a
 					href="mailto:ansellee23@gmail.com">ansellee23@gmail.com</a>. <br>Code? <a
 					href="https://jsfiddle.net/ansellee/jg5v12ro">jsfiddle.net/ansellee/jg5v12ro</a></p>
+			<div id="nextlesson">
+				<p> find the next&nbsp;
+					<select id="whatsnext">
+						<option>English</option>
+						<option>Math</option>
+						<option>Science</option>
+						<option>Mother Tongue</option>
+						<option>Geography</option>
+						<option>History</option>
+						<option value="lit">Literature</option>
+						<!--alias: lit-->
+						<option>Art</option>
+						<option>PE</option>
+						<option>FCE</option>
+						<option disabled>DNT</option>
+						<option disabled>PE Pool</option>
+					</select> &nbsp;lesson &nbsp;
+					<button id="find">Go!</button>
+				</p>
+				<div id="nextinstance"></div>
+			</div>
 		</div>
 	</div>
 	<script>
 		'use strict'
+		var currdate = new Date();
 		function init() {
 			var editthis = document.getElementById("timetableEdit");
 			var notes = document.getElementById("note");
 			var now = new Date();
+			var isOdd = false;
 			console.log(now)
 			var hoildays = [
 				[], // January - 0
@@ -136,23 +162,24 @@ The fact that you are reading this means that you are going to look at my code a
 			];
 			var timetable = ["",
 				// odd week
-				["Literature, Science, FCE, <br/> Mother Tongue, <strong>PE (pool)</strong>"], //monday
-				["H-CUBE, math, History, <br />, Mother Tongue, Art, Science, English"], //tuesday
-				["START LATE, Class time, Mother Tongue, <br /> Music, math, Geography, English"], //wednesday
-				["WA/ Class Time, FCE, math, <br /> Geography, English, Science"], //thursday
-				["Mother Tongue, English, math, <br /> Music, Chapel"], //friday
+				["<em>PE</em>, Math, English, <br /> Mother Tongue, Art, Literature, Science"], //monday
+				["H-CUBE, Math, Lit, Geography, Science, <br /> Mother Tongue, English, Math"], //tuesday
+				["START LATE, Class time, Math, <br /> History, Music, Science"], //wednesday
+				["WA/ Class Time, Mother Tongue, Art, <br /> English, FCE (in class), Math, Science"], //thursday
+				["<em>PE</em>, English, <em>FCE practical</em>, <br /> Geography, Chapel"], //friday
 
 				// even week
-				["math, English, Science, <br /> Mother Tongue, <strong>PE (Pool)</strong>"], //monday
-				["H-CUBE, Art, FCE, <br /> math, English, Literature"], //tuesday
-				["START LATE, Class time, Mother Tongue, <br /> math, History, Literature, Science"], //wednesday
-				["WA/ Class Time, Geography, Music,<br /> math, English, Science, FCE"], //thursday
-				["English , History, Art, <br />, Mother Tongue, Chapel"], //friday
+				["Mother Tongue, Art, FCE (possibly practical), Math, English, Science"], //monday
+				["H-CUBE, Literature, <em>PE</em>, <br />, History, English, Math, Science"], //tuesday
+				["START LATE, Class time, Mother Tongue, <br /> Math, English, Science"], //wednesday
+				["WA/ Class Time, English, Music, <br /> History, Mother Tongue, Math, FCE (in class)"], //thursday
+				["<em>PE</em>, Music, Science, Geography, <br />, Mother Tongue, Chapel"], //friday
 
 				// fallbacks
 				["How did I end up here?"],
 				["Yay! A term break"]
 			];
+
 			var weekoddeven = [ // gets the first monday of the week - true denotes odd and false denotes even
 				{ 3: true, 10: false, 17: true, 24: false, 31: true }, // January
 				{ 7: false, 14: true, 21: false, 28: true }, // February
@@ -167,6 +194,7 @@ The fact that you are reading this means that you are going to look at my code a
 				{}, // November
 				{} // december
 			]; //ACSBR has a 10-day/2-week timetable - anchor is by the monday of that week
+
 			function displayday(date) {
 				function get_next_weekday(date) {
 					var tomorrow = new Date(date.setDate(date.getDate() + 1));
@@ -183,7 +211,8 @@ The fact that you are reading this means that you are going to look at my code a
 				}
 				return get_next_weekday(date);
 			}
-			function OddEven(date) {
+
+			function OddEven(date, displaying) {
 				console.log(date); // this is the second console log date, indicating the date of which it is fetching the timetable from. 
 				var prevMonday = new Date(+date);
 				prevMonday.setDate(prevMonday.getDate() - (prevMonday.getDay() + 6) % 7);
@@ -194,12 +223,65 @@ The fact that you are reading this means that you are going to look at my code a
 					: weekoddeven[prevMonday.getMonth()][prevMonday.getDate()] !== false
 						? timetable[12] //undefined
 						: timetable[date.getDay() + 5]; // even
-				editthis.innerHTML = subjects; // format it
-				notes.innerHTML = date.getDate() + "/" + (date.getMonth() + 1) + "";
+				if (displaying) {
+					currdate = date;
+					isOdd = weekoddeven[prevMonday.getMonth()][prevMonday.getDate()]
+					editthis.innerHTML = subjects; // format it
+					notes.innerHTML = date.getDate() + "/" + (date.getMonth() + 1) + " " + (isOdd ? "odd" : "even") +
+						" " + getDayName(date, "en-US");
+				}
+				console.log(subjects, isOdd, date)
+				return [subjects, isOdd, date];
 			}
+
+
+			function getDayName(dateStr, locale) {
+				var date = new Date(dateStr);
+				return date.toLocaleDateString(locale, { weekday: 'long' });
+			}
+
+			function findDay() {
+				console.log("finding the next " + document.getElementById("whatsnext").value + " lesson")
+				var foundYet = false;
+				var added = 0;
+				var currSearch;
+				recur();
+				function recur() {
+					// var tomorrow = new Date(date.setDate(date.getDate() + 1));
+					var addingdays = new Date(+now)
+					addingdays = new Date(addingdays.setDate(addingdays.getDate() + added));
+					console.log(addingdays)
+					console.log(OddEven(displayday(addingdays), false) + "why");
+					continueDisp(OddEven(displayday(addingdays), false));
+					function continueDisp(currSearch) {
+						console.log(currSearch)
+						if (currSearch[0].includes(document.getElementById("whatsnext").value)) {
+							foundYet = true;
+							document.getElementById("nextinstance").innerHTML = "next " +
+								document.getElementById("whatsnext").value + " lesson: " +
+								currSearch[2].getDate() + "/" + (currSearch[2].getMonth() + 1) + " " + (currSearch[1] ? "odd" : "even") +
+								" " + getDayName(date, "en-US") + "<br />Timetable on that day: <br>" +
+								currSearch[0];
+							console.log("next " +
+								document.getElementById("whatsnext").value + " lesson: " +
+								currSearch[2].getDate() + "/" + (currSearch[2].getMonth() + 1) + " " + (currSearch[1] ? "odd" : "even") +
+								" " + getDayName(date, "en-US") + "<br />Timetable on that day: <br>" +
+								currSearch[0])
+						} else {
+							if (currSearch[1]) {
+								recur()
+							}
+						}
+						added++
+					}
+				}
+			}
+
+			document.getElementById("find").addEventListener("click", findDay)
+
 			OddEven(
 				displayday(new Date(+now)) //create a new variable of NOW so it does not reference the same one and override
-			)
+				, true)
 		}
 	</script>
 </body>
