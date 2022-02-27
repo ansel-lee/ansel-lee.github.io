@@ -13,10 +13,10 @@ The fact that you are reading this means that you are going to look at my code a
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="description" content="ACSBR 1L timetable 2021 1.1">
+	<meta name="description" content="timetable 2.1">
 	<title>Timetable</title>
 	<link rel="icon" type="image/png"
-		href="https://raw.githubusercontent.com/gist/ansel-lee/db8b9fc82b3ff71b0a810fd8e342ade4/raw/3bdbd3b2dfbe4780352fe034184e55c9600edeaa/1lhw_favicon.svg" />
+		href="" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		#timetableEdit {
@@ -113,7 +113,7 @@ The fact that you are reading this means that you are going to look at my code a
 			<p class="timetable">Please note that this does not account for school and public holidays. Always
 				double-check if you think that this system is wrong.<br> Any inaccuracies? Please email me at <a
 					href="mailto:ansellee23@gmail.com">ansellee23@gmail.com</a>. <br>Code? <a
-					href="https://jsfiddle.net/ansellee/jg5v12ro">jsfiddle.net/ansellee/jg5v12ro</a></p>
+					href="https://github.com/ansel-lee/ansel-lee.github.io/blob/main/timetable.html">github.com/ansel-lee/ansel-lee.github.io/blob/main/timetable.html</a></p>
 			<div id="nextlesson">
 				<p> find the next&nbsp;
 					<select id="whatsnext">
@@ -193,7 +193,7 @@ The fact that you are reading this means that you are going to look at my code a
 				{ 3: false, 10: true, 17: false, 24: true, 31: false }, // October
 				{}, // November
 				{} // december
-			]; //ACSBR has a 10-day/2-week timetable - anchor is by the monday of that week
+			]; //My School has a 10-day/2-week timetable - anchor is by the monday of that week
 
 			function displayday(date) {
 				function get_next_weekday(date) {
@@ -250,39 +250,40 @@ The fact that you are reading this means that you are going to look at my code a
 					// var tomorrow = new Date(date.setDate(date.getDate() + 1));
 					var addingdays = new Date(+now)
 					addingdays = new Date(addingdays.setDate(addingdays.getDate() + added));
-					console.log(addingdays)
-					console.log(OddEven(displayday(addingdays), false) + "why");
 					continueDisp(OddEven(displayday(addingdays), false));
 					function continueDisp(currSearch) {
 						console.log(currSearch)
-						if (currSearch[0].includes(document.getElementById("whatsnext").value)) {
+						if (currSearch[0].toString().includes(document.getElementById("whatsnext").value)) {
 							foundYet = true;
+							console.log("has been found!")
 							document.getElementById("nextinstance").innerHTML = "next " +
 								document.getElementById("whatsnext").value + " lesson: " +
 								currSearch[2].getDate() + "/" + (currSearch[2].getMonth() + 1) + " " + (currSearch[1] ? "odd" : "even") +
-								" " + getDayName(date, "en-US") + "<br />Timetable on that day: <br>" +
+								" " + getDayName(currSearch[2], "en-US") + "<br />Timetable on that day: <br>" +
 								currSearch[0];
 							console.log("next " +
 								document.getElementById("whatsnext").value + " lesson: " +
 								currSearch[2].getDate() + "/" + (currSearch[2].getMonth() + 1) + " " + (currSearch[1] ? "odd" : "even") +
-								" " + getDayName(date, "en-US") + "<br />Timetable on that day: <br>" +
+								" " + getDayName(currSearch[2], "en-US") + "<br />Timetable on that day: <br>" +
 								currSearch[0])
 						} else {
-							if (currSearch[1]) {
-								recur()
-							}
+							added++
+							setTimeout(recur, 200)
+							var addingdays = new Date(+now)
+							addingdays = new Date(addingdays.setDate(addingdays.getDate() + added));
 						}
-						added++
 					}
 				}
 			}
-
 			document.getElementById("find").addEventListener("click", findDay)
+
+
 
 			OddEven(
 				displayday(new Date(+now)) //create a new variable of NOW so it does not reference the same one and override
 				, true)
 		}
+
 	</script>
 </body>
 
