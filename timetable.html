@@ -396,9 +396,12 @@ The fact that you are reading this means that you are going to look at my code a
 							getDayName(currdate, "en-US") + " (" + (isOdd ? "odd" : "even") + " week) timetable:\n" +
 							(daySubjects.toString().replace("<br />", "\n").replace("<em>", "*").replace("</em>", "*")) +
 							"\nhttps://ansel-lee.github.io/timetable"
+						
 						console.log(toShare)
+
 						if (e.currentTarget.id == "timetable-share") {
 							navigator.share({ text: toShare })
+							alert("share does not work for now")
 						} else {
 							copyTextToClipboard(toShare)
 						}
