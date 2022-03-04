@@ -1,19 +1,9 @@
-<!--
-WELCOME TO MY TIMETABLE LISTER THINGY
-developed by Ansel Lee. Feel free to use this code even without giving credit; but if you do use it ethically and do not sell the code
-Please note that this does not account for school and public holidays. Always double-check if you think that this system is wrong.
-I developed it in a way so that it can be easily incorporated into a web application without having to change anything much. For example, I try to name it properly and keep all the things for this in a <div>. 
-	My Javascript is adaptable should the IDs of the elements or the timetable change.
-	For ease of CSS styling, all of the elements here have a class "timetable".
-The fact that you are reading this means that you are going to look at my code and therefore I can safely assume that you are a developer so good luck coding!
--->
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="description" content="timetable 2.1">
+	<meta name="description" content="2L timetable 2.1">
 	<title>Timetable</title>
 	<link rel="icon" type="image/png" href="" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,11 +16,24 @@ The fact that you are reading this means that you are going to look at my code a
 			font-size: 1em;
 		}
 
-		p.timetable>em, div#nextinstance {
+		p.timetable>em,
+		div#nextinstance>em {
 			font-size: 1em;
 			text-decoration: none;
 			font-weight: 600;
 			font-style: normal;
+		}
+
+		.inline {
+			display: inline-block;
+		}
+
+		button.timetable:hover {
+			cursor: pointer;
+		}
+
+		.timetable.nodisp {
+			display: none;
 		}
 
 
@@ -68,10 +71,15 @@ The fact that you are reading this means that you are going to look at my code a
 				overflow: auto;
 			}
 
+			#nextinstance {
+				font-weight: 400;
+			}
+
 			#nextlesson {
 				border: 1px solid black;
 				padding: 4px 20px;
 				border-radius: 5px;
+				font-weight: 400;
 			}
 		}
 
@@ -103,6 +111,11 @@ The fact that you are reading this means that you are going to look at my code a
 				padding: 0 1rem;
 				border-radius: 5px;
 				font-size: 1.3rem;
+				font-weight: 400;
+			}
+
+			#nextinstance {
+				font-weight: 400;
 			}
 
 			.timetable.smaller {
@@ -112,15 +125,37 @@ The fact that you are reading this means that you are going to look at my code a
 	</style>
 </head>
 
-<body onload="init()">
+<body onload="timetable()">
+	<!--
+WELCOME TO MY TIMETABLE LISTER THINGY
+developed by Ansel Lee. Feel free to use this code even without giving credit; but if you do use it ethically and do not sell the code
+Please note that this does not account for school and public holidays. Always double-check if you think that this system is wrong.
+I developed it in a way so that it can be easily incorporated into a web application without having to change anything much. For example, I try to name it properly and keep all the things for this in a <div>. 
+	My Javascript is adaptable should the IDs of the elements or the timetable change.
+	For ease of CSS styling, all of the elements here have a class "timetable".
+The fact that you are reading this means that you are going to look at my code and therefore I can safely assume that you are a developer so happy coding!
+-->
+
+
 	<div id="tocentre">
 		<div id="timetable" class="timetable">
-			<h3 class="timetable">What subjects are tomorrow?</h3>
+			<h3 class="timetable">What's on <span id="timetableDay">placeholder</span>?</h3>
 			<div id="fontscale">
 				<p id="timetableEdit" class="timetable"></p>
 			</div>
-			<p><span id="note" class=""smaller></span>&nbsp; |&nbsp; Timetable version 2.1 2022</p>
-			<p class="timetable smaller">Please note that this does not account for school and public holidays. Always
+			<p class="timetable"><span id="note" class="smaller"></span>&nbsp; |&nbsp; Timetable version 2.1 2022
+				|&nbsp;
+			</p>
+			<div id="buttonSet">
+				<button class="timetable" id="prevDay">&lt; previous day</button>
+				<button class="timetable" id="nextDay">&#62; next day</button>
+				<button class="timetable nodisp" id="timetable-share">Share</button>
+				<button class="timetable" id="timetable-copy">Copy</button>
+				<a href="https://ansel-lee.github.io/timetable" target="_blank" download><button class="timetable"
+						id="timetable-download">Download</button></a>
+			</div>
+			<p class="timetable smaller">Please note that this does not account for school and public holidays.
+				Always
 				double-check if you think that this system is wrong.<br> Any inaccuracies? Please email me at <a
 					href="mailto:ansellee23@gmail.com">ansellee23@gmail.com</a>. <br>Code? <a
 					href="https://github.com/ansel-lee/ansel-lee.github.io/blob/main/timetable.html">github.com/ansel-lee/ansel-lee.github.io/blob/main/timetable.html</a>
@@ -137,6 +172,7 @@ The fact that you are reading this means that you are going to look at my code a
 						<option value="Lit">Literature</option>
 						<!--alias: lit-->
 						<option>Art</option>
+						<option>Music</option>
 						<option>PE</option>
 						<option>FCE</option>
 						<option value="practical">FCE practical</option>
@@ -145,18 +181,23 @@ The fact that you are reading this means that you are going to look at my code a
 					</select> &nbsp;lesson &nbsp;
 					<button id="find">Go!</button>
 				</p>
-				<div id="nextinstance"></div>
+				<div id="nextinstance" class="timetable"></div>
+				<iframe id="downloadURL" class="timetable nodisp"></iframe>
 			</div>
 		</div>
 	</div>
 	<script>
 		'use strict'
-		var currdate = new Date();
-		function init() {
+		var timetable_pub = {};
+		function timetable() {
+			var currdate = new Date();
+			var isOdd = false;
+			var daySubjects = ""
+
 			var editthis = document.getElementById("timetableEdit");
 			var notes = document.getElementById("note");
 			var now = new Date();
-			var isOdd = false;
+			var holidayBump = false;
 			console.log(now)
 			var hoildays = [
 				[], // January - 0
@@ -181,11 +222,11 @@ The fact that you are reading this means that you are going to look at my code a
 				["<em>PE</em>, English, <em>FCE (practical)</em>, <br /> Geography, Chapel"], //friday
 
 				// even week
-				["Mother Tongue, Art, FCE (possibly practical), Math, English, Science"], //monday
-				["H-CUBE, Literature, <em>PE</em>, <br />, History, English, Math, Science"], //tuesday
+				["Mother Tongue, Art, FCE (possibly practical), <br /> Math, English, Science"], //monday
+				["H-CUBE, Literature, <em>PE</em>, <br />History, English, Math, Science"], //tuesday
 				["START LATE, Class time, Mother Tongue, <br /> Math, English, Science"], //wednesday
 				["WA/ Class Time, English, Music, <br /> History, Mother Tongue, Math, FCE (in class)"], //thursday
-				["<em>PE</em>, Music, Science, Geography, <br />, Mother Tongue, Chapel"], //friday
+				["<em>PE</em>, Music, Science, Geography, <br />Mother Tongue, Chapel"], //friday
 
 				// fallbacks
 				["How did I end up here?"],
@@ -205,24 +246,27 @@ The fact that you are reading this means that you are going to look at my code a
 				{ 3: false, 10: true, 17: false, 24: true, 31: false }, // October
 				{}, // November
 				{} // december
-			]; //My School has a 10-day/2-week timetable - anchor is by the monday of that week
+			]; // My School has a 10-day/2-week timetable - anchor is by the monday of that week
 
 			function displayday(date) {
-				function get_next_weekday(date) {
-					var tomorrow = new Date(date.setDate(date.getDate() + 1));
-					return (
-						(tomorrow.getDay() % 6) && !(hoildays[tomorrow.getMonth()].includes(tomorrow.getDate()))) ?
-						// 0 is a falsey value. If getDay is divisible by 6, then it is 6 (saturday) or 0 (sunday). Therefore, it will return false if it is a weekend
-						// if holidays includes the day, then return false
-						tomorrow :
-						get_next_weekday(tomorrow);
-				} //credit: https://stackoverflow.com/a/39140133/13904265
-
 				if (date.getHours() < 12) {
 					date.setDate(date.getDate() - 1); //get next weekday will add 1 - so to include today we do this
 				}
-				return get_next_weekday(date);
+				return get_next_weekday(date, 1);
 			}
+
+			function get_next_weekday(date, next) { // next = -1 - get previous weekday
+				next = next || 1
+				var tomorrow = new Date(date.setDate(date.getDate() + next))
+				// 0 is a falsey value. If getDay is divisible by 6, then it is 6 (saturday) or 0 (sunday). Therefore, it will return false if it is a weekend
+				// if holidays includes the day, then return false
+				while (!(tomorrow.getDay() % 6) || (hoildays[tomorrow.getMonth()].includes(tomorrow.getDate()))) {
+					tomorrow = new Date(date.setDate(date.getDate() + next));
+				}
+				console.log(hoildays[tomorrow.getMonth()].includes(tomorrow.getDate()))
+				return tomorrow;
+			}
+			timetable_pub.wkday = get_next_weekday
 
 			function OddEven(date, displaying) {
 				console.log(date); // this is the second console log date, indicating the date of which it is fetching the timetable from. 
@@ -236,11 +280,13 @@ The fact that you are reading this means that you are going to look at my code a
 						? timetable[12] //undefined
 						: timetable[date.getDay() + 5]; // even
 				if (displaying) {
+					daySubjects = subjects
 					currdate = date;
 					isOdd = weekoddeven[prevMonday.getMonth()][prevMonday.getDate()]
 					editthis.innerHTML = subjects; // format it
 					notes.innerHTML = date.getDate() + "/" + (date.getMonth() + 1) + " " + (isOdd ? "odd" : "even") +
 						" " + getDayName(date, "en-US");
+					document.getElementById("timetableDay").innerText = getDayName(date, "en-US")
 				}
 				console.log(subjects, isOdd, date)
 				return [subjects, isOdd, date];
@@ -255,14 +301,11 @@ The fact that you are reading this means that you are going to look at my code a
 			function findDay() {
 				console.log("finding the next " + document.getElementById("whatsnext").value + " lesson")
 				var foundYet = false;
-				var added = 0;
+				var processDay = new Date(+now)
 				var currSearch;
 				recur();
 				function recur() {
-					// var tomorrow = new Date(date.setDate(date.getDate() + 1));
-					var addingdays = new Date(+now)
-					addingdays = new Date(addingdays.setDate(addingdays.getDate() + added));
-					continueDisp(OddEven(displayday(addingdays), false));
+					continueDisp(OddEven(get_next_weekday(processDay), false));
 					function continueDisp(currSearch) {
 						console.log(currSearch)
 						if (currSearch[0].toString().includes(document.getElementById("whatsnext").value)) {
@@ -273,27 +316,101 @@ The fact that you are reading this means that you are going to look at my code a
 								currSearch[2].getDate() + "/" + (currSearch[2].getMonth() + 1) + " " + (currSearch[1] ? "odd" : "even") +
 								" " + getDayName(currSearch[2], "en-US") + "<br />Timetable on that day: <br>" +
 								currSearch[0];
-							console.log("next " +
-								document.getElementById("whatsnext").value + " lesson: " +
-								currSearch[2].getDate() + "/" + (currSearch[2].getMonth() + 1) + " " + (currSearch[1] ? "odd" : "even") +
-								" " + getDayName(currSearch[2], "en-US") + "<br />Timetable on that day: <br>" +
-								currSearch[0])
 						} else {
-							added++
 							setTimeout(recur, 200)
-							var addingdays = new Date(+now)
-							addingdays = new Date(addingdays.setDate(addingdays.getDate() + added));
 						}
 					}
 				}
 			}
-			document.getElementById("find").addEventListener("click", findDay)
 
 
 
-			OddEven(
-				displayday(new Date(+now)) //create a new variable of NOW so it does not reference the same one and override
-				, true)
+
+
+			function init() {
+				OddEven(
+					displayday(now) //create a new variable of NOW so it does not reference the same one and override
+					, true
+				)
+				evts()
+
+				function evts() {
+					document.getElementById("find").addEventListener("click", findDay)
+					document.getElementById("prevDay").addEventListener("click", prevDay)
+					document.getElementById("nextDay").addEventListener("click", nextDay)
+					document.getElementById("timetable-share").addEventListener("click", shareFunctions)
+					document.getElementById("timetable-copy").addEventListener("click", shareFunctions)
+
+					document.addEventListener("visibilitychange", reInitialise)
+
+					if (navigator.share) {
+						document.getElementById("timetable-share").classList.remove("nodisp")
+					}
+
+					function prevDay() {
+						OddEven(get_next_weekday(now, -1), true)
+					}
+
+					function nextDay() {
+						OddEven(get_next_weekday(now), true)
+					}
+
+					function reInitialise() {
+						OddEven(displayday(new Date(+now)), true)
+					}
+
+					function shareFunctions(e) {
+						var toShare = currdate.getDate() + "/" + currdate.getMonth() + ", " +
+							getDayName(currdate, "en-US") + " (" + (isOdd ? "odd" : "even") + " week) timetable:\n" +
+							(daySubjects.toString().replace("<br />", "\n").replace("<em>", "*").replace("</em>", "*")) + 
+							"\nhttps://ansel-lee.github.io/timetable"
+						console.log(toShare)
+						if (e.currentTarget.id == "timetable-share") {
+							navigator.share(toShare)
+						} else {
+							copyTextToClipboard(toShare)
+						}
+					}
+				}
+			}
+			init()
+
+
+			function fallbackCopyTextToClipboard(text) {
+				var textArea = document.createElement("textarea");
+				textArea.value = text;
+
+				// Avoid scrolling to bottom
+				textArea.style.top = "0";
+				textArea.style.left = "0";
+				textArea.style.position = "fixed";
+
+				document.body.appendChild(textArea);
+				textArea.focus();
+				textArea.select();
+
+				try {
+					var successful = document.execCommand('copy');
+					var msg = successful ? 'successful' : 'unsuccessful';
+					console.log('Fallback: Copying text command was ' + msg);
+				} catch (err) {
+					console.error('Fallback: Oops, unable to copy', err);
+				}
+
+				document.body.removeChild(textArea);
+			}
+
+			function copyTextToClipboard(text) {
+				if (!navigator.clipboard) {
+					fallbackCopyTextToClipboard(text);
+					return;
+				}
+				navigator.clipboard.writeText(text).then(function () {
+					console.log('Async: Copying to clipboard was successful!');
+				}, function (err) {
+					console.error('Async: Could not copy text: ', err);
+				});
+			}
 		}
 
 	</script>
