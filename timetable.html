@@ -43,7 +43,8 @@
 				font-size: min(1.6vw, 2.2vh);
 			}
 
-			.timetable h3 {
+			.timetable h3,
+			.timetable h3>span {
 				font-weight: 400;
 				font-size: min(3vw, 5vh);
 			}
@@ -88,7 +89,8 @@
 				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 			}
 
-			.timetable h3 {
+			.timetable h3,
+			.timetable h3>span {
 				font-weight: 400;
 				font-size: 2em;
 			}
@@ -139,12 +141,12 @@ The fact that you are reading this means that you are going to look at my code a
 
 	<div id="tocentre">
 		<div id="timetable" class="timetable">
-			<h3 class="timetable">What's on <span id="timetableDay">placeholder</span>?</h3>
+			<h3 class="timetable">What's on <span id="timetableDay" class="timetable">placeholder</span>?</h3>
 			<div id="fontscale">
 				<p id="timetableEdit" class="timetable"></p>
 			</div>
-			<p class="timetable"><span id="note" class="smaller"></span>&nbsp; |&nbsp; Timetable version 2.1 2022
-				|&nbsp;
+			<p class="timetable"><span id="note" class="smaller"></span>&nbsp; |&nbsp; Timetable version 2.1 2022 <span
+					id="timetableUpdated">updated?</span>
 			</p>
 			<div id="buttonSet">
 				<button class="timetable" id="prevDay">&lt; previous day</button>
@@ -154,8 +156,7 @@ The fact that you are reading this means that you are going to look at my code a
 				<a href="https://ansel-lee.github.io/timetable" target="_blank" download><button class="timetable"
 						id="timetable-download">Download</button></a>
 			</div>
-			<p class="timetable smaller">Please note that this does not account for school and public holidays.
-				Always
+			<p class="timetable smaller">Always
 				double-check if you think that this system is wrong.<br> Any inaccuracies? Please email me at <a
 					href="mailto:ansellee23@gmail.com">ansellee23@gmail.com</a>. <br>Code? <a
 					href="https://github.com/ansel-lee/ansel-lee.github.io/blob/main/timetable.html">github.com/ansel-lee/ansel-lee.github.io/blob/main/timetable.html</a>
@@ -193,6 +194,8 @@ The fact that you are reading this means that you are going to look at my code a
 			var currdate = new Date();
 			var isOdd = false;
 			var daySubjects = ""
+			var originalDate = new Date();
+			var dateUnchanged = true;
 
 			var editthis = document.getElementById("timetableEdit");
 			var notes = document.getElementById("note");
@@ -282,11 +285,17 @@ The fact that you are reading this means that you are going to look at my code a
 				if (displaying) {
 					daySubjects = subjects
 					currdate = date;
+					timetable_pub.currDate = currdate
 					isOdd = weekoddeven[prevMonday.getMonth()][prevMonday.getDate()]
 					editthis.innerHTML = subjects; // format it
+
+					var comparingDates = new Date(Date.UTC(originalDate.getFullYear(),originalDate.getMonth(), originalDate.getDate()));
+					comparingDates = comparingDates.getTime() === (new Date(Date.UTC(date.getFullYear(),date.getMonth(), date.getDate()))).getTime();
+					dateUnchanged = comparingDates
+
 					notes.innerHTML = date.getDate() + "/" + (date.getMonth() + 1) + " " + (isOdd ? "odd" : "even") +
 						" " + getDayName(date, "en-US");
-					document.getElementById("timetableDay").innerText = getDayName(date, "en-US")
+					document.getElementById("timetableDay").innerText = (!comparingDates ? "*" : "") + getDayName(date, "en-US")
 				}
 				console.log(subjects, isOdd, date)
 				return [subjects, isOdd, date];
@@ -328,11 +337,34 @@ The fact that you are reading this means that you are going to look at my code a
 
 
 			function init() {
-				OddEven(
-					displayday(now) //create a new variable of NOW so it does not reference the same one and override
-					, true
-				)
+				originalDate = displayday(now)
+				OddEven(originalDate, true)
+				timetable_pub.oDate = originalDate
 				evts()
+
+				function verifyVersion() {
+					var currVersion = new XMLHttpRequest();
+					currVersion.open("GET", "https://ansel-lee.github.io/timetable-version.txt")
+					currVersion.send("")
+					currVersion.onload = function () {
+						console.log(currVersion.responseText)
+						console.log(currVersion.status)
+						if (currVersion.responseText === "2L 2022 2.1") {
+							document.getElementById("timetableUpdated").innerText = "{Timetable is up-to-date :) }"
+						} else {
+							document.getElementById("timetableUpdated").innerText = "{Timetable is OUTDATED! :( }";
+						}
+					}
+					currVersion.onerror = function () {
+						document.getElementById("timetableUpdated").innerText = "{version could not be verified ://}"
+					}
+				}
+
+				if (navigator.onLine) {
+					verifyVersion()
+				} else {
+					document.getElementById("timetableUpdated").innerText = "{version could not be verified ://}"
+				}
 
 				function evts() {
 					document.getElementById("find").addEventListener("click", findDay)
@@ -360,13 +392,13 @@ The fact that you are reading this means that you are going to look at my code a
 					}
 
 					function shareFunctions(e) {
-						var toShare = currdate.getDate() + "/" + currdate.getMonth() + ", " +
+						var toShare = (dateUnchanged ? "" : "*") + currdate.getDate() + "/" + currdate.getMonth() + ", " +
 							getDayName(currdate, "en-US") + " (" + (isOdd ? "odd" : "even") + " week) timetable:\n" +
-							(daySubjects.toString().replace("<br />", "\n").replace("<em>", "*").replace("</em>", "*")) + 
+							(daySubjects.toString().replace("<br />", "\n").replace("<em>", "*").replace("</em>", "*")) +
 							"\nhttps://ansel-lee.github.io/timetable"
 						console.log(toShare)
 						if (e.currentTarget.id == "timetable-share") {
-							navigator.share(toShare)
+							navigator.share({ text: toShare })
 						} else {
 							copyTextToClipboard(toShare)
 						}
