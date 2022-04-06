@@ -3,7 +3,7 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="description" content="2L timetable 2.1">
+	<meta name="description" content="2E timetable 2.1 preview">
 	<title>Timetable</title>
 	<link rel="icon" type="image/png" href="" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -145,7 +145,7 @@ The fact that you are reading this means that you are going to look at my code a
 			<div id="fontscale">
 				<p id="timetableEdit" class="timetable"></p>
 			</div>
-			<p class="timetable"><span id="note" class="smaller"></span>&nbsp; |&nbsp; Timetable version 2.1 2022 <span
+			<p class="timetable"><span id="note" class="smaller"></span>&nbsp; |&nbsp; <em>2E</em>Timetable version 2.1 2022 <span
 					id="timetableUpdated">updated?</span>
 			</p>
 			<div id="buttonSet">
@@ -153,13 +153,13 @@ The fact that you are reading this means that you are going to look at my code a
 				<button class="timetable" id="nextDay">&#62; next day</button>
 				<button class="timetable nodisp" id="timetable-share">Share</button>
 				<button class="timetable" id="timetable-copy">Copy</button>
-				<a href="https://ansel-lee.github.io/timetable" target="_blank" download><button class="timetable"
+				<a href="https://ansel-lee.github.io/2E/timetable" target="_blank" download><button class="timetable"
 						id="timetable-download">Download</button></a>
 			</div>
 			<p class="timetable smaller">Always
 				double-check if you think that this system is wrong.<br> Any inaccuracies? Please email me at <a
 					href="mailto:ansellee23@gmail.com">ansellee23@gmail.com</a>. <br>Code? <a
-					href="https://github.com/ansel-lee/ansel-lee.github.io/blob/main/timetable.html">github.com/ansel-lee/ansel-lee.github.io/blob/main/timetable.html</a>
+					href="https://github.com/ansel-lee/ansel-lee.github.io/blob/main/2E/timetable.html">github.com/ansel-lee/ansel-lee.github.io/blob/main/2E/timetable.html</a>
 			</p>
 			<div id="nextlesson">
 				<p> find the next&nbsp;
@@ -191,7 +191,7 @@ The fact that you are reading this means that you are going to look at my code a
 		'use strict'
 		var timetable_pub = {};
 		function timetableFunction() {
-			var expectVersion = "2L 2022 2.1 patch 1";
+			var expectVersion = "2E 2022 2.1";
 			var currdate = new Date();
 			var isOdd = false;
 			var daySubjects = ""
@@ -219,18 +219,18 @@ The fact that you are reading this means that you are going to look at my code a
 			];
 			var timetable = ["",
 				// odd week
-				["<em>PE</em>, Math, English, <br /> Mother Tongue, Art, Literature, Science"], //monday
-				["H-CUBE, Lit, Geography, Science <br /> Mother Tongue, English, Math"], //tuesday
-				["START LATE, Class time, Math, <br /> History, Music, Science"], //wednesday
-				["WA/ Class Time, Mother Tongue, Art, <br /> English, FCE (in class), Math, Science"], //thursday
-				["<em>PE</em>, English, <em>FCE (practical)</em>, <br /> Geography, Chapel"], //friday
+				["Science, Music, Math, <br /> Mother Tongue, <em>PE</em>, English"], //monday
+				["H-CUBE, English, Math, <br /> Mother Tongue, Literature, History, Science"], //tuesday
+				["START LATE, Class time, English, <br /> Geography, Art, FCE, Math"], //wednesday
+				["WA/ Class Time, Mother Tongue, <em>PE</em>, <br /> Science, History, Math"], //thursday
+				["Literature, FCE (possibly practical), English, Science, <br /> <em>Chapel :)</em>"], //friday
 
 				// even week
-				["Mother Tongue, Art, FCE (possibly practical), <br /> Math, English, Science"], //monday
-				["H-CUBE, Literature, <em>PE</em>, <br />History, English, Math, Science"], //tuesday
-				["START LATE, Class time, Mother Tongue, <br /> Math, English, Science"], //wednesday
-				["WA/ Class Time, English, Music, <br /> History, Mother Tongue, Math, FCE (in class)"], //thursday
-				["<em>PE</em>, Music, Science, Geography, <br />Mother Tongue, Chapel"], //friday
+				["Mother Tongue, English, Literature, <br /> Math, Geography, History"], //monday
+				["H-CUBE, Art, <em>PE</em>, <br /> FCE (class), Science, Math, English"], //tuesday
+				["START LATE, Class time, Mother Tongue, <br /> English, Math, Science, Music"], //wednesday
+				["WA/ Class Time, English, <em>PE</em>, <br /> Geography, Mother Tongue, Math, Science"], //thursday
+				["Music, Science, <em>FCE</em>, <br /> Mother Tongue, Chapel"], //friday
 
 				// fallbacks
 				["How did I end up here?"],
@@ -345,7 +345,7 @@ The fact that you are reading this means that you are going to look at my code a
 
 				function verifyVersion() {
 					var currVersion = new XMLHttpRequest();
-					currVersion.open("GET", "https://ansel-lee.github.io/timetable-version.txt")
+					currVersion.open("GET", "https://ansel-lee.github.io/2E/timetable-version.txt")
 					currVersion.send("")
 					currVersion.onload = function () {
 						console.log(currVersion.responseText)
@@ -408,7 +408,7 @@ The fact that you are reading this means that you are going to look at my code a
 						var toShare = (dateUnchanged ? "" : "*") + currdate.getDate() + "/" + currdate.getMonth() + ", " +
 							getDayName(currdate, "en-US") + " (" + (isOdd ? "odd" : "even") + " week) timetable:\n" +
 							(daySubjects.toString().replace("<br />", "\n").replace("<em>", "*").replace("</em>", "*")) +
-							"\nhttps://ansel-lee.github.io/timetable"
+							"\nhttps://ansel-lee.github.io/2E/timetable"
 
 						console.log(toShare)
 
