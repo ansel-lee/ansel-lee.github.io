@@ -356,7 +356,7 @@ The fact that you are reading this means that you are going to look at my code a
 						} else {
 							console.log("expected '" + expectVersion + "', but received '" + currVersion.responseText + "' version instead")
 							document.getElementById("timetableUpdated").innerText = "{Timetable is OUTDATED! :( } <br /> error: expected " + (currVersion.responseText == expectVersion);
-						}+
+						}
 					}
 					currVersion.onerror = function () {
 						document.getElementById("timetableUpdated").innerText = "{version could not be verified ://}"
