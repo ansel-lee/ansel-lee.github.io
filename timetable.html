@@ -4,7 +4,7 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="description" content="2L timetable 2.1">
+	<meta name="description" content="2L timetable Sem 2 1.0">
 	<title>Timetable</title>
 	<link rel="icon" type="image/png" href="" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -355,7 +355,7 @@ The fact that you are reading this means that you are going to look at my code a
 							document.getElementById("timetableUpdated").innerText = "{Timetable is up-to-date :) }"
 						} else {
 							console.log("expected '" + expectVersion + "', but received '" + currVersion.responseText + "' version instead")
-							document.getElementById("timetableUpdated").innerText = "{Timetable is OUTDATED! :( }";
+							document.getElementById("timetableUpdated").innerText = "{Timetable is OUTDATED! :( }. expected: " + currVersion;
 						}
 					}
 					currVersion.onerror = function () {
