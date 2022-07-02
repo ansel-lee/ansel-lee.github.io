@@ -192,7 +192,7 @@ The fact that you are reading this means that you are going to look at my code a
 		'use strict'
 		var timetable_pub = {};
 		function timetableFunction() {
-			var expectVersion = "2L 2022 2.1 patch 1";
+			var expectVersion = "2L 2022 Sem 2/ 1.0";
 			var currdate = new Date();
 			var isOdd = false;
 			var daySubjects = ""
@@ -220,18 +220,18 @@ The fact that you are reading this means that you are going to look at my code a
 			];
 			var timetable = ["",
 				// odd week
-				["<em>PE</em>, Math, English, <br /> Mother Tongue, Art, Literature, Science"], //monday
-				["H-CUBE, Lit, Geography, Science <br /> Mother Tongue, English, Math"], //tuesday
-				["START LATE, Class time, Math, <br /> History, Music, Science"], //wednesday
-				["WA/ Class Time, Mother Tongue, Art, <br /> English, FCE (in class), Math, Science"], //thursday
-				["<em>PE</em>, English, <em>FCE (practical)</em>, <br /> Geography, Chapel"], //friday
+				["Mother Tongue, Science, <em>PE</em>, <br /> Geography, English, Math, <em>DnT</em>"], //monday
+				["H-CUBE, Art, Math, <br /> Music, Geography, English, Science"], //tuesday
+				["START LATE, Class time, <em>PE</em>, <br /> <em>DnT</em>, Art, Science, Lit"], //wednesday
+				["WA/ Class Time, English, Math, <br /> Literature, Science, Math"], //thursday
+				["<em>PE</em>, History, Mother Tongue, English, <br /> Math, Chapel"], //friday
 
 				// even week
-				["Mother Tongue, Art, FCE (possibly practical), <br /> Math, English, Science"], //monday
-				["H-CUBE, Literature, <em>PE</em>, <br />History, English, Math, Science"], //tuesday
-				["START LATE, Class time, Mother Tongue, <br /> Math, English, Science"], //wednesday
-				["WA/ Class Time, English, Music, <br /> History, Mother Tongue, Math, FCE (in class)"], //thursday
-				["<em>PE</em>, Music, Science, Geography, <br />Mother Tongue, Chapel"], //friday
+				["Music, Mother Tongue, <em>DnT</em>, <br /> English, PE, Science"], //monday
+				["H-CUBE, English, Mother Tongue, History, <br /> Science, Music, Lit, Math"], //tuesday
+				["START LATE, Class time, History, <br /> Geography, English, Math, Science"], //wednesday
+				["WA/ Class Time, Mother Tongue, <em>PE</em>, <br /> Math, <em>DnT</em>, Art"], //thursday
+				["Science, English, Math, <br /> Mother Tongue, Chapel"], //friday
 
 				// fallbacks
 				["How did I end up here?"],
