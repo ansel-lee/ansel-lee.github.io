@@ -351,11 +351,11 @@ The fact that you are reading this means that you are going to look at my code a
 					currVersion.onload = function () {
 						console.log(currVersion.responseText)
 						console.log(currVersion.status)
-						if (currVersion.responseText.toString === "2L 2022 Sem 2/ 1.0") {
+						if (currVersion.responseText.toString() == expectVersion) {
 							document.getElementById("timetableUpdated").innerText = "{Timetable is up-to-date :) }"
 						} else {
 							console.log("expected '" + expectVersion + "', but received '" + currVersion.responseText + "' version instead")
-							document.getElementById("timetableUpdated").innerText = "{Timetable is OUTDATED! :( }";
+							document.getElementById("timetableUpdated").innerText = "{Timetable is OUTDATED! :( } <br /> error: expected '" + expectVersion + "', but received '" + currVersion.responseText + "' version instead";
 						}
 					}
 					currVersion.onerror = function () {
