@@ -146,7 +146,7 @@ The fact that you are reading this means that you are going to look at my code a
 			<div id="fontscale">
 				<p id="timetableEdit" class="timetable"></p>
 			</div>
-			<p class="timetable"><span id="note" class="smaller"></span>&nbsp; |&nbsp; Timetable version 2.1 2022 <span
+			<p class="timetable"><span id="note" class="smaller"></span>&nbsp; |&nbsp; Timetable semester 2 1.0 2022 <span
 					id="timetableUpdated">updated?</span>
 			</p>
 			<div id="buttonSet">
@@ -355,7 +355,7 @@ The fact that you are reading this means that you are going to look at my code a
 							document.getElementById("timetableUpdated").innerText = "{Timetable is up-to-date :) }"
 						} else {
 							console.log("expected '" + expectVersion + "', but received '" + currVersion.responseText + "' version instead")
-							document.getElementById("timetableUpdated").innerText = "{Timetable is OUTDATED! :( }. expected: " + currVersion;
+							document.getElementById("timetableUpdated").innerText = "{Timetable is OUTDATED! :( }. expected: " + currVersion.responseText;
 						}
 					}
 					currVersion.onerror = function () {
