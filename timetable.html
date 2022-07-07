@@ -284,11 +284,11 @@ The fact that you are reading this means that you are going to look at my code a
 					: weekoddeven[prevMonday.getMonth()][prevMonday.getDate()] !== false
 						? timetable[12] //undefined
 						: timetable[date.getDay() + 5]; // even
+				isOdd = weekoddeven[prevMonday.getMonth()][prevMonday.getDate()]
 				if (displaying) {
 					daySubjects = subjects
 					currdate = date;
 					timetable_pub.currDate = currdate
-					isOdd = weekoddeven[prevMonday.getMonth()][prevMonday.getDate()]
 					editthis.innerHTML = subjects; // format it
 
 					var comparingDates = new Date(Date.UTC(originalDate.getFullYear(), originalDate.getMonth(), originalDate.getDate()));
@@ -391,18 +391,10 @@ The fact that you are reading this means that you are going to look at my code a
 					}
 
 					function reInitialise() {
-						var currdate = new Date();
-						var isOdd = false;
-						var daySubjects = ""
-						var originalDate = displayday(new Date());
-						var dateUnchanged = true;
-
-						var editthis = document.getElementById("timetableEdit");
-						var notes = document.getElementById("note");
-						var now = new Date();
-						var holidayBump = false;
-						console.log(now)
-						OddEven(get_next_weekday(now), true)
+						now = new Date();
+						currdate = new Date();
+						originalDate = displayday(now);
+						oddEven(displayday(now), true);
 					}
 
 					function shareFunctions(e) {
