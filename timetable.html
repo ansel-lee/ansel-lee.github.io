@@ -4,7 +4,7 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="description" content="2L timetable Sem 2 1.0">
+	<meta name="description" content="2L timetable Sem 2 1.1">
 	<title>Timetable</title>
 	<link rel="icon" type="image/png" href="" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -146,7 +146,7 @@ The fact that you are reading this means that you are going to look at my code a
 			<div id="fontscale">
 				<p id="timetableEdit" class="timetable"></p>
 			</div>
-			<p class="timetable"><span id="note" class="smaller"></span>&nbsp; |&nbsp; Timetable semester 2 1.0 2022 <span
+			<p class="timetable"><span id="note" class="smaller"></span>&nbsp; |&nbsp; Timetable semester 2 1.1 2022 <span
 					id="timetableUpdated">updated?</span>
 			</p>
 			<div id="buttonSet">
@@ -169,16 +169,16 @@ The fact that you are reading this means that you are going to look at my code a
 						<option>Math</option>
 						<option>Science</option>
 						<option>Mother Tongue</option>
-						<option>Geography</option>
+						<option value="Geog">Geography</option>
 						<option>History</option>
 						<option value="Lit">Literature</option>
 						<!--alias: lit-->
 						<option>Art</option>
 						<option>Music</option>
 						<option>PE</option>
-						<option>FCE</option>
+						<option disabled>FCE</option>
 						<option value="practical">FCE practical</option>
-						<option disabled>DNT</option>
+						<option>DNT</option>
 						<option disabled>PE Pool</option>
 					</select> &nbsp;lesson &nbsp;
 					<button id="find">Go!</button>
@@ -192,7 +192,7 @@ The fact that you are reading this means that you are going to look at my code a
 		'use strict'
 		var timetable_pub = {};
 		function timetableFunction() {
-			var expectVersion = "2L 2022 Sem 2/ 1.0";
+			var expectVersion = "2L 2022 Sem 2/ 1.1";
 			var currdate = new Date();
 			var isOdd = false;
 			var daySubjects = ""
@@ -220,11 +220,11 @@ The fact that you are reading this means that you are going to look at my code a
 			];
 			var timetable = ["",
 				// odd week
-				["Mother Tongue, Science, <em>PE</em>, <br /> Geography, English, Math, <em>DnT</em>"], //monday
-				["H-CUBE, Art, Math, <br /> Music, Geography, English, Science"], //tuesday
-				["START LATE, Class time, <em>PE</em>, <br /> <em>DnT</em>, Art, Science, Lit"], //wednesday
-				["WA/ Class Time, English, Math, <br /> Literature, Science, Math"], //thursday
-				["<em>PE</em>, History, Mother Tongue, English, <br /> Math, Chapel"], //friday
+				["Mother Tongue, <em>PE</em>, Math <br /> Literature, Science, History"], //monday
+				["H-CUBE, <em>Dnt</em>, English, <br /> Literature, Science, History"], //tuesday
+				["START LATE, Class time, Art, Geography, <br /> Lit, Science, Mother Tongue, English"], //wednesday
+				["WA/ Class Time, English, Science, <br /> Geography, Math, Mother Tongue"], //thursday
+				["Math, English, Music, <em>PE</em>, <br /> DnT, Chapel"], //friday
 
 				// even week
 				["Music, Mother Tongue, <em>DnT</em>, <br /> English, PE, Science"], //monday
