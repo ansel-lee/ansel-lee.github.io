@@ -398,7 +398,7 @@ The fact that you are reading this means that you are going to look at my code a
 					}
 
 					function shareFunctions(e) {
-						var toShare = (dateUnchanged ? "" : "*") + currdate.getDate() + "/" + currdate.getMonth() + ", " +
+						var toShare = (dateUnchanged ? "" : "*") + currdate.getDate() + "/" + (currdate.getMonth() + 1) + ", " +
 							getDayName(currdate, "en-US") + " (" + (isOdd ? "odd" : "even") + " week) timetable:\n" +
 							(daySubjects.toString().replace("<br />", "\n").replace("<em>", "*").replace("</em>", "*")) +
 							"\nhttps://ansel-lee.github.io/timetable"
