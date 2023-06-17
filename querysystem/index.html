@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="testsignin.css" rel="stylesheet">
+</head>
+
+<body onload="init()">
+    <!--
+            An open source project by ansel lee.
+            This uses Google Sheets to store the information and Google Apps Script to retrieve it from the sheet, 
+                which are both free services provided by Google. However, requests are slow, 
+                and limited to 90 minutes a day, or 6 hours for a paid Google Workspace account.
+            As I have not implemented a password field or federated sign-in system, information privacy is not guaranteed.
+        -->
+
+    <div id="sitecontainer">
+
+        <title>test form</title>
+        <div id="noInternet" class="hidden">👀 You're not connected to the internet!</div>
+        <h1>test form</h1>
+        <div id="toggleLightButton">Light mode</div>
+        <div id="mainform">
+            <div id="google-signinbox">
+                <div id="g_id_onload"
+                    data-client_id="1058554454512-daeil9rg9nahtovai8mji510fq2fi8qg.apps.googleusercontent.com"
+                    data-context="signin" data-ux_mode="popup" data-callback="googleSignIn" data-auto_prompt="false">
+                </div>
+
+                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue"
+                    data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="100">
+                </div>
+            </div>
+
+            <div id="loadingscreen" class="hidden">
+                <div class="lds-ring">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+                <div>requesting from server...</div>
+            </div>
+
+            <div id="identifierPassword" class="hidden"">
+                <label for="userinfo">Username: </label><input id="userinfo"><br />
+                <div id="passdiv" class="hidden">
+                    <label for="userPass"">Password: </label><input id="userPass">
+                </div>
+                <div id="textsubmit"><input type="button" id="submitBtn" value="submit"></div>
+            </div>
+
+
+            <div id="successMsg" class="hidden">
+                <img src="the-tick.svg" width="50px" height="50px">
+                <div>Success!</div>
+            </div>
+
+        </div>
+        <div id="errors" class="hidden">
+            <svg width="90px" height="90px" xmlns="http://www.w3.org/2000/svg" version="1.1" id="errorX">
+                <line x1="10" x2="80" y1="10" y2="80" stroke="white" stroke-width="20" stroke-linecap="round" />
+                <line x1="80" x2="10" y1="10" y2="80" stroke="white" stroke-width="20" stroke-linecap="round" />
+            </svg>
+            <div>
+                <h2>An error occured.</h2>
+                <p class="hidden" id="infoErr">We could not reach the server,
+                    Please check your internet connection and try again.</p>
+                <p class="hidden" id="noUser">Your username could not be found in the sheet or you provided an incorrect
+                    password.</p>
+                <p class="hidden" id="serverErr">Something strange happened on the server. You might want to resend your
+                    request or check the browser console.</p>
+                <p class="hidden" id="wrongVersion">Hmm... We couldn't find the sheet referenced. Please inform the
+                    person who sent this file to you.</p>
+                <!-- Means that the sheet that's supposed to be referenced does not exist or does not have its version stated 
+                at the start of cell A9 -->
+                <p class="hidden" id="noEmail">Your email was not found, please use a registered email or another method
+                    to sign in</p>
+                <p class="hidden" id="specialExpected">An error occurred. Error code: <span id="errcode"></span></p>
+                <p class="hidden" id="unauthorized">Your google sign-in web token has expired or was rejected. Please
+                    try again</p>
+                <p class="hidden" id="uncleanIdentity">Check that your username was typed in correctly and try again.
+                    Otherwise, please contact the person who had sent you this file</p>
+                <!-- Username picked up by ant-SQL-injection regEx -->
+            </div>
+        </div>
+
+        <div id="receivedInfo">
+            <p>Field</p>
+            <p>Details</p>
+            <hr />
+        </div>
+
+        <p id="verid">Version n</p>
+
+        <div id="logdump"></div>
+
+        <p id="credit"> <br />Found any bugs?
+            please email lee_jia_hong_ansel@students.edu.sg
+            credit: <a href="loading.io/css">loading.io for the loading sign</a>
+        </p>
+
+
+    </div>
+
+    <script src="testsignin.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+</html>
