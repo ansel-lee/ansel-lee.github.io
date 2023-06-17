@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="80" height="80" version="1.1" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(-20,-20)" stroke-width="0">
+  <circle cx="60" cy="60" r="40" fill="#2f8"/>
+  <g transform="translate(-1.8 .75)" fill="#fff">
+   <g transform="rotate(-45)">
+    <g fill="#fdffff" stroke-width="0">
+     <path d="m-14.598 84.412h40c2.77 0 5 2.23 5 5s-2.23 5-5 5h-40c-2.77 0-5-2.23-5-5s2.23-5 5-5z" color="#000000"/>
+     <path d="m-14.598 84.412h40c2.77 0 5 2.23 5 5s-2.23 5-5 5h-40c-2.77 0-5-2.23-5-5s2.23-5 5-5z" color="#000000"/>
+     <path d="m-14.598 84.412h40c2.77 0 5 2.23 5 5s-2.23 5-5 5h-40c-2.77 0-5-2.23-5-5s2.23-5 5-5z" color="#000000"/>
+     <path d="m-14.598 84.412h40c2.77 0 5 2.23 5 5s-2.23 5-5 5h-40c-2.77 0-5-2.23-5-5s2.23-5 5-5z" color="#000000"/>
+    </g>
+   </g>
+   <g transform="rotate(225)">
+    <g fill="#fdffff" stroke-width="0">
+     <path d="m-89.412-19.598h15c2.77 0 5 2.23 5 5s-2.23 5-5 5h-15c-2.77 0-5-2.23-5-5s2.23-5 5-5z" color="#000000"/>
+     <path d="m-89.412-19.598h15c2.77 0 5 2.23 5 5s-2.23 5-5 5h-15c-2.77 0-5-2.23-5-5s2.23-5 5-5z" color="#000000"/>
+     <path d="m-89.412-19.598h15c2.77 0 5 2.23 5 5s-2.23 5-5 5h-15c-2.77 0-5-2.23-5-5s2.23-5 5-5z" color="#000000"/>
+     <path d="m-89.412-19.598h15c2.77 0 5 2.23 5 5s-2.23 5-5 5h-15c-2.77 0-5-2.23-5-5s2.23-5 5-5z" color="#000000"/>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>
