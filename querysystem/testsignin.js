@@ -5,7 +5,7 @@
 
 function globalVars() {
     window.scriptlink = "https://script.google.com/macros/s/AKfycbz9K7mpM2cO97S0x6zjTreHKLDwvL6-MeK3ckzCgY81gMgjqh8UfFIef9Szzmd7JDOG/exec";
-    window.verNum = 3.1;
+    window.verNum = 3.2;
     window.googleAuthID = "1058554454512-daeil9rg9nahtovai8mji510fq2fi8qg.apps.googleusercontent.com";
     window.formType = ["Google", "userID", "userPass"]
     // what fields are shown.
