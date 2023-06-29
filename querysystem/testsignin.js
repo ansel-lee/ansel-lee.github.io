@@ -4,7 +4,7 @@
 
 
 function globalVars() {
-    window.scriptlink = "https://script.google.com/macros/s/AKfycbz9K7mpM2cO97S0x6zjTreHKLDwvL6-MeK3ckzCgY81gMgjqh8UfFIef9Szzmd7JDOG/exec";
+    window.scriptlink = "https://script.google.com/macros/s/AKfycbyMSm9vQWsl6qoCVNvIUpjbLj3PF1ReQ4gt3Ba2rAEEjxOyByABUmI6jQO96ZhpWDHd/exec";
     window.verNum = 3.2;
     window.googleAuthID = "1058554454512-daeil9rg9nahtovai8mji510fq2fi8qg.apps.googleusercontent.com";
     window.formType = ["Google", "userID", "userPass"]
