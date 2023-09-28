@@ -1,0 +1,285 @@
+//https://docs.google.com/spreadsheets/d/1DlBwnURLAjjN7KXmJI8qJxoQ1X0FplzFFmkUX7SsOzg/edit#gid=0
+
+function myFunction() {
+    Logger.log(makeHash("1"))
+    whatWasPosted = ["userPass", ["1", "1"], 3.4]
+    Logger.log(whatWasPosted[0] == "userPass" && whatWasPosted[1].length == 2 && ((typeof (whatWasPosted[1])) === "object"))
+    // reqType: "Google/JWT", "userID", "userPass"
+    e = {
+        postData: {
+            contents: JSON.stringify(whatWasPosted)
+        },
+    }
+    doPost(e)
+}
+
+function doPost(e) {
+    colFound = -1
+    var currVersion = 3.4
+    //
+    var currspread = SpreadsheetApp.openById("1DlBwnURLAjjN7KXmJI8qJxoQ1X0FplzFFmkUX7SsOzg")
+    var googleAuthID = "1058554454512-daeil9rg9nahtovai8mji510fq2fi8qg.apps.googleusercontent.com";
+
+    // ----- PASTE HERE!! -----
+
+
+
+    function findIdentity(colLetter, lookingFor, failCallback) {
+        // includes email
+        var identiList = refSheet.getRange(colLetter + "2:" + colLetter).getValues()
+        var foundIdentity = false;
+        for (var i = 0; i < identiList.length; i++) {
+            if (String(identiList[i][0]).toLowerCase() === String(lookingFor)) { foundIdentity = true; break }
+        }
+
+        // i=0 is column 2
+        colFound = i + 2;
+
+        if (!foundIdentity) {
+            return failCallback()
+        }
+
+
+        topLabels = refSheet.getRange("G1:1").getValues();
+        userValues = refSheet.getRange("G" + (i + 2) + ":" + (i + 2)).getValues();
+        Logger.log(JSON.stringify(userValues))
+        returningInfo[2] = []
+        returningInfo[3] = []
+        Logger.log("length of computation: " + topLabels[0].length)
+        for (var j = 0; j < topLabels[0].length; j++) {
+            Logger.log("expecting to find from text: " + userValues[0][j])
+            if (userValues[0][j] !== "") {
+                if (userValues[0][j] === "^") {
+                    Logger.log("relaying first user's message")
+                    returningInfo[2].push(topLabels[0][j])
+                    returningInfo[3].push(refSheet.getRange(2, (j + 7)).getValue())
+                } else if (String(userValues[0][j]).startsWith("\\") && !String(userValues[0][j]).startsWith("\\\\")) {
+                    Logger.log("finding other cell")
+                    returningInfo[2].push(topLabels[0][j])
+                    var cellToFind = refSheet.getRange(userValues[0][j].slice(1))
+                    Logger.log(cellToFind.getColumn())
+                    Logger.log(((cellToFind.getColumn > 6)))
+
+                    // disallowing columns A, B, D, E and F from being retrieved
+                    returningInfo[3].push(((cellToFind.getColumn() > 6) || cellToFind.getColumn() == 3)
+                        ? cellToFind.getValue()
+                        : "information redacted for privacy reasons."
+                    )
+                } else {
+                    returningInfo[2].push(topLabels[0][j])
+                    returningInfo[3].push(userValues[0][j])
+                }
+            } else { Logger.log("yay empty") }
+        }
+        returningInfo[0] = "success"
+        Logger.log("success")
+        refSheet.getRange("B" + (i + 2)).setValue(true)
+    }
+
+
+
+    function googleSignIn() {
+        var signinresponse = ""
+        try {
+            signinresponse = UrlFetchApp.fetch("https://oauth2.googleapis.com/tokeninfo?id_token=" + information[1])
+            // https://developers.google.com/identity/sign-in/web/backend-auth#calling-the-tokeninfo-endpoint
+        } catch {
+            // JSON Web Token failed to authenticate
+            returningInfo[2] = ["Unauthorised-1"]
+            returningInfo[3] = ["Google Sign-in JWT failed. Reminded with faith hope and love by: " + currVersion]
+            Logger.log("returning " + (JSON.stringify(returningInfo)) + " ")
+            return ContentService.createTextOutput(JSON.stringify(returningInfo))
+        }
+        var theResponse = JSON.parse(signinresponse.getContentText())
+        if (theResponse.aud === googleAuthID && signinresponse.getResponseCode() === 200) {
+            // email authorised
+            findIdentity("C", theResponse.email, unfoundEmailCallBack)
+
+            function unfoundEmailCallBack() {
+                // email not found.
+                values = refSheet.getRange("A25:A").getValues();
+                var k = 0
+                while (values[k][0] !== "" && k < values.length) { k++ }
+                if (k === values.length) { refSheet.appendRow() }
+                refSheet.getRange("A" + (i + 25)).setValue("Email: " + theResponse.email + "; Email JWT: " + information[1]);
+
+                returningInfo[2] = ["user-not-found-1"]
+                returningInfo[3] = ["The email " + theResponse.email + " was authenticated but not found in the sheet. Reminded with faith hope and love by version: " + currVersion]
+                Logger.log("returning " + (JSON.stringify(returningInfo)) + " ")
+                return ContentService.createTextOutput(JSON.stringify(returningInfo))
+            }
+
+            // YAYYYYY!!!!!
+
+        } else {
+            // JSON Web Token was attempted 
+            Logger.log(theResponse)
+            Logger.log(theResponse["aud"])
+            Logger.log(signinresponse.getResponseCode())
+            returningInfo[2] = ["Unauthorised-2"]
+            returningInfo[3] = ["Google Sign-in JWT failed. Reminded with faith hope and love by: " + currVersion]
+            Logger.log("returning " + (JSON.stringify(returningInfo)) + " ")
+            return ContentService.createTextOutput(JSON.stringify(returningInfo))
+        }
+    }
+
+
+
+    function identifierOnly() {
+        findIdentity("D", String(information[1]), unfoundIdentity)
+        if (refSheet.getRange("F" + colFound).getValue() === "") {
+            Logger.log("Good. There is no password")
+        } else {
+            // Error: Locked behind a password but password wasn't provided
+
+            Logger.log("That's not the way. There is a password")
+            returningInfo[0] = "error"
+            returningInfo[2] = ["user-not-found-5"]
+            returningInfo[3] = ["The identifier " + information[1] + " was secured with a password. Reminded with faith hope and love by: " + currVersion]
+        }
+
+        function unfoundIdentity() {
+            values = refSheet.getRange("A25:A").getValues();
+            var k = 0
+            while (values[k][0] !== "" && k < values.length) { k++ }
+            if (k === values.length) { refSheet.appendRow() }
+            refSheet.getRange("A" + (i + 25)).setValue(information[1]);
+
+            // Username Not Found
+            returningInfo[0] = "error"
+            returningInfo[2] = ["user-not-found-2"]
+            returningInfo[3] = ["The identifier " + information[1] + " was not found in the sheet, or it was locked with a password. Reminded with faith hope and love by: " + currVersion]
+            Logger.log("returning " + (JSON.stringify(returningInfo)) + " ")
+            return ContentService.createTextOutput(JSON.stringify(returningInfo))
+        }
+    }
+
+    function identiPass() {
+        //hash password
+        hashed = makeHash(String(information[1][1]))
+
+        findIdentity("D", String(information[1][0]), cantFindUserPass)
+
+        Logger.log(information[1][1])
+        Logger.log("Hashed: " + hashed)
+        Logger.log("In sheet: " + refSheet.getRange("F" + colFound).getValue())
+
+        if (refSheet.getRange("F" + colFound).getValue() === hashed) {
+            Logger.log("passwords matched!")
+        } else {
+            Logger.log("password doesn't match")
+            returningInfo[0] = "error"
+            returningInfo[2] = ["user-not-found-4"]
+            returningInfo[3] = ["The identifier " + information[1] + "was not found in the sheet with the given password. Reminded with faith hope and love by: " + currVersion]
+        }
+
+        function cantFindUserPass() { // username not found.
+            values = refSheet.getRange("A25:A").getValues();
+            var k = 0
+            while (values[k][0] !== "" && k < values.length) { k++ }
+            if (k === values.length) { refSheet.appendRow() }
+            refSheet.getRange("A" + (i + 25)).setValue(information[1]);
+
+            returningInfo[0] = "error"
+            returningInfo[2] = ["user-not-found-3"]
+            returningInfo[3] = ["The identifier " + information[1] + " was not found in the sheet with the given password. Reminded with faith hope and love by: " + currVersion]
+            Logger.log("returning " + (JSON.stringify(returningInfo)) + " ")
+            return ContentService.createTextOutput(JSON.stringify(returningInfo))
+        }
+    }
+
+
+
+    // structure: ["reqType", "JWT from google/identifier/ List of UserID + pass", "version"]
+    // reqType: "Google/JWT", "userID", "userPass"
+    // return structure: ["error/success", "form name", [datakeys/problemName], [datavalues/whereitocured]]
+
+    //if (e) {
+    information = JSON.parse(e.postData.contents)
+    //} else {
+    //information = ["Google/JWT", "<google sign in jwt>", 3]
+    //information = ["userID", "my username", 3]
+    //information = ["userPass", ["my username", "hey!?"], "3"]
+    //}
+
+    //information = JSON.parse('["", "w/ha(t)-characters @re al.lowed", ""]')
+
+    Logger.log(JSON.stringify(information))
+    var returningInfo = ["error", "signin sheet return", ["unfinished"], ["code was not fully executed"]];
+
+    if (information.length != 3 || information[2] != currVersion) {
+        // questions floating over my head
+        returningInfo[2] = ["malformed-request-1"]
+        returningInfo[3] = ["check that length is 3 and that your version is " + currVersion]
+        Logger.log("returning " + (JSON.stringify(returningInfo)) + " as the request is malformed.")
+        return ContentService.createTextOutput(JSON.stringify(returningInfo))
+    }
+
+
+    // finding sheet
+    spreadlist = currspread.getSheets();
+    var refSheet = false;
+    for (var i = 0; i < spreadlist.length; i++) {
+        if (spreadlist[i].getRange("A9").getValue().startsWith("version " + currVersion)) {
+            refSheet = spreadlist[i]
+        }
+    }
+
+    // Error: Sheet version does not match Script Version
+    if (refSheet === false) {
+        returningInfo[2] = ["missing-sheet"]
+        returningInfo[3] = ["Sorry, I cannot find a sheet with the referenced version. Perhaps you might have been running an outdated script. Reminded with faith hope and love by: " + currVersion]
+        Logger.log("missing sheet")
+        return ContentService.createTextOutput(JSON.stringify(returningInfo))
+    }
+
+
+
+    // Error: Disallowed Characters
+    if (!(/^[a-zA-Z0-9\,\/ \(\)\-\_\.\@]+$/.test(information[1])) || information[1] == "") {
+        returningInfo[2] = ["unclean-1"]
+        returningInfo[3] = ["It appears disallowed characters are used. Reminded with faith hope and love by: " + currVersion]
+        Logger.log("returning " + (JSON.stringify(returningInfo)) + " as the request is unclean.")
+        return ContentService.createTextOutput(JSON.stringify(returningInfo))
+    }
+
+    if (information[0] == "Google/JWT" && (information[1].split(".").length) == 3) {
+        googleSignIn()
+    } else if (information[0] == "userID") {
+        identifierOnly()
+    } else if (information[0] == "userPass" && information[1].length == 2 && typeof (information[1]) == "object") {
+        identiPass()
+    } else {
+        // Error: Authentication Type does not match Input Structure
+        returningInfo[2] = ["malformed-request-2"]
+        returningInfo[3] = ["Check that you have used the correct auth type. Reminded, with faith hope and love by: " + currVersion]
+        Logger.log("returning " + (JSON.stringify(returningInfo)) + " as the request is malformed.")
+        return ContentService.createTextOutput(JSON.stringify(returningInfo))
+    }
+
+    Logger.log("Final output: " + JSON.stringify(returningInfo))
+    return ContentService.createTextOutput(JSON.stringify(returningInfo))
+}
+
+function doGet() {
+    return HtmlService.createHtmlOutput("<h1>Sorry, you have used an unaccepted type of request. Please try again</h1>")
+}
+
+function makeHash(value) {
+    // - credit: https://stackoverflow.com/a/59382305/13904265
+    /** @type Byte[] */
+    var signature = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, value);
+
+    /** @type String */
+    var hexString = signature
+        .map(function (byte) {
+            // Convert from 2's compliment
+            var v = (byte < 0) ? 256 + byte : byte;
+
+            // Convert byte to hexadecimal
+            return ("0" + v.toString(16)).slice(-2);
+        })
+        .join("");
+    return hexString
+}
+

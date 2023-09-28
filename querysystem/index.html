@@ -19,7 +19,7 @@
         <title>test form</title>
         <div id="noInternet" class="hidden">👀 You're not connected to the internet!</div>
         <h1>test form</h1>
-        <div id="toggleLightButton">Light mode</div>
+        <div id="toggleLightButton" tabindex="0" role="region">Light mode</div>
         <div id="mainform">
             <div id="google-signinbox">
                 <div id="g_id_onload"
@@ -43,11 +43,10 @@
             </div>
 
             <div id="identifierPassword" class="hidden"">
-                <label for="userinfo">Username: </label><input id="userinfo"><br />
+                <label for="userinfo">Username: </label><input id="userinfo">
                 <div id="passdiv" class="hidden">
-                    <label for="userPass"">Password: </label><input id="userPass">
-                </div>
-                <div id="textsubmit"><input type="button" id="submitBtn" value="submit"></div>
+                    <label for="userPass"">Password: </label><input type="password" id="userPass"><input type="button" id="passReveal" value="👀">
+                </div><input type="button" id="submitBtn" value="submit">
             </div>
 
 
@@ -85,19 +84,24 @@
             </div>
         </div>
 
-        <div id="receivedInfo">
-            <p>Field</p>
-            <p>Details</p>
-            <hr />
+        <div id="forPrinting">
+            <div id="yourlogohere"></div>
+            <div id="receivedInfo" tabindex="0" role="region">
+                <p>Field</p>
+                <p>Details</p>
+                <hr />
+            </div>
         </div>
+
+        <button id="print">Print</button>
 
         <p id="verid">Version n</p>
 
         <div id="logdump"></div>
 
-        <p id="credit"> <br />Found any bugs?
-            please email lee_jia_hong_ansel@students.edu.sg
-            credit: <a href="loading.io/css">loading.io for the loading sign</a>
+        <p id="credit"> <br />If it doesn't work as expected, 
+            please email lee_jia_hong_ansel@students.edu.sg.
+            Loading sign credit: <a href="loading.io/css">loading.io</a>
         </p>
 
 
