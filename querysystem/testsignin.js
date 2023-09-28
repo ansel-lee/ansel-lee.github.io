@@ -92,8 +92,7 @@ function callAppsScript(authType, cred) {
             if (thisresponse[0] == "error") {
                 handleServerErrs(thisresponse)
             } else {
-                // Request finished. Do processing here.
-                document.getElementById("receivedInfo").innterHTML = "<p>Field</p><p>Details</p><hr />";
+                // Request finished. Do processing here.\
                 populatelist(thisresponse[2], thisresponse[3]);
                 document.getElementById("loadingscreen").classList.add("hidden");
                 document.getElementById("successMsg").classList.remove("hidden");
@@ -166,6 +165,7 @@ function hideAllErrors() {
 
 
 function populatelist(names, val) {
+    document.getElementById("receivedInfo").innerHTML = "<p>Field</p><p>Details</p><hr />";
     var i = 0;
     while (i < names.length) {
         if (val[i] != "") {
