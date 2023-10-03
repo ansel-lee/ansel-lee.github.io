@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="booklist.css">
+    <title>title</title>
+</head>
+
+<body class="darkmode" onload="main()">
+    <div id="sitecontainer">
+        <h1>ACS(BR) Booklist</h1>
+        <hr class="smallhr">
+        <div id="halfparent">
+            <div class="halfwidth">
+                <label for="studentlevel">Level next year: Secondary </label><select id="studentlevel">
+                    <option selected disabled>Choose</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
+                <div class="hidden" id="hidingstream"><label for="studentstream">Stream: </label>
+                    <datalist id="studentstream">
+                        <option value="exp">Express Pure</option>
+                        <option vlaue="exc">Express Combined</option>
+                        <option value="na">Normal (Academic)</option>
+                        <option value="nt">Normal (Technical)</option>
+                    </datalist>
+                    <input list="studentstream">
+                </div>
+                <label for="studentMT">Mother Tongue: </label><select id="studentMT" class="withdropdown">
+                    <option value="na">I'll select later</option>
+                    <option value="cl">Chinese</option>
+                    <option value="ma">Malay</option>
+                    <option value="ta">Tamil</option>
+                    <option value="clb">Chinese Language B</option>
+                </select>
+            </div>
+            <div class="halfwidth "><label for="saveID">or, pick up from where you've left off</label> <br /> <input
+                    id="saveID" class=""> <button id="pickup">Enter</button>
+            </div>
+        </div>
+
+        <div id="subjectbox">
+            <div class="subjectCard EL">G1 English</div>
+            <div class="subjectCard MA">G1 Elementary Mathematics</div>
+            <div class="subjectCard CW">Coursework</div>
+            <div class="subjectCard CH SC">Combined Chemistry</div>
+            <div class="subjectCard PH SC">Combined Physics</div>
+            <div class="subjectCard MT">Chinese</div>
+            <div class="subjectCard SS">Social Studies</div>
+            <div class="subjectCard EH">Elective Humanities</div>
+            <div class="subjectCard CP">Computing</div>
+        </div>
+
+        <div class="nodisp" id="allcards">
+            <div id="sec1subjects">
+                <div class="subjectCard"></div>
+            </div>
+        </div>
+
+        <div id="replacebox1" class="nodisp">
+            <div class="typebutton redbold" tabindex="0">Remove</div>
+            <div class="dropdown-container dropdown-closed">
+                <input class="withdropdown">
+                <ul class="dropdown-list">
+                    <li value="item1" tabindex="0">Item 1</li>
+                    <li value="item2" tabindex="0">Item 2</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="subAddBox">
+            <div class="addSearch">
+                <label for="addSubSearch">+ subject search: </label><input id="addSubSearch">
+                <input type="checkbox" id="onlylevel"><label for="onlylevel"> only from my level</label>
+            </div>
+            <br />
+            <div id="addCards">
+                <div class="subAddCard EL">G1 English</div>
+                <div class="subAddCard EL">G2 English</div>
+                <div class="subAddCard EL">G3 English</div>
+                <div class="subAddCard EL">G1 Lower Secondary Science</div>
+                <div class="subAddCard EL">G2 Lower Secondary Science</div>
+                <div class="subAddCard EL">G3 Lower Secondary Science</div>
+                <div class="subAddCard EL">G1 Mathematics</div>
+                <div class="subAddCard EL">G2 Mathematics</div>
+                <div class="subAddCard EL">G3 Mathematics</div>
+                <div class="subAddCard EL">G1 FCE</div>
+                <div class="subAddCard EL">G2 FCE</div>
+                <div class="subAddCard EL">G3 FCE</div>
+            </div>
+        </div>
+
+        <div id="selectionCopy">
+            <label for="exportSelected">Copy Selection: </label><input id="exportSelected" disabled />
+            <label for="cookiecheck">Enable saving selection in cookies: </label><input id="cookiecheck" type="checkbox">
+            <!--on click select all + copy-->
+
+            <!--this should include all the selected-deselected items below, and if user permits, saves to cookies -->
+            <!-- alert when user disables cookies -->
+        </div>
+
+        <div id="itemlist">
+            <h1>Items List</h1>
+            <div id="gridcontainbooks">
+                <p>Subject</p><p>Resource</p><p>Publisher</p><p>Unit Price</p><p>Quantity</p>
+                <div class="qty"><button>-</button>0<button>+</button></div>
+                <!-- Items from the most recent deselected subject will be bumped to the top in red, and deleted 
+                    when another subject is replaced/deleted, unless the user disables the delete, then there'll be a code marker-->
+
+                <!-- Grid list = 5; subject will include secondary level if it does not correspond with header -->
+                <!-- Quantity Will Be Highlighted if not equals to 1 !! -->
+                <div class="bookItem"></div>
+            </div>
+            <div id="booksearch">
+                <label for="searchbooks">Search for other books: </label><input id="searchbooks">
+            </div>
+        </div>
+
+        <div id="miscItems">
+            <h2>Miscellaneous Items</h2>
+            <div id="gridcontainmisc">
+                <p>Item Name</p><p></p>
+            </div>
+            <div id="miscsearch">
+                <label for="searchmisc">Finding other miscellaneous items?</label><input id="searchmisc">
+            </div>
+        </div>
+    </div>
+
+    <p>Developed in-house by ACS(BR). Found any bugs? Please email lee_jia_hong_ansel@students.edu.sg</p>
+    <script src="booklist.js"></script>
+</body>
+
+</html>
