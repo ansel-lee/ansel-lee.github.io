@@ -12,94 +12,54 @@
 
 <body class="darkmode" onload="main()">
     <div id="sitecontainer">
-        <h1>ACS(BR) Booklist</h1>
-        <hr class="smallhr">
-        <div id="halfparent">
-            <div class="halfwidth">
-                <label for="studentlevel">Level next year: Secondary </label><select id="studentlevel">
-                    <option selected disabled>Choose</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                </select>
-                <div class="hidden" id="hidingstream"><label for="studentstream">Stream: </label>
-                    <datalist id="studentstream">
-                        <option value="exp">Express Pure</option>
-                        <option vlaue="exc">Express Combined</option>
-                        <option value="na">Normal (Academic)</option>
-                        <option value="nt">Normal (Technical)</option>
-                    </datalist>
-                    <input list="studentstream">
+        <div id="pageTop">
+            <h1>ACS(BR) Booklist</h1>
+            <hr class="smallhr">
+            <div id="toggleLightButton" tabindex="0" role="region">Light mode</div>
+            <div id="halfparent">
+                <div class="halfwidth">
+                    <label for="studentlevel">Level next year: Secondary </label><select id="studentlevel">
+                        <!-- TODO: have a warning when someone changes if bottom of page was interacted with. Possibly a pop out above "halfparent" asking the user if they want to keep the items from previously selected year
+						and set scrollTo to it so it is visible -->
+                        <option selected disabled>Choose</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                    <div class="hidden" id="hidingstream"><label for="studentstream">Most Common Stream: </label>
+                        <select id="studentstream">
+                            <option disabled>choose</option>
+                            <option value="EXP" class="oldstream">Express</option>
+                            <option value="NA" class="oldstream">Normal (Academic)</option>
+                            <option value="NT" class="oldstream">Normal (Technical)</option>
+                            <option value="G1" class="newstream">PG1</option>
+                            <option value="G2" class="newstream">PG2</option>
+                            <option value="G3" class="newstream">PG3</option>
+                        </select>
+                    </div>
+                    <div id="nolvlselect" class="nodisp">please reload the page to edit</div>
                 </div>
-                <label for="studentMT">Mother Tongue: </label><select id="studentMT" class="withdropdown">
-                    <option value="na">I'll select later</option>
-                    <option value="cl">Chinese</option>
-                    <option value="ma">Malay</option>
-                    <option value="ta">Tamil</option>
-                    <option value="clb">Chinese Language B</option>
-                </select>
-            </div>
-            <div class="halfwidth "><label for="saveID">or, pick up from where you've left off</label> <br /> <input
-                    id="saveID" class=""> <button id="pickup">Enter</button>
+                <div class="halfwidth "><label for="saveID">or, pick up from where you've left off</label> <br /> <input
+                        id="saveID" class=""> <button id="pickup">Enter</button>
+                </div>
             </div>
         </div>
 
         <div id="subjectbox">
-            <div class="subjectCard EL">G1 English</div>
-            <div class="subjectCard MA">G1 Elementary Mathematics</div>
-            <div class="subjectCard CW">Coursework</div>
-            <div class="subjectCard CH SC">Combined Chemistry</div>
-            <div class="subjectCard PH SC">Combined Physics</div>
-            <div class="subjectCard MT">Chinese</div>
-            <div class="subjectCard SS">Social Studies</div>
-            <div class="subjectCard EH">Elective Humanities</div>
-            <div class="subjectCard CP">Computing</div>
+            <p>Group</p>
+            <p>Subject</p>
+            <p>English Language</p>
+            <div><select></select></div>
         </div>
 
-        <div class="nodisp" id="allcards">
-            <div id="sec1subjects">
-                <div class="subjectCard"></div>
-            </div>
-        </div>
-
-        <div id="replacebox1" class="nodisp">
-            <div class="typebutton redbold" tabindex="0">Remove</div>
-            <div class="dropdown-container dropdown-closed">
-                <input class="withdropdown">
-                <ul class="dropdown-list">
-                    <li value="item1" tabindex="0">Item 1</li>
-                    <li value="item2" tabindex="0">Item 2</li>
-                </ul>
-            </div>
-        </div>
-
-        <div id="subAddBox">
-            <div class="addSearch">
-                <label for="addSubSearch">+ subject search: </label><input id="addSubSearch">
-                <input type="checkbox" id="onlylevel"><label for="onlylevel"> only from my level</label>
-            </div>
-            <br />
-            <div id="addCards">
-                <div class="subAddCard EL">G1 English</div>
-                <div class="subAddCard EL">G2 English</div>
-                <div class="subAddCard EL">G3 English</div>
-                <div class="subAddCard EL">G1 Lower Secondary Science</div>
-                <div class="subAddCard EL">G2 Lower Secondary Science</div>
-                <div class="subAddCard EL">G3 Lower Secondary Science</div>
-                <div class="subAddCard EL">G1 Mathematics</div>
-                <div class="subAddCard EL">G2 Mathematics</div>
-                <div class="subAddCard EL">G3 Mathematics</div>
-                <div class="subAddCard EL">G1 FCE</div>
-                <div class="subAddCard EL">G2 FCE</div>
-                <div class="subAddCard EL">G3 FCE</div>
-            </div>
-        </div>
-
+        <br /><br />
         <div id="selectionCopy">
-            <label for="exportSelected">Copy Selection: </label><input id="exportSelected" disabled />
-            <label for="cookiecheck">Enable saving selection in cookies: </label><input id="cookiecheck" type="checkbox">
+            <div id="catchCopyClick"><label for="exportSelected">Copy Selection: </label><input id="exportSelected" readonly /></div>
+            <div>&nbsp;<span class="nodisp" id="copiedIndicator">Copied!</span></div> |
+            <label for="cookiecheck">Enable saving selection in cookies: </label><input id="cookiecheck"
+                type="checkbox" >
             <!--on click select all + copy-->
 
             <!--this should include all the selected-deselected items below, and if user permits, saves to cookies -->
@@ -108,33 +68,71 @@
 
         <div id="itemlist">
             <h1>Items List</h1>
+            <div id="loadicon" class="hidden">
+                <div class="lds-ring">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div> Loading
+            </div>
             <div id="gridcontainbooks">
-                <p>Subject</p><p>Resource</p><p>Publisher</p><p>Unit Price</p><p>Quantity</p>
-                <div class="qty"><button>-</button>0<button>+</button></div>
+                <div>Select</div>
+                <div>Subject</div>
+                <div>Resource</div>
+                <div>Publisher</div>
+                <!-- future addition: magnifying glass beside resource to get thumbnail pic -->
                 <!-- Items from the most recent deselected subject will be bumped to the top in red, and deleted 
                     when another subject is replaced/deleted, unless the user disables the delete, then there'll be a code marker-->
 
                 <!-- Grid list = 5; subject will include secondary level if it does not correspond with header -->
                 <!-- Quantity Will Be Highlighted if not equals to 1 !! -->
-                <div class="bookItem"></div>
             </div>
+            <br /><br />
             <div id="booksearch">
                 <label for="searchbooks">Search for other books: </label><input id="searchbooks">
+                <div id="searchbookresult">
+
+                </div>
             </div>
         </div>
 
         <div id="miscItems">
             <h2>Miscellaneous Items</h2>
             <div id="gridcontainmisc">
-                <p>Item Name</p><p></p>
+                <div>Item Name</div>
+                <div>Linked Subject</div>
+                <div>Quantity</div>
             </div>
+            <!-- draw a down arrow and hide all unrelated misc items. when its closed, search bar will only reveal those searched for-->
             <div id="miscsearch">
-                <label for="searchmisc">Finding other miscellaneous items?</label><input id="searchmisc">
+                <label for="searchmisc">Finding other miscellaneous items? </label><input id="searchmisc">
+                <div id="searchmiscresult">
+
+                </div>
             </div>
         </div>
+
+        <div id="siteSettings" class=nodisp>
+            <div class="settings nodisp">
+                <div id="lightdark">Light Mode</div>
+            </div>
+        </div>
+
+        <div id="floatpanel">
+            <div class="buttonlike">
+                <div></div>
+            </div>
+            <div id="panelcontain">
+                <button id="toPrint">Print</button>
+                <div>Number of items: <span id="numItems">0</span></div>
+            </div>
+        </div>
+
+        <p class="smalltext">Developed in-house by ACS(BR). Found any bugs? Please email
+            lee_jia_hong_ansel@students.edu.sg</p>
     </div>
 
-    <p>Developed in-house by ACS(BR). Found any bugs? Please email lee_jia_hong_ansel@students.edu.sg</p>
     <script src="booklist.js"></script>
 </body>
 

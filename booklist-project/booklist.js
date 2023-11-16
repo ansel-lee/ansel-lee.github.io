@@ -1,75 +1,566 @@
 "use strict"
-var document, window, console, setTimeout
+var document, window, console, setTimeout, XMLHttpRequest
 
 
-function studentlevelcheck() {
-    var e = document.getElementById("studentlevel").value
-    if (e == "4" || e == "5") {
-        document.getElementById("hidingstream").classList.remove("hidden")
-        console.log("hello")
-    } else {
-        document.getElementById("hidingstream").classList.add("hidden")
-    }
+function defGlobals() {
+	window.currReq = { abort: () => { console.log("no XHR to abort") } }
+	window.verNum = 1.2;
+	window.scriptLink = "https://script.google.com/macros/s/AKfycbwE0Cy5Fk-YOF5TycV6kOygLT4URO5Ojru3iWVd8s7cEAD1pTAltmwCUZDsPt2Bue8bow/exec";
+	makeSubjectTree()
+
+	window.allMiscItems = []
+	window.exampleReceived = [["Literature (G3/G2)", [["Literature ", "Wonder (By R. J. Palacio) (Random House Children's)", "PM Associa", ""]]], ["Science (G3/G2)", [["Science ", "Science For Lower Secondary G3/G2 Textbook 1A (Revised Edn) NEW!", "Marshall C", ""], ["Science ", "Science For Lower Secondary G3/G2 Textbook 1B (Revised Edn) NEW!", "Marshall C", ""],
+	["Science ", "Science For Lower Secondary G3/G2 Activity Book 1A (Revised Edn) NEW!", "Marshall C", ""], ["Science ", "Science For Lower Secondary G3/G2 Activity Book 1B (Revised Edn) NEW!", "Marshall C", ""]]]]
+
+	window.itemListResetText = "<div>Select</div><div>Subject</div><div>Resource</div><div>Publisher</div>"
+	window.usrSave = {
+		courses: [], // secLevel, currstream, list in group/subject
+		books: [],
+		miscAdded: [], // each item: ["name", qty]
+		miscList: [] //
+	}
+	window.miscList = []
+	window.initialLoad = true;
 }
 
-function replaceDropdown(e) {
-    function remChild(e) {
-        if (!(e.target.parentNode.id === "replacebox" || e.target.parentNode.classList.contains("dropdown-container"))) {
-            document.getElementById("replacebox").outerHTML = ""
-            document.body.removeEventListener("click", remChild, true)
+function addSubStreamSelect() {
+	var subkeys = [];
+	var subkeysdefault = [];
+	var subselections = [];
+
+	var subBox = document.getElementById("subjectbox");
+	var currstream = document.getElementById("studentstream").value;
+	var secLevel = document.getElementById("studentlevel").value;
+	document.getElementById("subjectbox").appendChild(document.createElement("p")).innerText = "Group";
+	document.getElementById("subjectbox").appendChild(document.createElement("p")).innerText = "Subject";
+	subBox.innerHTML = "<p>Group</p><p>Subject</p>"
+	var subkeyindex = 0;
+	console.log(currstream)
+	if ((!currstream) || currstream == "select") {
+		return;
+	} else {
+		window.usrSave.courses = [secLevel, currstream]
+		document.getElementById("gridcontainbooks").innerHTML = window.itemListResetText;
+		window.initialLoad = true;
+		scrollCheck();
+		console.log("currstream: " + currstream)
+		console.log("Here's the object for year")
+		console.log(window.subjectTree[secLevel - 1])
+		for (var i = 0; i < window.subjectTree[secLevel - 1].length; i++) {
+			subkeys = subkeys.concat(window.subjectTree[secLevel - 1][i][0]);
+			subselections = subselections.concat([window.subjectTree[secLevel - 1][i].slice(1)])
+			subkeysdefault.push(window.subjectTree[secLevel - 1][i][1])
+			for (var j = 0; j < window.subjectTree[secLevel - 1][i].length; j++) {
+				if (window.subjectTree[secLevel - 1][i][j].includes(currstream)) { // does not work if a book has EXPerience or "a G2 Pen" inside it
+					subkeysdefault[subkeysdefault.length - 1] = window.subjectTree[secLevel - 1][i][j];
+					j = 999
+				}
+			}
+		}
+	}
+	console.log(subselections)
+
+
+	for (var i = 0; i < subkeys.length; i++) {
+		subBox.appendChild(document.createElement("div")).innerText = subkeys[i]
+		var crElm2 = subBox.appendChild(document.createElement("div"));
+		var crElm3 = crElm2.appendChild(document.createElement("select"));
+		crElm3.id = "subselect" + String(i)
+		crElm3.classList.add("subjectStreamSelection")
+
+		var optionlist = []
+		for (var j = 0; j < subselections[i].length; j++) {
+			optionlist = optionlist.concat(crElm3.appendChild(document.createElement("option")))
+			//console.log(subselections)
+			optionlist[j].innerText = subselections[i][j]
+		}
+		optionlist = optionlist.concat(crElm3.appendChild(document.createElement("option")))
+		optionlist[optionlist.length - 1].innerText = "none"
+		crElm3.value = subkeysdefault[i]
+		crElm3.addEventListener("change", disableLevelSelect)
+		crElm3.addEventListener("change", handlenewsubstream)
+		crElm3.setAttribute("prevvalue", subkeysdefault[i])
+	}
+
+	console.log("contacting server")
+	reqServer(subkeysdefault)
+}
+
+function cellGridRowAreas(padding) {
+	// refresh grid areas
+	var elms = document.getElementById("gridcontainbooks").children
+	var prevItem = "";
+	var cycle = 0;
+	var buffer = 2 + (padding || 0);
+	var logBufferList = [];
+
+	for (var i = 0; i < elms.length; i++) {
+		if (elms[i].classList.contains("subjectName")) {
+			logBufferList.push((i + buffer) / 4)
+			elms[i].style.gridRowStart = (i + buffer) / 4
+			if (prevItem) {
+				prevItem.style.gridRowEnd = (i + buffer) / 4
+			}
+			prevItem = elms[i]
+			cycle = 0;
+		} else if (cycle >= 3) {
+			if (!elms[i + 1].classList.contains("subjectName")) {
+				cycle = 0; // to give you numbers divisible by 4
+				buffer++;
+			}
+		}
+		cycle++
+	}
+	console.log(logBufferList);
+
+}
+
+
+// when a group's subject is changed (e.g. English Language G3 > G2)
+function handlenewsubstream(e) {
+	function callBackUpdate() {
+		cellGridRowAreas(0);
+	}
+
+	// note: above is a different function
+
+	// e is the event handler
+	console.log("ugh why must they change it")
+	var prevVal = e.currentTarget.getAttribute("prevValue")
+	e.currentTarget.setAttribute("prevValue", e.currentTarget.value)
+	var filteredArray = window.usrSave.courses.filter(e => e !== prevVal)
+	var elms = document.getElementsByClassName(prevVal.replaceAll(" ", "-"))
+	// selects the checkboxes only 
+	var container = document.getElementById("gridcontainbooks")
+	window.usrSave.courses = filteredArray;
+	saveCookie()
+	console.log(elms.length)
+
+	var i = elms.length;
+	var delcount = i.length;
+	while (i--) {
+		let childs = container.children
+		let index = [...Array.from(childs)].indexOf(elms[i].parentElement) // elms[i].parentElement is the label where the checkbox is held
+
+
+		let listPos = window.usrSave.books.indexOf(+elms[i].id.replace("itemgen", ""));
+		if (listPos !== -1) {
+			window.usrSave.books.splice(listPos, 1);
+		} else {
+			console.log("Couldn't delete ID in usrSave.books from itemgen key. ID: " + elms[i].id)
+		}
+
+		//container.removeChild(childs[index + 3])
+		container.removeChild(childs[index + 2])
+		container.removeChild(childs[index + 1])
+		container.removeChild(childs[index])
+		if (i == 0) {
+			container.removeChild(childs[index])
+		}
+	}
+
+	reqServer([e.currentTarget.value], callBackUpdate)
+}
+
+
+// whether a book was selected/deselected
+function bookCheckChange(e) {
+	console.log(e.currentTarget.id.replace("itemgen", ""))
+	if (e.currentTarget.parentNode.classList.contains("bookselected")) {
+		// remove item
+		e.currentTarget.parentNode.classList.remove("bookselected")
+		var index = window.usrSave.books.indexOf(+e.currentTarget.id.replace("itemgen", ""));
+		if (index !== -1) {
+			window.usrSave.books.splice(index, 1);
+			console.log("removing at index " + index)
+		} else {
+			console.log("cannot find in list")
+		}
+	} else {
+		// add item
+		e.currentTarget.parentNode.classList.add("bookselected")
+		if (!window.usrSave.books.includes(+e.currentTarget.id.replace("itemgen", ""))) {
+			window.usrSave.books.push(+e.currentTarget.id.replace("itemgen", ""))
+		}
+	}
+
+	saveCookie();
+}
+
+
+
+// received XHR - adding to item list and misc items
+function receivedXHR(e, f, callback) {
+	// e is bookitems and f is misclist
+	function populateItemList() {
+		var itrcount = 0;
+		for (var i = 0; i < e.length; i++) {
+			var bookclass = e[i][0].replaceAll(" ", "-");
+			for (var j = 0; j < (e[i][1].length); j++) {
+				var crElm1, thelabel, crElm3
+				if (window.initialLoad) {
+					crElm1 = container.appendChild(document.createElement("label"))
+					if (j == 0) {
+						crElm3 = container.appendChild(document.createElement("div"))
+						crElm3.innerText = e[i][0]
+						console.log(e[i][0])
+						crElm3.style.gridRow = (itrcount + 2) + "/" + (itrcount + e[i][1].length + 2);
+						crElm3.style.gridColumn = 2;
+						crElm3.classList.add("subjectName")
+					}
+					thelabel = container.appendChild(document.createElement("label"));
+					container.appendChild(document.createElement("div")).innerText = e[i][1][j][2]
+					//container.appendChild(document.createElement("div")).innerText = e[i][1][j][3]
+				} else {
+					//container.insertBefore(document.createElement("div"), container.children[5]).innerText = e[i][1][j][3];
+					container.insertBefore(document.createElement("div"), container.children[4]).innerText = e[i][1][j][2];
+					thelabel = container.insertBefore(document.createElement("label"), container.children[4]);
+					if (j == e[i][1].length - 1) {
+						crElm3 = container.insertBefore(document.createElement("div"), container.children[4])
+						crElm3.innerText = e[i][0];
+						crElm3.style.gridRow = (itrcount + 2) + "/" + (itrcount + e[i][1].length + 2);
+						crElm3.style.gridColumn = 2;
+						crElm3.classList.add("subjectName")
+					}
+					crElm1 = container.insertBefore(document.createElement("label"), container.children[4])
+				}
+
+				crElm1.classList.add("bookselected")
+				var crElm2 = crElm1.appendChild(document.createElement("input"))
+				crElm2.type = "checkbox"
+				crElm2.id = "itemgen" + e[i][1][j][3]
+				crElm2.addEventListener("input", bookCheckChange)
+				if (!window.usrSave.books.includes(e[i][1][j][3])) {
+					window.usrSave.books.push(e[i][1][j][3])
+				}
+				crElm2.classList.add(bookclass)
+				crElm2.checked = true;
+				thelabel.innerText = e[i][1][j][1];
+				thelabel.setAttribute("for", ("itemgen" + e[i][1][j][3]))
+				itrcount++;
+			}
+		}
+	}
+
+	console.log(e)
+	console.log("received")
+	var container = document.getElementById("gridcontainbooks");
+	if (window.initialLoad) { window.usrSave.books = []; }
+
+	populateItemList()
+	window.initialLoad = false;
+
+	// miscellaneous items
+	var container2 = document.getElementById("gridcontainmisc")
+	console.log("1")
+	for (let i = 0; i < f.length; i++) {
+		// f = [name of item, ID, checked by default?]
+		console.log(f[i])
+		let crElm4 = container2.appendChild(document.createElement("div"))
+		crElm4.innerText = f[i][0]
+		crElm4.classList.add("miscitem")
+		crElm4.id = "miscitem" + f[i][1]
+		container2.appendChild(document.createElement("div")).innerText = f[i][2] ? f[i][2] : "nil"
+		let crElm5 = container2.appendChild(document.createElement("div"))
+		crElm5.appendChild(document.createElement("button")).innerText = "-"
+		crElm5.appendChild(document.createElement("div")).innerText = f[i][2] ? 1 : 0
+		crElm5.appendChild(document.createElement("button")).innerText = "+"
+	}
+	console.log("console working!")
+
+	console.log()
+	saveCookie()
+	if (callback) { callback() } // currently to update the merged grid items in the subject column
+}
+
+
+
+function reqServer(subjectsList, callback) {
+	function releaseLoadingLock() {
+		document.getElementById("toPrint").disabled = false;
+		document.getElementById("loadicon").classList.add("hidden");
+		var elms = document.getElementsByClassName("subjectStreamSelection")
+		for (let k = 0; k < elms.length; k++) {
+			elms[k].disabled = false;
+		}
+	}
+
+	function handleServerErrs(e) {
+		console.log("An Error Occurred!")
+		console.log(e)
+	}
+
+	// display loading message and lock most inputs
+	document.getElementById("toPrint").disabled = true;
+	document.getElementById("loadicon").classList.remove("hidden")
+	var elms = document.getElementsByClassName("subjectStreamSelection")
+	for (let k = 0; k < elms.length; k++) {
+		elms[k].disabled = true;
+	}
+	while (window.usrSave.courses.length > 2 && window.initialLoad) {
+		window.usrSave.courses.pop();
+	} // reset to only secLevel and currStream
+	for (var i = 0; i < subjectsList.length; i++) { window.usrSave.courses.push(subjectsList[i]); }
+
+
+	// create XMUHttpRequest and add event listeners
+	var xhr = new XMLHttpRequest();
+	xhr.addEventListener("load", (e) => {
+		releaseLoadingLock()
+		console.log(e.responseText)
+	})
+	xhr.onreadystatechange = () => {
+		if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+			releaseLoadingLock()
+			console.log(xhr.responseText)
+			if (xhr.responseText.startsWith("error")) {
+				handleServerErrs(xhr.responseText)
+			} else {
+				var thisresponse = JSON.parse(xhr.responseText)
+				// Request finished. Do processing here.
+				// bookitems, misclist, callback
+				receivedXHR(thisresponse[0], thisresponse[1], callback) // only get item 0 if miscList is implemented
+			}
+		} else { console.log("xhr status: " + xhr.status) }
+	}
+	xhr.open("POST", window.scriptLink);
+
+	xhr.addEventListener("error", releaseLoadingLock) // no harm letting the user try again
+	var toSend = [document.getElementById("studentlevel").value, subjectsList, window.initialLoad, window.verNum]; // initial load is sent instead so we can get the booklist
+	// window initialLoad replaced miscellaneous list
+	console.log("Sending... " + JSON.stringify(toSend));
+	window.currReq = xhr
+	xhr.send(JSON.stringify(toSend))
+}
+
+function studentlevelcheck(g) {
+	var e = document.getElementById("studentlevel").value
+	window.initialLoad = true;
+	if (g.currentTarget) {
+		document.getElementById("studentstream").value = "choose"
+	}
+
+	if (e == "1") {
+		document.getElementById("hidingstream").classList.remove("hidden")
+		var elms = document.getElementsByClassName("newstream")
+		for (let i = 0; i < elms.length; i++) { elms[i].removeAttribute("hidden", true) }
+
+		elms = document.getElementsByClassName("oldstream")
+		for (let i = 0; i < elms.length; i++) { elms[i].setAttribute("hidden", true) }
+		document.getElementById("hidingstream").children[0].innerText = "Posting Group: ";
+	} else if (e == "2" || e == "3" || e == "4") {
+		document.getElementById("hidingstream").classList.remove("hidden");
+		Array.from(document.getElementsByClassName("newstream")).forEach((f) => f.setAttribute("hidden", true))
+
+		var elms = document.getElementsByClassName("oldstream");
+		for (let i = 0; i < elms.length; i++) { elms[i].removeAttribute("hidden", false); }
+		document.getElementById("hidingstream").children[0].innerText = "Stream: ";
+	} else if (e == "5") {
+		document.getElementById("hidingstream").classList.remove("hidden");
+		var elms = (Array.from(document.getElementsByClassName("oldstream"))).concat(Array.from(document.getElementsByClassName("newstream")));
+
+		for (let i = 0; i < elms.length; i++) { elms[i].setAttribute("hidden", true) }
+		elms[1].removeAttribute("hidden");
+		document.getElementById("hidingstream").children[0].innerText = "Stream: ";
+	} else {
+		document.getElementById("hidingstream").classList.add("hidden");
+	}
+}
+
+function bubbleMisc(e) {
+	console.log(e.target.nodeName) 
+	if (e.target.nodeName === "BUTTON") {
+		var theMiscNumEl = e.target.parentElement.children[1]
+		if (e.target.innerText === "+") {
+			console.log("adding item")
+			theMiscNumEl.innerText = +theMiscNumEl.innerText + 1;
+		} else if (e.target.innerText === "-") {
+			console.log("removing button")
+			if (+theMiscNumEl.innerText) {
+				theMiscNumEl.innerText -=1;
+			}
+		} else {
+			console.log("unknown button. InnerText: " + e.target.innerText)
+		}
+	}
+}
+
+
+
+
+function saveCookie() {
+	var count = window.usrSave.books.length;
+	let i = window.usrSave.miscAdded.length;
+	while (i--) {
+		count += window.usrSave.miscAdded[i][1]
+	}
+	let j = window.usrSave.miscList.length;
+	while (j--) {
+		count += window.usrSave.miscList[j][1]
+	}
+
+	document.getElementById("numItems").innerText = count;
+	if (document.getElementById("cookiecheck").checked) {
+		document.cookie = "booklistPref=" + JSON.stringify(window.usrSave);
+	}
+	document.getElementById("exportSelected").value = JSON.stringify(usrSave);
+}
+
+
+
+function reqPrint() {
+	var headitem = document.getElementById("gridcontainbooks").insertBefore(document.createElement("div"), document.getElementById("gridcontainbooks").children[0])
+	headitem.style.gridArea = "1 / 1 / 1 / 5";
+	cellGridRowAreas(3);
+	//headitem. add header text e.g. name and class
+
+	var wasDark = document.body.classList.contains("darkmode")
+	document.body.classList.remove("darkmode");
+	window.print();
+	if (wasDark) { document.body.classList.add("darkmode") }
+}
+
+function copyOut() {
+	console.log("attempting to copy")
+	document.getElementById("exportSelected").select();
+	copyTextToClipboard(document.getElementById("exportSelected").value);
+	document.getElementById("copiedIndicator").classList.remove("nodisp");
+	setTimeout(() => {document.getElementById("copiedIndicator").classList.add("nodisp")}, 1000)
+}
+
+function enterSaved() {
+	var saveVals = document.getElementById("saveID").value;
+	try {
+		window.usrSave = JSON.parse(saveVals)
+	} catch {}
+	window.currReq.abort();
+	addSubStreamSelect();
+}
+
+function disableLevelSelect() {
+	document.getElementById("studentlevel").setAttribute("disabled", "disabled");
+	document.getElementById("studentstream").setAttribute("disabled", "disabled");
+	document.getElementById("nolvlselect").classList.remove("nodisp")
+
+	var elms = document.getElementsByClassName("subjectStreamSelection")
+	for (var i = 0; i < elms.length; i++) {
+		elms[i].removeEventListener("change", disableLevelSelect)
+	}
+}
+
+function scrollCheck() {
+	if (window.scrollY > 600) {
+		disableLevelSelect()
+	} else {
+		setTimeout(scrollCheck, 500)
+	}
+}
+
+function makeSubjectTree() {
+	window.subjectTree = [[["English", "English Language (G3)", "English Language (G2)", "English Language (G1)",], ["Mathematics", "Mathematics (G3)", "Mathematics (G2)", "Mathematics (G1)",], ["Lower Secondary Science", "Science (G3/G2)", "Science (G1)",], ["Humanities 1", "Geography (G3/G2)", "Social Studies (G1)",], ["Humanities 2", "History (G3/G2)",], ["Humanities 3", "Literature (G3/G2)",], ["Mother Tongue", "Chinese Language (G3)", "Higher Chinese Language (G3)", "Chinese Language (G2)", "Chinese (G1)", "Malay Language (G3)", "Malay Language (G2)", "Malay Language (G1)", "Tamil Language (G3)", "Tamil Language (G2)", "Tamil (G1)",], ["Design and Technology", "Design & Technology (G3/G2/G1)",], ["Food and Consumer Ed", "Food & Consumer Education (G3/G2/G1)",], ["Art", "Art (G3/G2/G1)",], ["Music", "Music (G3/G2/G1)",]],
+	[["English", "English Language (EXP)", "English Language (NA)", "English Language (NT)",], ["Mathematics", "Mathematics (EXP)", "Mathematics (NA)", "Mathematics (NT)",], ["Science", "Science (EXP/NA)", "Science (NT - no books)",], ["Humanities 1", "Geography (EXP/NA)", "Social Studies (NT)",], ["Humanities 2", "History (EXP/NA)", "Computer Applications (NT)",], ["Humanities 3", "Literature (EXP/NA)", "None (NT)",], ["Mother Tongue", "Chinese Language (EXP)", "Chinese Language B (EXP/NA)", "Malay Language (EXP)", "Tamil Language (EXP)", "Tamil Language B (EXP/NA)", "Chinese Language (NA)", "Malay Language (NA)", "Tamil Language (NA)", "Basic Chinese (NT)", "Basic Malay (NT)", "Basic Tamil (NT)",], ["Food and Consumer Ed", "Food & Consumer Education (EXP/NA/NT)",], ["Design and Technology", "Design & Technology (EXP/NA/NT)",]],
+	[["English", "English Language (EXP)", "English Language (NA)", "English Language (NT)",], ["Mathematics", "Mathematics (EXP)", "Mathematics (NA)", "Mathematics (NT)",], ["Chemistry", "Pure Chemistry (EXP)", "Science (Chemistry) (EXP)", "Science (Chemistry) (NA)", "Science (NT)",], ["Science 2", "Pure Physics (EXP)", "Science (Physics) (EXP)", "Science (Physics) (NA)", "Pure Biology (EXP)",], ["Science 3 (only triple science)", "None (EXP/NA/NT)", "Pure Biology (EXP)",], ["Social Studies", "Social Studies (EXP/NA)", "Social Studies (NT)",], ["Elective Humanities", "Literature (Elective) (EXP/NA)", "History (Elective) (EXP/NA)", "Geography (Elective) (EXP)", "Geography (Elective) (NA)",], ["Mother Tongue", "Chinese Language (EXP)", "Chinese Language B (EXP/NA)", "Malay Language (EXP)", "Tamil Language (EXP)", "Tamil Language B (EXP/NA)", "Chinese Language (NA)", "Malay Language (NA)", "Tamil Language (NA)", "Basic Chinese (NT)", "Basic Malay (NT)", "Basic Tamil (NT)",], ["Coursework/AS1", "Additional Maths (EXP)", "Additional Maths (NA)", "Design & Technology (EXP/NA)", "Nutrition and Food Science (EXP/NA)", "Mobile Robotics (NT)", "Art ( (EXP/NA)",], ["Pure/AS2", "History (Full) (EXP)", "Geography (Full) (EXP)", "Literature (Pure) (EXP)", "Computing (EXP) (no books)", "Principles of Accounts (EXP/NA)", "Computer Applications (NT)", "Elements Of Business Skills (NT)",]],
+	[["English", "English Language (EXP)", "English Language (NA)", "English Language (NT)",], ["Mathematics", "Mathematics (EXP)", "Mathematics (NA)", "Mathematics (NT)",], ["Chemistry", "Pure Chemistry (EXP)", "Science (Chemistry) (EXP)", "Science (Chemistry) (NA)", "Science (NT)",], ["Science 2", "Pure Physics (EXP)", "Science (Physics) (EXP)", "Science (Biology) (EXP)", "Science (Physics) (NA)", "Pure Biology (EXP)",], ["Science 3 (Triple Science)", "None (EXP/NA/NT)", "Pure Biology (EXP)",], ["Social Studies", "Social Studies (EXP)", "Social Studies (NA)", "Social Studies (NT)",], ["Elective Humanities", "History (Elective) (EXP)", "Literature (Elective) (EXP)", "Geography (Elective) (EXP) (no books)", "History (Elective) (NA)", "Literature (Elective) (NA) (no books)", "Geography (Elective) (NA) (no books)",], ["Mother Tongue", "Chinese Language (EXP)", "Chinese Language B (EXP/NA)", "Malay Language (EXP)", "Malay Language B (EXP/NA)", "Tamil Language (EXP)", "Tamil Language B (EXP/NA)", "Chinese Language (NA)", "Malay Language (NA)", "Tamil Language (NA)", "Basic Chinese (NT)", "Basic Malay (NT)", "Basic Tamil (NT)",], ["Coursework/ AS1", "Additional Maths (EXP)", "Additional Mathematics (NA)", "Design & Technology (EXP/NA)", "Nutrition and Food Science (EXP)", "Nutrition and Food Science (NA)",], ["Pure/AS2", "Computing (EXP) (no books)", "Literature (Pure) (EXP)", "History (Full) (EXP)", "Geography (Full) (EXP)", "Principles of Accounts (EXP)", "Principles of Accounts (NA)", "Elements Of Business Skills (NT)",]],
+	[["English", "English Language (NA)",], ["Mathematics", "Mathematics (NA)",], ["Science", "Science (Chemistry) (NA)", "Science (Physics) (NA)",], ["Social Studies", "Social Studies (NA)",], ["Elective Humanities", "History (Elective) (NA)", "Geography (Elective) (NA)", "Chinese Language (NA)",], ["Mother Tongue", "Malay Language (NA)", "Tamil Language (NA)",], ["Coursework/AS1", "Additional Maths (NA)", "Nutrition and Food Science (NA)",]]]
+}
+
+// https://stackoverflow.com/a/30810322/13904265
+function fallbackCopyTextToClipboard(text) {
+	var textArea = document.createElement("textarea");
+	textArea.value = text;
+
+	// Avoid scrolling to bottom
+	textArea.style.top = "0";
+	textArea.style.left = "0";
+	textArea.style.position = "fixed";
+
+	document.body.appendChild(textArea);
+	textArea.focus();
+	textArea.select();
+
+	try {
+		var successful = document.execCommand('copy');
+		var msg = successful ? 'successful' : 'unsuccessful';
+		console.log('Fallback: Copying text command was ' + msg);
+	} catch (err) {
+		console.error('Fallback: Oops, unable to copy', err);
+	}
+
+	document.body.removeChild(textArea);
+}
+
+function copyTextToClipboard(text) {
+	if (!navigator.clipboard) {
+		fallbackCopyTextToClipboard(text);
+		return;
+	}
+	navigator.clipboard.writeText(text).then(function () {
+		console.log('Async: Copying to clipboard was successful!');
+	}, function (err) {
+		console.error('Async: Could not copy text: ', err);
+	});
+}
+
+// https://stackoverflow.com/a/33366171/13904265
+function clearCookies() {
+    var cookies = document.cookie.split("; ");
+    for (var c = 0; c < cookies.length; c++) {
+        var d = window.location.hostname.split(".");
+        while (d.length > 0) {
+            var cookieBase = encodeURIComponent(cookies[c].split(";")[0].split("=")[0]) + '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; domain=' + d.join('.') + ' ;path=';
+            var p = location.pathname.split('/');
+            document.cookie = cookieBase + '/';
+            while (p.length > 0) {
+                document.cookie = cookieBase + p.join('/');
+                p.pop();
+            };
+            d.shift();
         }
     }
-
-    if (e.target.classList.contains("subjectCard")) {
-        e.target.appendChild(document.getElementById("replacebox1").cloneNode(true))
-        e.target.style.position = "relative"
-        e.target.children[0].id = "replacebox"
-        e.target.children[0].classList.remove("nodisp")
-        e.target.children[0].style.position = "absolute";
-        e.target.children[0].style.padding = "0";
-
-        e.target.children[0].children[0].addEventListener("click", delSub)
-        document.body.addEventListener("click", remChild, true) 
-        // useCapture will make deletion fire before new is added
-    }
-
-    function delSub(e) {
-        var wherebox = document.getElementById("replacebox").parentNode;
-        document.body.removeEventListener("click", remChild, true);
-        wherebox.outerHTML = "";
-        console.log(wherebox.className)
-    }
-
-    function repSub(e) { }
-
 }
-
-function openDropdown(e) {
-    e.currentTarget.classList.remove("dropdown-closed")
-}
-
-function closeDropdown(e) {
-    e.currentTarget.classList.add("dropdown-closed")
-}
-
-
 
 function main() {
-    studentlevelcheck()
-    document.getElementById("studentlevel").addEventListener("change", studentlevelcheck)
-    document.getElementById("subjectbox").addEventListener("click", replaceDropdown)
+	defGlobals(true);
+	if (document.cookie) {
+		try {
+			var copyOver = JSON.parse(('; ' + document.cookie).split(`; booklistPref=`).pop().split(';')[0])
+			//https://stackoverflow.com/questions/10730362/get-cookie-by-name
+			console.log(copyOver)
+			window.usrSave.courses = copyOver.courses;
+			if (copyOver.books) {
+				window.initialLoad = false;
+				window.usrSave.books = copyOver.books;
+				window.usrSave.miscAdded = copyOver.miscAdded;
+				window.usrSave.miscList = copyOver.miscList;
+			}
 
-    var elms = document.getElementsByClassName("dropdown-container")
-    var i = elms.length
-    while (i--) {
-        console.log("element found")
-        elms[i].addEventListener("focusin", openDropdown)
-        elms[i].addEventListener("focusout", closeDropdown)
-    }
+			document.getElementById("studentlevel").value = window.usrSave.courses[0];
+			document.getElementById("studentstream").value = window.usrSave.courses[1];
+		} catch (Err) { }
+	}
 
-    var subCards = document.getElementsByClassName("subjectCard");
-    i = subCards.length;
-    while (i--) {
-        subCards[i].tabIndex = 0;
-    }
+	if (document.getElementById("studentlevel").value == "Choose") {
+		document.getElementById("studentstream").value = "select"
+	}
+	studentlevelcheck(false)
+	addSubStreamSelect()
+	document.getElementById("studentlevel").addEventListener("change", studentlevelcheck);
+	document.getElementById("toPrint").addEventListener("click", reqPrint);
+	document.getElementById("catchCopyClick").addEventListener("click", copyOut, true);
+	document.getElementById("pickup").addEventListener("click", enterSaved);
+	document.getElementById("miscItems").addEventListener("click", bubbleMisc)
+
+	document.getElementById("studentstream").addEventListener("change", () => {
+		window.currReq.abort()
+		addSubStreamSelect()
+	});
+	document.getElementById("floatpanel").children[0].addEventListener("click", () => {
+		document.getElementById("floatpanel").classList.toggle("closed")
+	});
+	document.getElementById("toggleLightButton").addEventListener("click", (e) => {
+		document.body.classList.toggle("darkmode");
+		e.target.innerText = (e.target.innerText == "Light mode") ? "Dark mode" : "Light mode"
+	});
+
 }
+
