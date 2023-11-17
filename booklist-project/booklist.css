@@ -301,6 +301,10 @@ ul.dropdown-list {
     background-color: #000;
 }
 
+#miscSearchLine {
+    grid-column: 1 / 4;
+}
+
 #gridcontainbooks>*,
 #gridcontainmisc>* {
     padding: 10px;
@@ -327,7 +331,8 @@ ul.dropdown-list {
     background-color: #88e;
 }
 
-#gridcontainmisc .miscitem+div+div>* {
+#gridcontainmisc .miscitem+div+div>*, 
+#gridcontainmisc .miscResult+div+div>*  {
     display: inline-block;
     margin: 2px;
 }

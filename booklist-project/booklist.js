@@ -16,8 +16,7 @@ function defGlobals() {
 	window.usrSave = {
 		courses: [], // secLevel, currstream, list in group/subject
 		books: [],
-		miscAdded: [], // each item: ["name", qty]
-		miscList: [] //
+		miscList: [] // ["name", "ID", "name2", "ID2"]
 	}
 	window.miscList = []
 	window.initialLoad = true;
@@ -86,36 +85,6 @@ function addSubStreamSelect() {
 	reqServer(subkeysdefault)
 }
 
-function cellGridRowAreas(padding) {
-	// refresh grid areas
-	var elms = document.getElementById("gridcontainbooks").children
-	var prevItem = "";
-	var cycle = 0;
-	var buffer = 2 + (padding || 0);
-	var logBufferList = [];
-
-	for (var i = 0; i < elms.length; i++) {
-		if (elms[i].classList.contains("subjectName")) {
-			logBufferList.push((i + buffer) / 4)
-			elms[i].style.gridRowStart = (i + buffer) / 4
-			if (prevItem) {
-				prevItem.style.gridRowEnd = (i + buffer) / 4
-			}
-			prevItem = elms[i]
-			cycle = 0;
-		} else if (cycle >= 3) {
-			if (!elms[i + 1].classList.contains("subjectName")) {
-				cycle = 0; // to give you numbers divisible by 4
-				buffer++;
-			}
-		}
-		cycle++
-	}
-	console.log(logBufferList);
-
-}
-
-
 // when a group's subject is changed (e.g. English Language G3 > G2)
 function handlenewsubstream(e) {
 	function callBackUpdate() {
@@ -128,13 +97,12 @@ function handlenewsubstream(e) {
 	console.log("ugh why must they change it")
 	var prevVal = e.currentTarget.getAttribute("prevValue")
 	e.currentTarget.setAttribute("prevValue", e.currentTarget.value)
-	var filteredArray = window.usrSave.courses.filter(e => e !== prevVal)
 	var elms = document.getElementsByClassName(prevVal.replaceAll(" ", "-"))
 	// selects the checkboxes only 
 	var container = document.getElementById("gridcontainbooks")
-	window.usrSave.courses = filteredArray;
-	saveCookie()
-	console.log(elms.length)
+	window.usrSave.courses = window.usrSave.courses.filter(e => e !== prevVal);
+	saveCookie();
+	console.log(elms.length);
 
 	var i = elms.length;
 	var delcount = i.length;
@@ -145,6 +113,7 @@ function handlenewsubstream(e) {
 
 		let listPos = window.usrSave.books.indexOf(+elms[i].id.replace("itemgen", ""));
 		if (listPos !== -1) {
+			// removed deselected subject items from saved list
 			window.usrSave.books.splice(listPos, 1);
 		} else {
 			console.log("Couldn't delete ID in usrSave.books from itemgen key. ID: " + elms[i].id)
@@ -190,7 +159,7 @@ function bookCheckChange(e) {
 
 
 // received XHR - adding to item list and misc items
-function receivedXHR(e, f, callback) {
+function receivedXHR(e, f) {
 	// e is bookitems and f is misclist
 	function populateItemList() {
 		var itrcount = 0;
@@ -199,13 +168,12 @@ function receivedXHR(e, f, callback) {
 			for (var j = 0; j < (e[i][1].length); j++) {
 				var crElm1, thelabel, crElm3
 				if (window.initialLoad) {
+					window.miscList = [];
 					crElm1 = container.appendChild(document.createElement("label"))
 					if (j == 0) {
 						crElm3 = container.appendChild(document.createElement("div"))
 						crElm3.innerText = e[i][0]
 						console.log(e[i][0])
-						crElm3.style.gridRow = (itrcount + 2) + "/" + (itrcount + e[i][1].length + 2);
-						crElm3.style.gridColumn = 2;
 						crElm3.classList.add("subjectName")
 					}
 					thelabel = container.appendChild(document.createElement("label"));
@@ -218,8 +186,6 @@ function receivedXHR(e, f, callback) {
 					if (j == e[i][1].length - 1) {
 						crElm3 = container.insertBefore(document.createElement("div"), container.children[4])
 						crElm3.innerText = e[i][0];
-						crElm3.style.gridRow = (itrcount + 2) + "/" + (itrcount + e[i][1].length + 2);
-						crElm3.style.gridColumn = 2;
 						crElm3.classList.add("subjectName")
 					}
 					crElm1 = container.insertBefore(document.createElement("label"), container.children[4])
@@ -240,39 +206,55 @@ function receivedXHR(e, f, callback) {
 				itrcount++;
 			}
 		}
+		cellGridRowAreas();
 	}
 
 	console.log(e)
 	console.log("received")
 	var container = document.getElementById("gridcontainbooks");
-	if (window.initialLoad) { window.usrSave.books = []; }
 
 	populateItemList()
-	window.initialLoad = false;
+	if (window.initialLoad) {
+		// miscellaneous items
+		var container2 = document.getElementById("gridcontainmisc")
+		for (let i = 0; i < f.length; i++) {
+			while (f[i] && f[i][2] === false) {
+				window.miscList.push(f[i][0], f[i][1]);
+				i++;
+			}
+			if (!f[i]) { break; }
 
-	// miscellaneous items
-	var container2 = document.getElementById("gridcontainmisc")
-	console.log("1")
-	for (let i = 0; i < f.length; i++) {
-		// f = [name of item, ID, checked by default?]
-		console.log(f[i])
-		let crElm4 = container2.appendChild(document.createElement("div"))
-		crElm4.innerText = f[i][0]
-		crElm4.classList.add("miscitem")
-		crElm4.id = "miscitem" + f[i][1]
-		container2.appendChild(document.createElement("div")).innerText = f[i][2] ? f[i][2] : "nil"
-		let crElm5 = container2.appendChild(document.createElement("div"))
-		crElm5.appendChild(document.createElement("button")).innerText = "-"
-		crElm5.appendChild(document.createElement("div")).innerText = f[i][2] ? 1 : 0
-		crElm5.appendChild(document.createElement("button")).innerText = "+"
+			// f = [name of item, ID, checked by default?]
+			console.log(f[i])
+			let crElm4 = container2.appendChild(document.createElement("div"))
+			crElm4.innerText = f[i][0]
+			crElm4.classList.add("miscitem")
+			crElm4.id = "miscitem" + f[i][1]
+			container2.appendChild(document.createElement("div")).innerText = f[i][2] ? f[i][2] : "nil"
+			let crElm5 = container2.appendChild(document.createElement("div"))
+			crElm5.appendChild(document.createElement("button")).innerText = "-";
+
+
+			console.log("anyways")
+			window.miscList.push(f[i][0], f[i][1])
+			var miscIndex = window.usrSave.miscList.findIndex((h) => { return h[0] == f[i][1] })
+			if (miscIndex === -1) {
+				// miscList does not contain ID
+				window.usrSave.miscList.push([f[i][1], 1]);
+				console.log(window.usrSave.miscList)
+				crElm5.appendChild(document.createElement("div")).innerText = 1
+			} else {
+				crElm5.appendChild(document.createElement("div")).innerText = window.usrSave.miscList[miscIndex][1]
+			}
+
+			crElm5.appendChild(document.createElement("button")).innerText = "+"
+		}
+
+		console.log();
+		saveCookie();
 	}
-	console.log("console working!")
-
-	console.log()
-	saveCookie()
-	if (callback) { callback() } // currently to update the merged grid items in the subject column
+	window.initialLoad = false;
 }
-
 
 
 function reqServer(subjectsList, callback) {
@@ -368,17 +350,49 @@ function studentlevelcheck(g) {
 }
 
 function bubbleMisc(e) {
-	console.log(e.target.nodeName) 
+	var mainGrid = document.getElementById("gridcontainmisc")
+	console.log(e.target.nodeName)
 	if (e.target.nodeName === "BUTTON") {
-		var theMiscNumEl = e.target.parentElement.children[1]
+		var miscNumDisplay = e.target.parentElement.children[1]
+		var theMiscNumEl = e.target.parentElement
 		if (e.target.innerText === "+") {
-			console.log("adding item")
-			theMiscNumEl.innerText = +theMiscNumEl.innerText + 1;
+			miscNumDisplay.innerText = +miscNumDisplay.innerText + 1;
+			let theIndex = Array.from(theMiscNumEl.parentElement.children).indexOf(theMiscNumEl);
+			let miscName = theMiscNumEl.parentElement.children[theIndex - 2];
+			let miscID = miscName.id.replace("miscitem", "")
+			console.log(miscID)
+			let searchThis = window.usrSave.miscList.findIndex((e) => { return e[0] === +miscID })
+
+			if (miscName.classList.contains("miscResult")) {
+				console.log("adding result of misc add more search")
+				var boundaryIndex = Array.from(mainGrid.children).indexOf(document.getElementById("miscSearchLine"))
+				mainGrid.insertBefore(document.createElement("div"), mainGrid.children[boundaryIndex])
+				// when the misc search is launched, and user presses plus to search results
+				// add to main list
+				if (searchThis === -1) {
+					window.usrSave.miscList.push();
+				}
+			}
+
+			console.log(searchThis)
+			if (searchThis > -1) { window.usrSave.miscList[searchThis][1] = +miscNumDisplay.innerText }
+			saveCookie();
 		} else if (e.target.innerText === "-") {
+			if (+miscNumDisplay.innerText) { miscNumDisplay.innerText -= 1 }
+			let theIndex = Array.from(theMiscNumEl.parentElement.children).indexOf(theMiscNumEl);
+			let miscName = theMiscNumEl.parentElement.children[theIndex - 2];
+			let miscID = miscName.id.replace("miscitem", "")
+			console.log(miscID)
+			let searchThis = window.usrSave.miscList.findIndex((e) => { return e[0] === +miscID })
+
 			console.log("removing button")
 			if (+theMiscNumEl.innerText) {
-				theMiscNumEl.innerText -=1;
+				theMiscNumEl.innerText -= 1;
 			}
+
+			console.log(searchThis)
+			if (searchThis > -1) { window.usrSave.miscList[searchThis][1] = +miscNumDisplay.innerText }
+			saveCookie();
 		} else {
 			console.log("unknown button. InnerText: " + e.target.innerText)
 		}
@@ -387,26 +401,58 @@ function bubbleMisc(e) {
 
 
 
+function searchMisc(e) {
+	console.log("fired")
+	var mainGrid = document.getElementById("gridcontainmisc");
+	console.log(e.target.getAttribute("prevVal"))
+	if (e.target.getAttribute("prevVal") === "") {
+		mainGrid.appendChild(document.createElement("div")).id = "miscSearchLine";
+	} else {
+		// remove all children
+		var boundaryIndex = Array.from(mainGrid.children).indexOf(document.getElementById("miscSearchLine"))
+		if (boundaryIndex !== -1) {
+			console.log("deleting items from: " + boundaryIndex);
+			while (mainGrid.children.length > boundaryIndex+1) {
+				mainGrid.removeChild(mainGrid.children[boundaryIndex+1]);
+			}
+		}
+	}
 
-function saveCookie() {
-	var count = window.usrSave.books.length;
-	let i = window.usrSave.miscAdded.length;
-	while (i--) {
-		count += window.usrSave.miscAdded[i][1]
-	}
-	let j = window.usrSave.miscList.length;
-	while (j--) {
-		count += window.usrSave.miscList[j][1]
-	}
+	if (e.target.value === "") {
+		mainGrid.removeChild(mainGrid.children[mainGrid.children.length - 1])
+	} else {
+		// add children - search results
+		var miscSearchResults = window.miscList.filter((r) => { 
+			return (typeof(r) === "string" && r.toLowerCase().includes(document.getElementById("searchmisc").value.toLowerCase())) 
+		});
+		for (let i = 0; i < miscSearchResults.length; i += 2) {
+			let miscName = mainGrid.appendChild(document.createElement("div")); // itemName
+			miscName.innerText = miscSearchResults[i];
+			miscName.classList.add("miscResult");
+			miscName.id = "miscitem" + miscList[miscSearchResults.indexOf(miscSearchResults[i])+1]
 
-	document.getElementById("numItems").innerText = count;
-	if (document.getElementById("cookiecheck").checked) {
-		document.cookie = "booklistPref=" + JSON.stringify(window.usrSave);
+			mainGrid.appendChild(document.createElement("div")).innerText = "nil"; // Linked subject
+			mainGrid.appendChild(document.createElement("div")).innerHTML = "<div>0</div><button>+</button>";
+		}
 	}
-	document.getElementById("exportSelected").value = JSON.stringify(usrSave);
+	e.target.setAttribute("prevVal", e.target.value);
 }
 
 
+
+
+function saveCookie() {
+	document.getElementById("exportSelected").value = JSON.stringify(usrSave);
+	if (document.getElementById("cookiecheck").checked) {
+		document.cookie = "booklistPref=" + JSON.stringify(window.usrSave);
+	}
+	var count = window.usrSave.books.length;
+	let i = window.usrSave.miscList.length;
+	while (--i) {
+		count += window.usrSave.miscList[i][1]
+	}
+	document.getElementById("numItems").innerText = count;
+}
 
 function reqPrint() {
 	var headitem = document.getElementById("gridcontainbooks").insertBefore(document.createElement("div"), document.getElementById("gridcontainbooks").children[0])
@@ -425,19 +471,52 @@ function copyOut() {
 	document.getElementById("exportSelected").select();
 	copyTextToClipboard(document.getElementById("exportSelected").value);
 	document.getElementById("copiedIndicator").classList.remove("nodisp");
-	setTimeout(() => {document.getElementById("copiedIndicator").classList.add("nodisp")}, 1000)
+	setTimeout(() => { document.getElementById("copiedIndicator").classList.add("nodisp") }, 1000)
 }
 
 function enterSaved() {
 	var saveVals = document.getElementById("saveID").value;
 	try {
 		window.usrSave = JSON.parse(saveVals)
-	} catch {}
+	} catch { }
 	window.currReq.abort();
 	addSubStreamSelect();
 }
 
+
+function cellGridRowAreas(padding) {
+	// refresh grid areas
+	var elms = document.getElementById("gridcontainbooks").children
+	var prevItem = "";
+	var cycle = 0;
+	var buffer = 2 + (padding || 0);
+	var logBufferList = [];
+
+	for (var i = 0; i < elms.length; i++) {
+		if (elms[i].classList.contains("subjectName")) {
+			logBufferList.push((i + buffer) / 4);
+			elms[i].style.gridColumn = 2;
+			elms[i].style.gridRowStart = (i + buffer) / 4
+			if (prevItem) {
+				prevItem.style.gridRowEnd = (i + buffer) / 4
+			}
+			prevItem = elms[i]
+			cycle = 0;
+		} else if (cycle >= 3) {
+			if (!elms[i + 1].classList.contains("subjectName")) {
+				cycle = 0; // to give you numbers divisible by 4
+				buffer++;
+			}
+		}
+		cycle++
+	}
+	prevItem.style.gridRowEnd = (i + buffer + 1) / 4;
+	console.log(logBufferList);
+}
+
 function disableLevelSelect() {
+	document.getElementById("clearinfo").classList.add("nodisp");
+	document.getElementById("clearinfo").removeEventListener("click", clearInfo);
 	document.getElementById("studentlevel").setAttribute("disabled", "disabled");
 	document.getElementById("studentstream").setAttribute("disabled", "disabled");
 	document.getElementById("nolvlselect").classList.remove("nodisp")
@@ -489,6 +568,23 @@ function fallbackCopyTextToClipboard(text) {
 	document.body.removeChild(textArea);
 }
 
+function clearInfo() {
+	console.log("clearing info")
+	window.currReq.abort();
+	window.initialLoad = true;
+	document.getElementById("gridcontainbooks").innerHTML = window.itemListResetText;
+	document.getElementById("studentlevel").value = "Choose";
+	studentlevelcheck(false);
+	window.usrSave = {
+		courses: [], // secLevel, currstream, list in group/subject
+		books: [],
+		miscList: [] //
+	}
+	clearCookies();
+	saveCookie();
+	document.getElementById("numItems").innerText = 0;
+}
+
 function copyTextToClipboard(text) {
 	if (!navigator.clipboard) {
 		fallbackCopyTextToClipboard(text);
@@ -503,20 +599,20 @@ function copyTextToClipboard(text) {
 
 // https://stackoverflow.com/a/33366171/13904265
 function clearCookies() {
-    var cookies = document.cookie.split("; ");
-    for (var c = 0; c < cookies.length; c++) {
-        var d = window.location.hostname.split(".");
-        while (d.length > 0) {
-            var cookieBase = encodeURIComponent(cookies[c].split(";")[0].split("=")[0]) + '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; domain=' + d.join('.') + ' ;path=';
-            var p = location.pathname.split('/');
-            document.cookie = cookieBase + '/';
-            while (p.length > 0) {
-                document.cookie = cookieBase + p.join('/');
-                p.pop();
-            };
-            d.shift();
-        }
-    }
+	var cookies = document.cookie.split("; ");
+	for (var c = 0; c < cookies.length; c++) {
+		var d = window.location.hostname.split(".");
+		while (d.length > 0) {
+			var cookieBase = encodeURIComponent(cookies[c].split(";")[0].split("=")[0]) + '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; domain=' + d.join('.') + ' ;path=';
+			var p = location.pathname.split('/');
+			document.cookie = cookieBase + '/';
+			while (p.length > 0) {
+				document.cookie = cookieBase + p.join('/');
+				p.pop();
+			};
+			d.shift();
+		}
+	}
 }
 
 function main() {
@@ -530,7 +626,6 @@ function main() {
 			if (copyOver.books) {
 				window.initialLoad = false;
 				window.usrSave.books = copyOver.books;
-				window.usrSave.miscAdded = copyOver.miscAdded;
 				window.usrSave.miscList = copyOver.miscList;
 			}
 
@@ -548,7 +643,10 @@ function main() {
 	document.getElementById("toPrint").addEventListener("click", reqPrint);
 	document.getElementById("catchCopyClick").addEventListener("click", copyOut, true);
 	document.getElementById("pickup").addEventListener("click", enterSaved);
-	document.getElementById("miscItems").addEventListener("click", bubbleMisc)
+	document.getElementById("miscItems").addEventListener("click", bubbleMisc);
+	document.getElementById("searchmisc").setAttribute("prevVal", "")
+	document.getElementById("searchmisc").addEventListener("input", searchMisc)
+	document.getElementById("clearinfo").addEventListener("click", clearInfo);
 
 	document.getElementById("studentstream").addEventListener("change", () => {
 		window.currReq.abort()
