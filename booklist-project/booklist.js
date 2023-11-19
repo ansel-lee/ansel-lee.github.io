@@ -351,7 +351,6 @@ function studentlevelcheck(g) {
 
 function bubbleMisc(e) {
 	var mainGrid = document.getElementById("gridcontainmisc")
-	console.log(e.target.nodeName)
 	if (e.target.nodeName === "BUTTON") {
 		var miscNumDisplay = e.target.parentElement.children[1]
 		var theMiscNumEl = e.target.parentElement
@@ -364,13 +363,21 @@ function bubbleMisc(e) {
 			let searchThis = window.usrSave.miscList.findIndex((e) => { return e[0] === +miscID })
 
 			if (miscName.classList.contains("miscResult")) {
-				console.log("adding result of misc add more search")
+			// a search result was added
+				console.log("adding result of misc's 'add more' search")
 				var boundaryIndex = Array.from(mainGrid.children).indexOf(document.getElementById("miscSearchLine"))
-				mainGrid.insertBefore(document.createElement("div"), mainGrid.children[boundaryIndex])
 				// when the misc search is launched, and user presses plus to search results
 				// add to main list
 				if (searchThis === -1) {
-					window.usrSave.miscList.push();
+					window.usrSave.miscList.push([miscName.id.replace("miscitem", ""), 1])
+					console.log(miscName.className)
+					console.log(miscName.id)
+					mainGrid.insertBefore(document.createElement("div"), mainGrid.children[boundaryIndex]).innerHTML = "<button>-</button><div>0</div><button>+</button>";
+					mainGrid.insertBefore(document.createElement("div"), mainGrid.children[boundaryIndex]).innerText = "nil";
+					var newItemDiv = mainGrid.insertBefore(document.createElement("div"), mainGrid.children[boundaryIndex])
+					newItemDiv.id = miscName.id;
+					newItemDiv.classList.add("miscitem");
+					newItemDiv.innerText = miscName.innerText;
 				}
 			}
 
@@ -402,16 +409,13 @@ function bubbleMisc(e) {
 
 
 function searchMisc(e) {
-	console.log("fired")
 	var mainGrid = document.getElementById("gridcontainmisc");
-	console.log(e.target.getAttribute("prevVal"))
 	if (e.target.getAttribute("prevVal") === "") {
 		mainGrid.appendChild(document.createElement("div")).id = "miscSearchLine";
 	} else {
 		// remove all children
 		var boundaryIndex = Array.from(mainGrid.children).indexOf(document.getElementById("miscSearchLine"))
 		if (boundaryIndex !== -1) {
-			console.log("deleting items from: " + boundaryIndex);
 			while (mainGrid.children.length > boundaryIndex+1) {
 				mainGrid.removeChild(mainGrid.children[boundaryIndex+1]);
 			}
@@ -429,7 +433,8 @@ function searchMisc(e) {
 			let miscName = mainGrid.appendChild(document.createElement("div")); // itemName
 			miscName.innerText = miscSearchResults[i];
 			miscName.classList.add("miscResult");
-			miscName.id = "miscitem" + miscList[miscSearchResults.indexOf(miscSearchResults[i])+1]
+			miscName.id = "miscitem" + window.miscList[miscSearchResults.indexOf(miscSearchResults[i])+1]
+			console.log("miscitem" + window.miscList[miscSearchResults.indexOf(miscSearchResults[i])+1])
 
 			mainGrid.appendChild(document.createElement("div")).innerText = "nil"; // Linked subject
 			mainGrid.appendChild(document.createElement("div")).innerHTML = "<div>0</div><button>+</button>";
@@ -581,7 +586,6 @@ function clearInfo() {
 		miscList: [] //
 	}
 	clearCookies();
-	saveCookie();
 	document.getElementById("numItems").innerText = 0;
 }
 
