@@ -1,25 +1,27 @@
 "use strict"
-var document, window, console, setTimeout, XMLHttpRequest
+var document, window, console, setTimeout, XMLHttpRequest, navigator
 
 
 function defGlobals() {
 	window.currReq = { abort: () => { console.log("no XHR to abort") } }
-	window.verNum = 1.2;
-	window.scriptLink = "https://script.google.com/macros/s/AKfycbwE0Cy5Fk-YOF5TycV6kOygLT4URO5Ojru3iWVd8s7cEAD1pTAltmwCUZDsPt2Bue8bow/exec";
-	makeSubjectTree()
+	window.verNum = 1.3;
+	window.scriptLink = "https://script.google.com/macros/s/AKfycbwxX2BG-CBt0EgkDXyELz4wG3VQ66Fu5UejiF56vQbXpIdI0u7RcssEgRuPsr5C-Me1vQ/exec";
+	makeSubjectTree();
 
-	window.allMiscItems = []
+	window.allMiscItems = [];
 	window.exampleReceived = [["Literature (G3/G2)", [["Literature ", "Wonder (By R. J. Palacio) (Random House Children's)", "PM Associa", ""]]], ["Science (G3/G2)", [["Science ", "Science For Lower Secondary G3/G2 Textbook 1A (Revised Edn) NEW!", "Marshall C", ""], ["Science ", "Science For Lower Secondary G3/G2 Textbook 1B (Revised Edn) NEW!", "Marshall C", ""],
-	["Science ", "Science For Lower Secondary G3/G2 Activity Book 1A (Revised Edn) NEW!", "Marshall C", ""], ["Science ", "Science For Lower Secondary G3/G2 Activity Book 1B (Revised Edn) NEW!", "Marshall C", ""]]]]
-
-	window.itemListResetText = "<div>Select</div><div>Subject</div><div>Resource</div><div>Publisher</div>"
+	["Science ", "Science For Lower Secondary G3/G2 Activity Book 1A (Revised Edn) NEW!", "Marshall C", ""], ["Science ", "Science For Lower Secondary G3/G2 Activity Book 1B (Revised Edn) NEW!", "Marshall C", ""]]]];
+	
+	window.itemListResetText = "<div>Select</div><div>Subject</div><div>Resource</div><div>Publisher</div>";
+	window.miscListResetText = "<div>Item Name</div><div>Linked Subject</div><div>Quantity</div>";
 	window.usrSave = {
 		courses: [], // secLevel, currstream, list in group/subject
 		books: [],
 		miscList: [] // ["name", "ID", "name2", "ID2"]
-	}
-	window.miscList = []
+	};
+	window.miscList = [];
 	window.initialLoad = true;
+	window.fromCookie = false;
 }
 
 function addSubStreamSelect() {
@@ -32,19 +34,19 @@ function addSubStreamSelect() {
 	var secLevel = document.getElementById("studentlevel").value;
 	document.getElementById("subjectbox").appendChild(document.createElement("p")).innerText = "Group";
 	document.getElementById("subjectbox").appendChild(document.createElement("p")).innerText = "Subject";
-	subBox.innerHTML = "<p>Group</p><p>Subject</p>"
+	subBox.innerHTML = "<p>Group</p><p>Subject</p>";
 	var subkeyindex = 0;
 	console.log(currstream)
 	if ((!currstream) || currstream == "select") {
 		return;
 	} else {
-		window.usrSave.courses = [secLevel, currstream]
+		window.usrSave.courses = [secLevel, currstream];
 		document.getElementById("gridcontainbooks").innerHTML = window.itemListResetText;
 		window.initialLoad = true;
 		scrollCheck();
-		console.log("currstream: " + currstream)
-		console.log("Here's the object for year")
-		console.log(window.subjectTree[secLevel - 1])
+		console.log("currstream: " + currstream);
+		console.log("Here's the object for year");
+		console.log(window.subjectTree[secLevel - 1]);
 		for (var i = 0; i < window.subjectTree[secLevel - 1].length; i++) {
 			subkeys = subkeys.concat(window.subjectTree[secLevel - 1][i][0]);
 			subselections = subselections.concat([window.subjectTree[secLevel - 1][i].slice(1)])
@@ -191,16 +193,24 @@ function receivedXHR(e, f) {
 					crElm1 = container.insertBefore(document.createElement("label"), container.children[4])
 				}
 
-				crElm1.classList.add("bookselected")
-				var crElm2 = crElm1.appendChild(document.createElement("input"))
-				crElm2.type = "checkbox"
-				crElm2.id = "itemgen" + e[i][1][j][3]
-				crElm2.addEventListener("input", bookCheckChange)
-				if (!window.usrSave.books.includes(e[i][1][j][3])) {
-					window.usrSave.books.push(e[i][1][j][3])
+				var crElm2 = crElm1.appendChild(document.createElement("input"));
+				crElm2.type = "checkbox";
+				crElm2.id = "itemgen" + e[i][1][j][3];
+				crElm2.addEventListener("input", bookCheckChange);
+				if (window.fromCookie) {
+					if (window.usrSave.books.includes(e[i][1][j][3])) {
+						crElm2.checked = true;
+						crElm1.classList.add("bookselected");
+					}
+				} else {
+					if (!(window.fromCookie || window.usrSave.books.includes(e[i][1][j][3]) || e[i][1][j][1].includes("NOT NECESSARY IF BOUGHT"))) {
+						crElm2.checked = true;
+						crElm1.classList.add("bookselected")
+						window.usrSave.books.push(e[i][1][j][3])
+					}
 				}
+
 				crElm2.classList.add(bookclass)
-				crElm2.checked = true;
 				thelabel.innerText = e[i][1][j][1];
 				thelabel.setAttribute("for", ("itemgen" + e[i][1][j][3]))
 				itrcount++;
@@ -233,21 +243,17 @@ function receivedXHR(e, f) {
 			container2.appendChild(document.createElement("div")).innerText = f[i][2] ? f[i][2] : "nil"
 			let crElm5 = container2.appendChild(document.createElement("div"))
 			crElm5.appendChild(document.createElement("button")).innerText = "-";
-
-
-			console.log("anyways")
-			window.miscList.push(f[i][0], f[i][1])
-			var miscIndex = window.usrSave.miscList.findIndex((h) => { return h[0] == f[i][1] })
+			window.miscList.push(f[i][0], f[i][1]);
+			var miscIndex = window.usrSave.miscList.findIndex((h) => { return h[0] == f[i][1] });
 			if (miscIndex === -1) {
 				// miscList does not contain ID
 				window.usrSave.miscList.push([f[i][1], 1]);
-				console.log(window.usrSave.miscList)
 				crElm5.appendChild(document.createElement("div")).innerText = 1
 			} else {
-				crElm5.appendChild(document.createElement("div")).innerText = window.usrSave.miscList[miscIndex][1]
+				crElm5.appendChild(document.createElement("div")).innerText = window.usrSave.miscList[miscIndex][1];
 			}
 
-			crElm5.appendChild(document.createElement("button")).innerText = "+"
+			crElm5.appendChild(document.createElement("button")).innerText = "+";
 		}
 
 		console.log();
@@ -315,34 +321,26 @@ function reqServer(subjectsList, callback) {
 	xhr.send(JSON.stringify(toSend))
 }
 
-function studentlevelcheck(g) {
-	var e = document.getElementById("studentlevel").value
-	window.initialLoad = true;
-	if (g.currentTarget) {
-		document.getElementById("studentstream").value = "choose"
+function studentlevelcheck() {
+	function hideshow(hide, show) {
+		Array.from(document.getElementsByClassName(hide)).forEach((f) => f.setAttribute("hidden", true));
+		Array.from(document.getElementsByClassName(show)).forEach((f) => f.removeAttribute("hidden"));
 	}
 
-	if (e == "1") {
-		document.getElementById("hidingstream").classList.remove("hidden")
-		var elms = document.getElementsByClassName("newstream")
-		for (let i = 0; i < elms.length; i++) { elms[i].removeAttribute("hidden", true) }
+	var e = document.getElementById("studentlevel").value
+	window.initialLoad = true;
 
-		elms = document.getElementsByClassName("oldstream")
-		for (let i = 0; i < elms.length; i++) { elms[i].setAttribute("hidden", true) }
+	document.getElementById("hidingstream").classList.remove("hidden") // if its not 1-5 will rehide this
+	if (e == "1") {
+		hideshow("oldstream", "newstream");
 		document.getElementById("hidingstream").children[0].innerText = "Posting Group: ";
 	} else if (e == "2" || e == "3" || e == "4") {
-		document.getElementById("hidingstream").classList.remove("hidden");
-		Array.from(document.getElementsByClassName("newstream")).forEach((f) => f.setAttribute("hidden", true))
-
-		var elms = document.getElementsByClassName("oldstream");
-		for (let i = 0; i < elms.length; i++) { elms[i].removeAttribute("hidden", false); }
+		hideshow("newstream", "oldstream");
 		document.getElementById("hidingstream").children[0].innerText = "Stream: ";
 	} else if (e == "5") {
-		document.getElementById("hidingstream").classList.remove("hidden");
 		var elms = (Array.from(document.getElementsByClassName("oldstream"))).concat(Array.from(document.getElementsByClassName("newstream")));
-
 		for (let i = 0; i < elms.length; i++) { elms[i].setAttribute("hidden", true) }
-		elms[1].removeAttribute("hidden");
+		elms[1].removeAttribute("hidden"); // "NA"
 		document.getElementById("hidingstream").children[0].innerText = "Stream: ";
 	} else {
 		document.getElementById("hidingstream").classList.add("hidden");
@@ -363,15 +361,15 @@ function bubbleMisc(e) {
 			let searchThis = window.usrSave.miscList.findIndex((e) => { return e[0] === +miscID })
 
 			if (miscName.classList.contains("miscResult")) {
-			// a search result was added
+				// a search result was added
 				console.log("adding result of misc's 'add more' search")
 				var boundaryIndex = Array.from(mainGrid.children).indexOf(document.getElementById("miscSearchLine"))
 				// when the misc search is launched, and user presses plus to search results
 				// add to main list
 				if (searchThis === -1) {
 					window.usrSave.miscList.push([miscName.id.replace("miscitem", ""), 1])
-					console.log(miscName.className)
-					console.log(miscName.id)
+					console.log(miscName.className);
+					console.log(miscName.id);
 					mainGrid.insertBefore(document.createElement("div"), mainGrid.children[boundaryIndex]).innerHTML = "<button>-</button><div>0</div><button>+</button>";
 					mainGrid.insertBefore(document.createElement("div"), mainGrid.children[boundaryIndex]).innerText = "nil";
 					var newItemDiv = mainGrid.insertBefore(document.createElement("div"), mainGrid.children[boundaryIndex])
@@ -411,13 +409,14 @@ function bubbleMisc(e) {
 function searchMisc(e) {
 	var mainGrid = document.getElementById("gridcontainmisc");
 	if (e.target.getAttribute("prevVal") === "") {
+		// add the seperator line
 		mainGrid.appendChild(document.createElement("div")).id = "miscSearchLine";
 	} else {
 		// remove all children
 		var boundaryIndex = Array.from(mainGrid.children).indexOf(document.getElementById("miscSearchLine"))
 		if (boundaryIndex !== -1) {
-			while (mainGrid.children.length > boundaryIndex+1) {
-				mainGrid.removeChild(mainGrid.children[boundaryIndex+1]);
+			while (mainGrid.children.length > boundaryIndex + 1) {
+				mainGrid.removeChild(mainGrid.children[boundaryIndex + 1]);
 			}
 		}
 	}
@@ -426,18 +425,28 @@ function searchMisc(e) {
 		mainGrid.removeChild(mainGrid.children[mainGrid.children.length - 1])
 	} else {
 		// add children - search results
-		var miscSearchResults = window.miscList.filter((r) => { 
-			return (typeof(r) === "string" && r.toLowerCase().includes(document.getElementById("searchmisc").value.toLowerCase())) 
+		var miscSearchResults = window.miscList.filter((r) => {
+			return (typeof (r) === "number" || 
+				(r.toLowerCase().includes(document.getElementById("searchmisc").value.toLowerCase()))
+			)
 		});
-		for (let i = 0; i < miscSearchResults.length; i += 2) {
-			let miscName = mainGrid.appendChild(document.createElement("div")); // itemName
-			miscName.innerText = miscSearchResults[i];
-			miscName.classList.add("miscResult");
-			miscName.id = "miscitem" + window.miscList[miscSearchResults.indexOf(miscSearchResults[i])+1]
-			console.log("miscitem" + window.miscList[miscSearchResults.indexOf(miscSearchResults[i])+1])
+		console.log(miscSearchResults)
+		let i = 0
+		while (typeof(miscSearchResults[i]) === "number") {i++}
+		while (i < miscSearchResults.length) {
+			if (!(JSON.stringify(window.usrSave.miscList).includes(miscSearchResults[i+1]))) {
+				let miscName = mainGrid.appendChild(document.createElement("div")); // itemName
+				console.log([miscSearchResults[i], miscSearchResults[i+1]])
+				miscName.innerText = miscSearchResults[i];
+				miscName.classList.add("miscResult");
+				miscName.id = "miscitem" + miscSearchResults[i + 1]
+				console.log("miscitem" + miscSearchResults[i+1])
 
-			mainGrid.appendChild(document.createElement("div")).innerText = "nil"; // Linked subject
-			mainGrid.appendChild(document.createElement("div")).innerHTML = "<div>0</div><button>+</button>";
+				mainGrid.appendChild(document.createElement("div")).innerText = "nil"; // Linked subject
+				mainGrid.appendChild(document.createElement("div")).innerHTML = "<div>0</div><button>+</button>";
+			}
+			i++
+			while (typeof(miscSearchResults[i]) === "number") {i++}
 		}
 	}
 	e.target.setAttribute("prevVal", e.target.value);
@@ -447,7 +456,7 @@ function searchMisc(e) {
 
 
 function saveCookie() {
-	document.getElementById("exportSelected").value = JSON.stringify(usrSave);
+	document.getElementById("exportSelected").value = JSON.stringify(window.usrSave);
 	if (document.getElementById("cookiecheck").checked) {
 		document.cookie = "booklistPref=" + JSON.stringify(window.usrSave);
 	}
@@ -480,11 +489,16 @@ function copyOut() {
 }
 
 function enterSaved() {
+	clearInfo()
 	var saveVals = document.getElementById("saveID").value;
 	try {
-		window.usrSave = JSON.parse(saveVals)
-	} catch { }
+		window.usrSave = JSON.parse(saveVals);
+		window.fromCookie = true;
+		document.getElementById("studentlevel").value = window.usrSave.courses[0];
+		document.getElementById("studentstream").value = window.usrSave.courses[1];
+	} catch(e) { }
 	window.currReq.abort();
+	
 	addSubStreamSelect();
 }
 
@@ -541,11 +555,11 @@ function scrollCheck() {
 }
 
 function makeSubjectTree() {
-	window.subjectTree = [[["English", "English Language (G3)", "English Language (G2)", "English Language (G1)",], ["Mathematics", "Mathematics (G3)", "Mathematics (G2)", "Mathematics (G1)",], ["Lower Secondary Science", "Science (G3/G2)", "Science (G1)",], ["Humanities 1", "Geography (G3/G2)", "Social Studies (G1)",], ["Humanities 2", "History (G3/G2)",], ["Humanities 3", "Literature (G3/G2)",], ["Mother Tongue", "Chinese Language (G3)", "Higher Chinese Language (G3)", "Chinese Language (G2)", "Chinese (G1)", "Malay Language (G3)", "Malay Language (G2)", "Malay Language (G1)", "Tamil Language (G3)", "Tamil Language (G2)", "Tamil (G1)",], ["Design and Technology", "Design & Technology (G3/G2/G1)",], ["Food and Consumer Ed", "Food & Consumer Education (G3/G2/G1)",], ["Art", "Art (G3/G2/G1)",], ["Music", "Music (G3/G2/G1)",]],
-	[["English", "English Language (EXP)", "English Language (NA)", "English Language (NT)",], ["Mathematics", "Mathematics (EXP)", "Mathematics (NA)", "Mathematics (NT)",], ["Science", "Science (EXP/NA)", "Science (NT - no books)",], ["Humanities 1", "Geography (EXP/NA)", "Social Studies (NT)",], ["Humanities 2", "History (EXP/NA)", "Computer Applications (NT)",], ["Humanities 3", "Literature (EXP/NA)", "None (NT)",], ["Mother Tongue", "Chinese Language (EXP)", "Chinese Language B (EXP/NA)", "Malay Language (EXP)", "Tamil Language (EXP)", "Tamil Language B (EXP/NA)", "Chinese Language (NA)", "Malay Language (NA)", "Tamil Language (NA)", "Basic Chinese (NT)", "Basic Malay (NT)", "Basic Tamil (NT)",], ["Food and Consumer Ed", "Food & Consumer Education (EXP/NA/NT)",], ["Design and Technology", "Design & Technology (EXP/NA/NT)",]],
-	[["English", "English Language (EXP)", "English Language (NA)", "English Language (NT)",], ["Mathematics", "Mathematics (EXP)", "Mathematics (NA)", "Mathematics (NT)",], ["Chemistry", "Pure Chemistry (EXP)", "Science (Chemistry) (EXP)", "Science (Chemistry) (NA)", "Science (NT)",], ["Science 2", "Pure Physics (EXP)", "Science (Physics) (EXP)", "Science (Physics) (NA)", "Pure Biology (EXP)",], ["Science 3 (only triple science)", "None (EXP/NA/NT)", "Pure Biology (EXP)",], ["Social Studies", "Social Studies (EXP/NA)", "Social Studies (NT)",], ["Elective Humanities", "Literature (Elective) (EXP/NA)", "History (Elective) (EXP/NA)", "Geography (Elective) (EXP)", "Geography (Elective) (NA)",], ["Mother Tongue", "Chinese Language (EXP)", "Chinese Language B (EXP/NA)", "Malay Language (EXP)", "Tamil Language (EXP)", "Tamil Language B (EXP/NA)", "Chinese Language (NA)", "Malay Language (NA)", "Tamil Language (NA)", "Basic Chinese (NT)", "Basic Malay (NT)", "Basic Tamil (NT)",], ["Coursework/AS1", "Additional Maths (EXP)", "Additional Maths (NA)", "Design & Technology (EXP/NA)", "Nutrition and Food Science (EXP/NA)", "Mobile Robotics (NT)", "Art ( (EXP/NA)",], ["Pure/AS2", "History (Full) (EXP)", "Geography (Full) (EXP)", "Literature (Pure) (EXP)", "Computing (EXP) (no books)", "Principles of Accounts (EXP/NA)", "Computer Applications (NT)", "Elements Of Business Skills (NT)",]],
-	[["English", "English Language (EXP)", "English Language (NA)", "English Language (NT)",], ["Mathematics", "Mathematics (EXP)", "Mathematics (NA)", "Mathematics (NT)",], ["Chemistry", "Pure Chemistry (EXP)", "Science (Chemistry) (EXP)", "Science (Chemistry) (NA)", "Science (NT)",], ["Science 2", "Pure Physics (EXP)", "Science (Physics) (EXP)", "Science (Biology) (EXP)", "Science (Physics) (NA)", "Pure Biology (EXP)",], ["Science 3 (Triple Science)", "None (EXP/NA/NT)", "Pure Biology (EXP)",], ["Social Studies", "Social Studies (EXP)", "Social Studies (NA)", "Social Studies (NT)",], ["Elective Humanities", "History (Elective) (EXP)", "Literature (Elective) (EXP)", "Geography (Elective) (EXP) (no books)", "History (Elective) (NA)", "Literature (Elective) (NA) (no books)", "Geography (Elective) (NA) (no books)",], ["Mother Tongue", "Chinese Language (EXP)", "Chinese Language B (EXP/NA)", "Malay Language (EXP)", "Malay Language B (EXP/NA)", "Tamil Language (EXP)", "Tamil Language B (EXP/NA)", "Chinese Language (NA)", "Malay Language (NA)", "Tamil Language (NA)", "Basic Chinese (NT)", "Basic Malay (NT)", "Basic Tamil (NT)",], ["Coursework/ AS1", "Additional Maths (EXP)", "Additional Mathematics (NA)", "Design & Technology (EXP/NA)", "Nutrition and Food Science (EXP)", "Nutrition and Food Science (NA)",], ["Pure/AS2", "Computing (EXP) (no books)", "Literature (Pure) (EXP)", "History (Full) (EXP)", "Geography (Full) (EXP)", "Principles of Accounts (EXP)", "Principles of Accounts (NA)", "Elements Of Business Skills (NT)",]],
-	[["English", "English Language (NA)",], ["Mathematics", "Mathematics (NA)",], ["Science", "Science (Chemistry) (NA)", "Science (Physics) (NA)",], ["Social Studies", "Social Studies (NA)",], ["Elective Humanities", "History (Elective) (NA)", "Geography (Elective) (NA)", "Chinese Language (NA)",], ["Mother Tongue", "Malay Language (NA)", "Tamil Language (NA)",], ["Coursework/AS1", "Additional Maths (NA)", "Nutrition and Food Science (NA)",]]]
+	window.subjectTree = [[["English", "English Language (G3)", "English Language (G2)", "English Language (G1)",], ["Mathematics", "Mathematics (G3)", "Mathematics (G2)", "Mathematics (G1)",], ["Lower Secondary Science", "Science (G3/G2)", "Science (G1)",], ["Humanities 1", "Geography (G3/G2)", "Social Studies (G1)",], ["Humanities 2", "History (G3/G2)", "None (G1)",], ["Humanities 3", "Literature (G3/G2)", "None (G1)",], ["Mother Tongue", "Chinese Language (G3)", "Higher Chinese Language (G3)", "Chinese Language (G2)", "Chinese (G1)", "Malay Language (G3)", "Malay Language (G2)", "Malay Language (G1)", "Tamil Language (G3)", "Tamil Language (G2)", "Tamil (G1)",], ["Design and Technology", "Design & Technology (G3/G2/G1)",], ["Food and Consumer Ed", "Food & Consumer Education (G3/G2/G1)",], ["Art", "Art (G3/G2/G1)",], ["Music", "Music (G3/G2/G1)",]],
+	[["English", "English Language (EXP)", "English Language (NA)", "English Language (NT)",], ["Mathematics", "Mathematics (EXP)", "Mathematics (NA)", "Mathematics (NT)",], ["Science", "Science (EXP/NA)", "Science (NT - no books)",], ["Humanities 1", "Geography (EXP/NA)", "Social Studies (NT)",], ["Humanities 2", "History (EXP/NA)", "Computer Applications (NT)",], ["Humanities 3", "Literature (EXP/NA)", "None (NT)",], ["Mother Tongue", "Chinese Language (EXP)", "Malay Language (EXP)", "Tamil Language (EXP)", "Chinese Language (NA)", "Malay Language (NA)", "Tamil Language (NA)", "Chinese Language B (EXP/NA)", "Tamil Language B (EXP/NA)", "Basic Chinese (NT)", "Basic Malay (NT)", "Basic Tamil (NT)",], ["Food and Consumer Ed", "Food & Consumer Education (EXP/NA/NT)",], ["Design and Technology", "Design & Technology (EXP/NA/NT)",]],
+	[["English", "English Language (EXP)", "English Language (NA)", "English Language (NT)",], ["Mathematics", "Mathematics (EXP)", "Mathematics (NA)", "Mathematics (NT)",], ["Chemistry", "Pure Chemistry (EXP)", "Science (Chemistry) (EXP)", "Science (Chemistry) (NA)", "Science (NT)",], ["Science 2", "Pure Physics (EXP)", "Pure Biology (EXP)", "Science (Physics) (EXP)", "Science (Physics) (NA)", "None (NT)",], ["Science 3 (only triple science)", "None (EXP/NA/NT)", "Pure Biology (EXP)",], ["Social Studies", "Social Studies (EXP/NA)", "Social Studies (NT)",], ["Elective Humanities", "Literature (Elective) (EXP/NA)", "History (Elective) (EXP/NA)", "Geography (Elective) (EXP)", "Geography (Elective) (NA)",], ["Mother Tongue", "Chinese Language (EXP)", "Malay Language (EXP)", "Tamil Language (EXP)", "Chinese Language (NA)", "Malay Language (NA)", "Tamil Language (NA)", "Chinese Language B (EXP/NA)", "Tamil Language B (EXP/NA)", "Basic Chinese (NT)", "Basic Malay (NT)", "Basic Tamil (NT)",], ["Additional Subject 1", "Additional Maths (EXP)", "Additional Maths (NA)", "Design & Technology (EXP/NA)", "Nutrition and Food Science (EXP/NA)", "Mobile Robotics (NT)", "Art ( (EXP/NA)", "Elements Of Business Skills (NT)",], ["Additional Subject 2", "History (Full) (EXP)", "Geography (Full) (EXP)", "Literature (Pure) (EXP)", "Computing (EXP) (no books)", "Principles of Accounts (EXP/NA)", "Computer Applications (NT)", "None (NT)",]],
+	[["English", "English Language (EXP)", "English Language (NA)", "English Language (NT)",], ["Mathematics", "Mathematics (EXP)", "Mathematics (NA)", "Mathematics (NT)",], ["Chemistry", "Pure Chemistry (EXP)", "Science (Chemistry) (EXP)", "Science (Chemistry) (NA)", "Science (NT)",], ["Science 2", "Pure Physics (EXP)", "Pure Biology (EXP)", "Science (Physics) (EXP)", "Science (Biology) (EXP)", "Science (Physics) (NA)", "None (NT)",], ["Science 3 (Triple Science)", "None (EXP/NA/NT)", "Pure Biology (EXP)",], ["Social Studies", "Social Studies (EXP)", "Social Studies (NA)", "Social Studies (NT)",], ["Elective Humanities", "History (Elective) (EXP)", "Literature (Elective) (EXP)", "Geography (Elective) (EXP) (no books)", "History (Elective) (NA)", "Literature (Elective) (NA) (no books)", "Geography (Elective) (NA) (no books)", "None (NT)",], ["Mother Tongue", "Chinese Language (EXP)", "Malay Language (EXP)", "Tamil Language (EXP)", "Chinese Language (NA)", "Malay Language (NA)", "Tamil Language (NA)", "Chinese Language B (EXP/NA)", "Malay Language B (EXP/NA)", "Tamil Language B (EXP/NA)", "Basic Chinese (NT)", "Basic Malay (NT)", "Basic Tamil (NT)",], ["Additional Subject 1", "Additional Maths (EXP)", "Additional Mathematics (NA)", "Design & Technology (EXP/NA)", "Nutrition and Food Science (EXP)", "Nutrition and Food Science (NA)", "Elements Of Business Skills (NT)",], ["Additional Subject 2", "Computing (EXP) (no books)", "Literature (Pure) (EXP)", "History (Full) (EXP)", "Geography (Full) (EXP)", "Principles of Accounts (EXP)", "Principles of Accounts (NA)", "Computer Applications (NT) (no books)",]],
+	[["English", "English Language (NA)",], ["Mathematics", "Mathematics (NA)",], ["Science", "Science (Chemistry) (NA)", "Science (Physics) (NA)",], ["Social Studies", "Social Studies (NA)",], ["Elective Humanities", "History (Elective) (NA)", "Geography (Elective) (NA)",], ["Mother Tongue", "Chinese Language (NA)", "Malay Language (NA)", "Tamil Language (NA)",], ["Coursework/AS1", "Additional Maths (NA)", "Nutrition and Food Science (NA)",]]]
 }
 
 // https://stackoverflow.com/a/30810322/13904265
@@ -579,7 +593,7 @@ function clearInfo() {
 	window.initialLoad = true;
 	document.getElementById("gridcontainbooks").innerHTML = window.itemListResetText;
 	document.getElementById("studentlevel").value = "Choose";
-	studentlevelcheck(false);
+	studentlevelcheck();
 	window.usrSave = {
 		courses: [], // secLevel, currstream, list in group/subject
 		books: [],
@@ -608,12 +622,12 @@ function clearCookies() {
 		var d = window.location.hostname.split(".");
 		while (d.length > 0) {
 			var cookieBase = encodeURIComponent(cookies[c].split(";")[0].split("=")[0]) + '=; expires=Thu, 01-Jan-1970 00:00:01 GMT; domain=' + d.join('.') + ' ;path=';
-			var p = location.pathname.split('/');
+			var p = window.location.pathname.split('/');
 			document.cookie = cookieBase + '/';
 			while (p.length > 0) {
 				document.cookie = cookieBase + p.join('/');
 				p.pop();
-			};
+			}
 			d.shift();
 		}
 	}
@@ -635,15 +649,18 @@ function main() {
 
 			document.getElementById("studentlevel").value = window.usrSave.courses[0];
 			document.getElementById("studentstream").value = window.usrSave.courses[1];
+			window.fromCookie = true;
 		} catch (Err) { }
+	} else {
+		window.usrSave.books = [];
+		window.usrSave.miscList = [];
 	}
 
 	if (document.getElementById("studentlevel").value == "Choose") {
 		document.getElementById("studentstream").value = "select"
 	}
-	studentlevelcheck(false)
+	studentlevelcheck()
 	addSubStreamSelect()
-	document.getElementById("studentlevel").addEventListener("change", studentlevelcheck);
 	document.getElementById("toPrint").addEventListener("click", reqPrint);
 	document.getElementById("catchCopyClick").addEventListener("click", copyOut, true);
 	document.getElementById("pickup").addEventListener("click", enterSaved);
@@ -652,6 +669,10 @@ function main() {
 	document.getElementById("searchmisc").addEventListener("input", searchMisc)
 	document.getElementById("clearinfo").addEventListener("click", clearInfo);
 
+	document.getElementById("studentlevel").addEventListener("change", () => {
+		document.getElementById("studentstream").value = "choose";
+		studentlevelcheck();
+	});
 	document.getElementById("studentstream").addEventListener("change", () => {
 		window.currReq.abort()
 		addSubStreamSelect()
