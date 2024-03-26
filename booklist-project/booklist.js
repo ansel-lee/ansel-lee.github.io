@@ -410,7 +410,7 @@ function bubbleMisc(e) {
 function searchMisc(e) {
 	var theinput = document.getElementById("searchmisc")
 	var mainGrid = document.getElementById("gridcontainmisc");
-	if (theinput.getAttribute("prevVal") === "") {
+	if (e.target.getAttribute("prevVal") === "") {
 		// add the seperator line
 		mainGrid.appendChild(document.createElement("div")).id = "miscSearchLine";
 	} else {
