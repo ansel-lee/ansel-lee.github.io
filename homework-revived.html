@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+		<base target="_blank">
+		<style>
+			/* top menu that shows when your css does not load properly */
+			#copyplain {
+				display: none;
+			}
+
+			/*GENERAL SELECTORS*/
+			* {
+				overflow-wrap: break-word;
+				word-wrap: break-word;
+				text-size-adjust: none;
+			}
+
+			button {
+				overflow-wrap: break-word;
+			}
+
+			body {
+				font-family: 'Roboto', sans-serif;
+				padding: 3vh 3vw;
+			}
+
+			div h3 {
+				font-weight: 400;
+				font-size: 2.2em;
+				margin-top: 0.5em;
+			}
+
+			div h4 {
+				font-weight: 400;
+				font-size: 1.2em;
+			}
+
+			hr.half {
+				width: 10%;
+				margin: 0 auto;
+				margin-left: 0;
+				color: #222222;
+			}
+
+			h1 {
+				font-weight: 400;
+				font-size: 2.2em;
+			}
+
+			select {
+				background-color: rgba(255, 255, 255, .5);
+				border: 1px solid #fff;
+			}
+
+			select:hover {
+				background-color: rgba(255, 255, 255, .8);
+			}
+
+
+			/*
+			COMMONLY USED CLASSES AND SITE LAYOUT
+			*/
+			input {
+				border-radius: 5px;
+				border: 1px solid #000;
+				background-color: #fafafa;
+				height: 1.3em;
+				padding: 3px 3px 3px 3px;
+				outline: none;
+			}
+			
+			input:focus {
+				border: 1px solid #0000ee;
+				background-color: #fff;
+			}
+			
+			input:valid {
+				border: 1px solid #0f0;
+			}
+			
+			input:invalid {
+				border: 2px solid #f00;
+				padding: 2px 2px 2px 2px;
+			}
+			
+			.inline {
+				display: inline-block;
+			}
+
+			.hidden {
+				visibility: hidden;
+			}
+
+			.nodisp {
+				display: none;
+			}
+
+			.stuffdiv {
+				padding-top: 20px;
+				padding-left: 20px;
+				padding-right: 20px;
+				padding-bottom: 20px;
+				border-radius: 20px;
+			}
+
+			.linebreak {
+				grid-column: 1/5;
+			}
+
+			.submitter {
+				display: none;
+			}
+
+			#site {
+				width: 100%;
+				position: relative;
+				display: block;
+				grid: none;
+			}
+
+			.spacing {
+				padding-top: 15px;
+				height: 20px;
+				width: 0;
+			}
+
+			.space {
+				padding-top: 15px;
+				height: 20px;
+				width: 0;
+			}
+
+
+
+			/* Homework listing main */
+			.bg {
+				grid-column: 1/3;
+				width: auto;
+				background-size: cover;
+				background-clip: padding-box;
+				background-position: center;
+				background-color: #eee;
+			}
+
+			.tablewrapper {
+				display: grid;
+				grid-template-columns: repeat(4, auto);
+				row-gap: 10px;
+				column-gap: 2vw;
+				overflow-x: auto;
+				padding-bottom: 20px;
+				background-color: rgba(180, 180, 180, 0.1);
+			}
+
+			.submitter,
+			.subject,
+			.piece,
+			.description,
+			.due,
+			.given {
+				font-size: 1rem;
+			}
+
+			#dategiven {
+				float: left;
+			}
+
+			#share {
+				border: none;
+				font-family: 'Roboto', sans-serif;
+				background-color: #eee;
+				font-size: 1.5em;
+				padding: 10px 15px 10px 15px;
+				border-radius: 8px;
+				display: inline-block;
+			}
+
+			#share:hover {
+				border: none;
+				font-family: 'Roboto', sans-serif;
+				background-color: #ddd;
+			}
+
+			button.shareopt {
+				font-family: 'Roboto', sans-serif;
+				display: inline-block;
+			}
+
+			#share_options {
+				padding-left: 4px;
+				display: inline-block;
+				visibility: hidden;
+			}
+
+			#share_options>div {
+				display: inline-block;
+				padding-right: 1px;
+			}
+
+			#exportJSON {
+				border: none;
+				font-family: 'Roboto', sans-serif;
+				background-color: #eee;
+				padding: 10px 15px 10px 15px;
+				border-radius: 8px;
+				display: inline-block;
+			}
+
+			#exportJSON:hover {
+				border: none;
+				font-family: 'Roboto', sans-serif;
+				background-color: #ddd;
+			}
+
+			/* For loading and error messages inside the table. */
+			.loadingbar {
+				display: block;
+				text-align: center;
+			}
+
+			.none,
+			.error {
+				display: none;
+				text-align: center;
+			}
+
+			/* Given date adjustments */
+			#giventbl {
+				display: none;
+			}
+
+			.spantbl {
+				grid-column: 1/5;
+			}
+
+			#toprightfilter {
+				padding-bottom: 20px;
+				display: flex;
+				justify-content: flex-end;
+			}
+
+
+			/* timetable */
+			#subjcontainer {
+				font-family: sans-serif;
+				background-color: #eeeeff;
+			}
+
+			#timetableEdit {
+				font-size: 1.2em;
+			}
+
+
+			/* announcements */
+			#announcements {
+				background-color: #f4f4f8;
+				background-size: cover;
+				background-clip: padding-box;
+				background-position: center;
+			}
+
+			#list {
+				padding-left: 20px;
+				display: grid;
+				grid-template-columns: repeat(1, auto);
+				gap: 10px;
+			}
+
+			.listitems {
+				background-color: #ffd800;
+				opacity: 0.8;
+				padding-left: 10px;
+				border-radius: 8px;
+				padding-top: 10px;
+				padding-bottom: 10px;
+			}
+
+			.announcetime {
+				margin-bottom: 0;
+				text-align: right;
+				padding-right: 30px;
+			}
+
+			.emphasis {
+				color: #222;
+				font-size: 1.2em;
+				font-weight: 500;
+				font-family: "Roboto", sans-serif;
+			}
+
+			/* information */
+			#siteinfo {
+				background-color: #0ff;
+			}
+
+
+			#developer {
+				background-color: #bee;
+			}
+
+
+
+			@media screen and (min-width: 1081px) {
+				#site {
+					display: grid;
+					grid-template-columns: auto auto;
+					gap: 40px;
+					width: 100%;
+					position: relative;
+				}
+
+				.spacing {
+					display: none;
+				}
+			}
+
+			/*	  
+	@media (max-device-width: 600) {}
+	@media (max-device-width: 1024) and (min-device-width: 601) {}
+	@media (min-device-width: 1025) {}
+	*/
+
+		</style>
+	</head>
+
+	<body onload="init();">
+		<div id="copyplain">copy plaintext (if this webpage does not display correctly)</div>
+		<h1>homework</h1>
+		<div id="site">
+			<div class="bg stuffdiv">
+				<div class="dategivenincl"><input type="checkbox" id="dategiven"><label for="dategiven">Include the date given</label></div>
+				<div id="toprightfilter">
+					<select id="filter">
+						<option value="undue">Show homework that is not due yet</option>
+						<option value="all">Show all homework including those overdue</option>
+						<option value="tmr">Show homework that is due tomorrow</option>
+						<option value="due" disabled>Show homework that was due today</option>
+						<option value="given" disabled>Show homework that was given today</option>
+					</select>
+				</div>
+				<div class="tablewrapper" id="wrap">
+					<div class="submitter">submitter</div>
+					<div class="subject">subject</div>
+					<div class="piece">homework name</div>
+					<div class="description">description</div>
+					<div class="due">due date</div>
+					<div id="giventbl">date given</div>
+					<div class="linebreak spantbl">
+						<hr>
+					</div>
+					<div class="loadingbar spantbl" id="load">Loading...</div>
+					<div class="none spantbl" id="none">There is either no homework or it has not been listed yet.</div>
+					<div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">lee_jia_hong_ansel@students.acsbr.org</a></div>
+				</div>
+				<hr class="half">
+				<p>List more homework by submitting the form at <a href="https://docs.google.com/forms/d/e/1FAIpQLSd2qsOo6LK7laqOeBY8KeaA29PR4rC5bPBkLTDvVgweidyIsw/viewform?usp=sf_link" target="_blank">https://docs.google.com/forms/d/e/1FAIpQLSd2qsOo6LK7laqOeBY8KeaA29PR4rC5bPBkLTDvVgweidyIsw/viewform?usp=sf_link</a>; <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">email me</a> for a key.</p>
+				<div id="share">
+					share
+					<div id="share_options">
+						<div class="inline"><button class="shareopt" id="s_share">share</button></div>
+						<div class="inline"><button class="shareopt" id="s_copy">copy</button></div>
+						<div class="inline"><button class="shareopt" id="send_discord">discord send</button></div>
+					</div>
+				</div>
+				<div id="send_discord_url" class="nodisp"><br>
+					<p>Discord webhook URL: <input type="url" id="send_discord_url_input">&nbsp;&nbsp;<button id="submit_discord_url">Post</button>&nbsp;&nbsp;<a href="https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks" target="_blank">help</a>.</p>
+					<p>please also include the protocol (http or https)</p>
+					<p class="nodisp" id="discordsend404">site returned a 404 error</p>
+					<p class="nodisp" id="discordsend401">Unauthorized. Headers:</p>
+				</div>
+
+				<p id="shareerr"></p>
+			</div>
+			<div class="spacing"></div>
+
+			<div id="subjcontainer" class="stuffdiv">
+				<h3>What's tomorrow?</h3>
+				<p id="timetableEdit"></p>
+				<p id="timetableNote"></p>
+				<p>Please note that this does not account for school and public holidays. Always double-check if you think that this system is wrong.<br> Any inaccuracies? Please email me at <a href="mailto:ansellee23@gmail.com">ansellee23@gmail.com</a>. <br>Code? <a href="https://jsfiddle.net/ansellee/jg5v12ro" target="_blank">jsfiddle.net/ansellee/jg5v12ro</a></p>
+			</div>
+			<div class="spacing"></div>
+
+
+			<div id="announcements" class="stuffdiv">
+				<h3>Announcements</h3>
+				<div id="list">
+					<div class="listitems">
+						By <span class="announceauthor">Loading...</span>:
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
+						<p class="announcetime">Today at 0000am</p>
+					</div>
+					<div class="space"></div>
+					<div class="listitems">By <span class="announceauthor">Lorem ipsum</span>:<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
+						<p class="announcetime">Today at 0000am</p>
+					</div>
+				</div>
+				<p class="emphasis">Official school announcements are at <a href="https://sites.google.com/a/students.acsbr.org/main/home">https://sites.google.com/a/students.acsbr.org/main/home</a></p>
+			</div>
+			<div class="spacing"></div>
+
+			<div id="siteinfo" class="stuffdiv">
+				<h3>This is a homework lister.</h3>
+				<p>Made by <a href="mailto:ansellee23@gmail.com" target="blank">Ansel Lee</a>, initally for my class.</p>
+				<h4>Timings:</h4>
+				<p>The timetable changes at 12pm, while the homework "due tomorrow" while show the next day's homework after 8am, and that day's homework before 8 a.m.</p>
+			</div>
+			<div class="spacing"></div>
+
+			<div id="developer" class="stuffdiv">
+				<h3>Developers and testing</h3>
+				<h4>switches</h4>
+				<p><input type="checkbox" id="offlinemode"><label for="offlinemode">&nbsp;test the offline mode - shows dummy text instead<br>To do so, change the filter twice after clicking this checkbox. **somehow announcements will not sync**<br><br>If this checkbox has been checked by accident, inform me.</label></p>
+				<br>
+				<hr class="half">
+				<h4>export</h4>
+				<div id="exportJSON">Copy raw JSON string</div>
+				<br><br>
+				<hr class="half">
+				<h4>Error logs</h4>
+				<div id="errorlogs"></div>
+			</div>
+			<div class="spacing"></div>
+		</div>
+
+		<div id="storvalues">
+			<input type="hidden" id="initialvalues_info">
+			<input type="hidden" id="allhw_info">
+			<input type="hidden" id="currentvalues_info">
+			<input type="hidden" id="fullyintegrated">
+			<input type="hidden" id="appsscriptlink">
+		</div>
+
+
+
+
+		<script>
+			'use strict'
+			// https://script.google.com/u/0/home/projects/18a6RaBCMyCh6sOV-ogjiAZl90WYEGD15ui-uEbI1H2qp-G3j9PKa2pKf/edit
+			// web app: https://script.google.com/macros/s/AKfycbwX0FRbXx_puZD6uMBkHLU1WyT2GDK94_X6A5_TNafiOzD1fSGlqUWewxz8nVyJ-N3q/exec
+			document.getElementById("appsscriptlink").value = "https://script.google.com/macros/s/AKfycbwX0FRbXx_puZD6uMBkHLU1WyT2GDK94_X6A5_TNafiOzD1fSGlqUWewxz8nVyJ-N3q/exec"
+
+			document.getElementById("load").style.display = 'block'
+			window.setTimeout(longresponse, 10000);
+
+			function longresponse() {
+				if (document.getElementById("load").style.display === 'block') {
+					document.getElementById("err").style.display = 'block';
+					document.getElementById("load").style.display = 'none';
+				}
+			}
+
+		</script>
+		
+		<script id="timetable">
+			 // timetable
+			'use strict'
+
+			function initTimetable() {
+				var editthis = document.getElementById("timetableEdit");
+				var notes = document.getElementById("timetableNote");
+				var now = new Date();
+				console.log(now)
+				var hoildays = [
+					[], // January - 0
+					[], // February
+					[], // March
+					[], // April
+					[1, 3, 13, 26], // May
+					[], // June - mainly due to the long term break, which will already be counted in by the weeks
+					[4, 20], // July
+					[9, 10], // August
+					[3], // September
+					[], // October
+					[4], // November
+					[] // December - practically useless
+				];
+				var timetable = ["",
+					// odd week
+					["English, History, D&T, <br /> Mother Tongue, Science, Geography"], //monday
+					["H-CUBE, Geography, English, <br /> Mother Tongue, Science, math"], //tuesday
+					["START LATE, Class time, PE, <br /> math, English, Music"], //wednesday
+					["WA/ Class Time, art, math, <br /> Science, Literature, Music, Mother Tongue"], //thursday
+					["Mother tongue, PE, Math, English, <br /> D&T, Chapel"], //friday
+
+					// even week
+					["Literature, Science, Art, <br /> D&T, PE, English"], //monday
+					["H-CUBE, Music, History, <br /> Mother Tongue, Geography, Math"], //tuesday
+					["START LATE, Class time, PE, <br /> math, Science, English"], //wednesday
+					["WA/Class Time,math,Mother Tongue, <br /> English, Literature, D&T, Science"], //thursday
+					["English, Art, math, History, <br /> Mother Tongue, Chapel"], //friday
+
+					// fallbacks
+					["How did I end up here?"],
+					["Yay! A term break"]
+				];
+				var weekoddeven = [ // gets the first monday of the week - true denotes odd and false denotes even 
+				{ 4: true, 11: false, 18: true, 25: false }, // January 
+				{ 1: true, 8: false, 15: true, 22: false }, // February 
+				{ 1: true, 8: false }, // March - partially due to the long term break 
+				{ 5: true, 12: false, 19: true, 26: false }, // April 
+				{ 3: true, 10: false, 17: true, 24: false }, // May 
+				{ 28: true }, // June 
+				{ 5: false, 12: true, 19: false, 26: true }, // July 
+				{ 2: false, 9: true, 16: false, 23: true, 30: false }, // August 
+				{ 13: true, 20: false, 27: true }, // September 
+				{ 4: false, 11: true, 18: false, 25: true }, // October 
+				{ 1: false, 8: true, 15: false }, // November 
+				{} // december 
+				]; //ACSBR has a 10-day/2-week timetable - anchor is by the monday of that week
+
+
+				function displayday(date) {
+					function get_next_weekday(date) {
+						var tomorrow = new Date(date.setDate(date.getDate() + 1));
+						return (
+								(tomorrow.getDay() % 6) && !(hoildays[tomorrow.getMonth()].includes(tomorrow.getDate()))) ?
+							// 0 is a falsey value. If getDay is divisible by 6, then it is 6 (saturday) or 0 (sunday). Therefore, it will return false if it is a weekend
+							// if holidays includes the day, then return false
+							tomorrow :
+							get_next_weekday(tomorrow);
+					} //credit: https://stackoverflow.com/a/39140133/13904265
+
+					if (date.getHours() < 12) {
+						date.setDate(date.getDate() - 1); //get next weekday will add 1 - so to include today we do this
+					}
+					return get_next_weekday(date);
+				}
+
+				function OddEven(date) {
+					console.log(date); // this is the second console log date, indicating the date of which it is fetching the timetable from. 
+					var prevMonday = new Date(+date);
+					prevMonday.setDate(prevMonday.getDate() - (prevMonday.getDay() + 6) % 7);
+					// subtracts the distance from the nearest monday
+					var subjects = weekoddeven[prevMonday.getMonth()][prevMonday.getDate()]
+						// returns true if odd, false if even or undefined
+						?
+						timetable[date.getDay()] // odd
+						:
+						weekoddeven[prevMonday.getMonth()][prevMonday.getDate()] !== false ?
+						timetable[12] //undefined
+						:
+						timetable[date.getDay() + 5]; // even
+					editthis.innerHTML = subjects; // format it
+					notes.innerHTML = date.getDate() + "/" + (date.getMonth() + 1);
+				}
+
+				OddEven(
+					displayday(new Date(+now)) //create a new variable of NOW so it does not reference the same one and override
+				)
+			}
+		</script>
+
+
+
+		<script>
+			'use strict'
+			document.getElementById("fullyintegrated").value = "yay"; // empty string if false; anything else if true
+			document.getElementById("offlinemode").checked = !(document.getElementById("fullyintegrated").value);
+
+			// the starting functions are in the bottommost script
+
+
+			document.getElementById("offlinemode").addEventListener("change", () => document.getElementById("fullyintegrated").value = (document.getElementById("offlinemode").checked ? "" : true));
+
+
+			// main - homework list and announcements
+			function hwlist_main() {
+				initMain();
+
+				function initMain() {
+					// set all elements to store data to an empty string
+					document.getElementById("initialvalues_info").value = "";
+					document.getElementById("currentvalues_info").value = "";
+					document.getElementById("initialvalues_info").value = "";
+					document.getElementById("allhw_info").value = "";
+
+					// pass values to html and intialise info
+					document.getElementById("fullyintegrated").value ? reqServer(HTMLUpdate)
+						// no internet connection or testing and building phase
+						:
+						setTimeout(
+							() => HTMLUpdate([[["22/3, Monday", "10/5, Monday"],["English", "Math"],["Lorem ipsum", "dolor sit amet"],["the quick brown fox jumps over the lazy dog", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."],["Ansel", "Ansel"], 2.0],[["Today at 3:36 p.m.", "Today at 3 p.m."],["Ansel Lee", " Ansel Lee"],["Welcome to the revamped page; version 1 of this system <br> How do you like it?", "This is a test announcement.<br>to see whether I can make line breaks with \<br> s"],["#fdfd96", "#00f"], 3]]), 1000);
+					document.getElementById("filter").value = "undue";
+
+					// prep date given system
+					document.getElementById("dategiven").addEventListener("change", dategivensys);
+
+					function HTMLUpdate(values) {
+						console.log("Fired!")
+						values = JSON.stringify(passtohtml(values));
+						document.getElementById("initialvalues_info").value = values;
+						document.getElementById("currentvalues_info").value = values;
+						console.log(values);
+					}
+				}
+
+				function reqServer(callback) {
+					function reqListener() {
+ 						callback(JSON.parse(this.responseText));
+					}
+
+					var xhr = new XMLHttpRequest();
+					xhr.addEventListener("load", reqListener);
+					xhr.open("POST", document.getElementById("appsscriptlink").value);
+					xhr.send("giveinfo");
+				}
+
+				function giveall() { //retrieves all info if in offline mode
+					return ([[[
+								"26/4, Monday", "26/4, Monday", "29/4, Thursday", "22/3, Monday", "9/3, Tuesday", "9/3, Tuesday", "10/3, Wednesday", "12/3, Friday", "13/3, Saturday", "24/3, Wednesday", "22/3, Monday", "22/3, Monday", "23/3, Tuesday", "25/3, Thursday", "29/3, Monday", "29/3, Monday", "30/3, Tuesday", "29/3, Monday", "29/3, Monday", "31/3, Wednesday", "31/3, Wednesday", "4/4, Sunday", "31/3, Wednesday", "31/3, Wednesday", "5/4, Monday", "6/4, Tuesday", "5/4, Monday", "12/4, Monday", "9/4, Friday", "13/4, Tuesday", "17/4, Saturday", "20/4, Tuesday", "22/4, Thursday", "6/4, Tuesday", "20/4, Tuesday", "20/4, Tuesday", "20/4, Tuesday", "20/4, Tuesday", "22/4, Thursday", "21/4, Wednesday"
+							],
+							// subject
+							["art", "Chinese", "Chinese", "Math", "literature", "Chinese", "English", "English", "Chinese", "PE", "Chinese", "English", "Chinese", "Chinese", "Chinese", "Math", "Chinese", "English", "English", "English", "Math", "literature", "English", "English", "English", "Geography ", "English", "art", "Chinese", "English", "Test", "Test", "art", "History", "Chinese", "geography", "Chinese", "History", "Science", "geography"],
+							// piece name
+							["Finish your pumpkin kettle or clip", "Page 57", "Rewrite Chinese paragraph writing", "Do what you have not done mark what you have not submitted.", "Please study for lit WA", "Xi Zi", "Distinction in English page 14", "Comprehension - Assumption English School ", "Textbook book page 40", "Clock 4km for Methodist walk and another 4km for cross country", "Read the book and answer the questions", "Write a composition", "Google classroom if you haven’t done", "作文", "Activity book", "Activity 5A", "Activity book", "Book thief annotation", "Holy innocence paper", "Page 21-26", "Whatever you haven’t done", "Check your email", "Page 21-26", "Page 21-26", "Distinction In English practice papers 1 and 2", "Worksheet if you haven’t done", "Distinction In English practice papers 1 and 2", "Finish the grid drawing", "Translation of location names", "Comprehension", "test", "This is a test. ", "Grid drawing", "Worksheet if you haven’t done", "习字", "Arrange your file for checking", "课本 Page 50 ", "Please prepare for WA", "Do your activity book and page 116", "Submit your geography file to me - ansel if you haven't"],
+							// description
+							["", "", "", "Refer to the google classroom for the list of people who have submitted; refer to the math google drive for the answers", "Read till (the end of) chapter 10; have a deep understanding until (the end of) chapter 5", "Write the words and the Han Yu Pin Yin four times and the english meaning once   <a href=\"https://classroom.google.com/c/MjUxNDczNzc3ODIy/p/MjczMDE2NzkzODA1\">Chinese google classroom</a>", "Questions 1 to 5", "Page 17-27", "Think about the answers", "", "", "On the topic of “An Embarrassing Moment”", "我们3月的假期作业是：\n\n1、阅读老师发给大家的华文书《面包特工队》。\n2、完成老师发给大家的“我的阅读之旅”阅读报告。\n3、完成新闻篇章阅读，完成阅读作业。作业在google classroom。", "Planner - textbook page 42, 43", "Till page 27", "", "Till page 34", "First two pages", "", "", "Till 5B", "", "", "", "", "", "", "Of the little birdie ", "", "", "test", "I hope you like the sharing functions so far!", "Pumpkin kettle or clip", "", "English meaning once, 汉语拼音 5 times", "", "Part 2 and 3", "", "If you have not done so", "Specifically register numbers 5, 8, 18, 21, 23, 24, 25, 30, 36,37, 38, 39"],
+							// submitter
+							["Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel", "Ansel"],
+							40, // data length
+							// dategiven
+							["22/4, Thursday", "23/4, Friday", "27/4, Tuesday", "5/3, Friday", "5/3, Friday", "7/3, Sunday", "9/3, Tuesday", "10/3, Wednesday", "11/3, Thursday", "12/3, Friday", "12/3, Friday", "12/3, Friday", "22/3, Monday", "22/3, Monday", "25/3, Thursday", "25/3, Thursday", "26/3, Friday", "26/3, Friday", "26/3, Friday", "29/3, Monday", "30/3, Tuesday", "30/3, Tuesday", "30/3, Tuesday", "1/4, Thursday", "1/4, Thursday", "5/4, Monday", "8/4, Thursday", "8/4, Thursday", "8/4, Thursday", "12/4, Monday", "16/4, Friday", "17/4, Saturday", "16/4, Friday", "17/4, Saturday", "19/4, Monday", "19/4, Monday", "19/4, Monday", "31/12, Friday", "20/4, Tuesday", "20/4, Tuesday"],
+							// today?
+							[false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
+						],
+
+						// announcements
+						[["26 March at 4:24 p.m."],["Ansel Lee"],["Please note that next week is an even week, and try not to talk in class during lesson time :).<br>enjoy your weekend!"],["#FFFF00"], 2
+						]
+					]);
+				}
+
+
+
+				function passtohtml(values) {
+					document.getElementById("currentvalues_info").value = JSON.stringify(values);
+					console.log(values);
+					console.log("rendering!")
+
+					function homework(stuff) {
+						console.log("where")
+						document.getElementById("load").style.display = 'none';
+						// values - due, subject, name, description, submitter, dataLength
+						var count = stuff[5] - 1;
+						var stringitup = '';
+						while (count > -1) {
+							stringitup += '<div class="submitter">' + stuff[4][count] + '</div><div class="subject">' + stuff[1][count] + '</div><div class="piece">' + stuff[2][count] + '</div><div class="description">' + stuff[3][count] + '</div><div class="due">' + stuff[0][count] + '</div>';
+							count = count - 1;
+						}
+						if (stuff[5] === 0) {
+							document.getElementById("none").style.display = 'block';
+						}
+						console.log([stringitup, count, stuff])
+						document.getElementById("wrap").innerHTML += stringitup;
+					}
+
+					function announcements(stuff) {
+						var count = stuff[4] - 2;
+						var stringitup = '';
+						while (count > -1) {
+							stringitup += '<div class="listitems" style="background-color: ' + stuff[3][count] + '">By <span class="announceauthor">' + stuff[1][count] + '</span>:<p>' + stuff[2][count] + '</p><p class="announcetime">' + stuff[0][count] + '</p></div>';
+							count = count - 1;
+						}
+						document.getElementById("list").innerHTML = stringitup;
+					}
+
+					homework(values[0]);
+					announcements(values[1]);
+					return values;
+				}
+
+
+
+				// date given
+				function dategivensys() {
+					var base = JSON.parse(document.getElementById("currentvalues_info").value);
+					console.log(base);
+
+					function clicktrue() {
+						function reflowhtml() { //repeats every time it is checked; only contains style adjustments
+							document.getElementById("dategiven").display = "block";
+							var elements = document.getElementsByClassName("given");
+							var count = elements.length - 1;
+							while (count > -1) {
+								elements[count].style.display = "block";
+								count = count - 1;
+							}
+							document.getElementById("giventbl").style.display = "block";
+							var elements = document.getElementsByClassName("spantbl");
+							var count = elements.length - 1;
+							while (count > -1) {
+								elements[count].style.gridColumn = '1/6';
+								count = count - 1;
+							}
+							document.getElementById("load").style.display = 'none';
+							if (base[0][5] === 0) {
+								document.getElementById("none").style.display = 'block';
+							}
+						}
+
+						function first(data) { //initialize first; loads everything
+							console.log("first!")
+							if (base[0][5]) {
+								var stringitup = '';
+								var stuff = base[0];
+								var count = stuff[1].length - 1;
+								while (count > -1) {
+									stringitup += '<div class="submitter">' + stuff[4][count] + '</div><div class="subject">' + stuff[1][count] + '</div><div class="piece">' + stuff[2][count] + '</div><div class="description">' + stuff[3][count] + '</div><div class="due">' + stuff[0][count] + '</div><div class="given">' + data[0][count] + '</div>';
+									count = count - 1;
+								}
+								document.getElementById("wrap").innerHTML = '<div class="submitter">submitter</div><div class="subject">subject</div><div class="piece">homework name</div><div class="description">description</div><div class="due">due date</div><div id="giventbl">date given</div><div class="linebreak spantbl"><hr></div><div class="loadingbar spantbl" id="load">Loading...</div><div class="none spantbl" id="none">There is either no homework or it has not been listed yet.</div><div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">lee_jia_hong_ansel@students.acsbr.org</a></div>';
+								document.getElementById("wrap").innerHTML += stringitup;
+								reflowhtml();
+							}
+						}
+
+						if (document.getElementsByClassName("given").length === 0) {
+							if (document.getElementById("filter").value !== 'all') { //getting all homework has been called, and is the current mode
+								document.getElementById("fullyintegrated").value ? google.script.run.withSuccessHandler(first).givendate() : first([
+									["5/3, Friday", "5/3, Friday"],
+									[false, false]
+								]);
+							} else {
+								reflowhtml();
+							}
+						} else {
+							reflowhtml();
+						}
+					}
+
+					function clickfalse() {
+						var elements = document.getElementsByClassName("spantbl");
+						var count = elements.length - 1;
+						document.getElementById("wrap").style.gridTemplateColumns = 'auto auto auto auto';
+						document.getElementById("giventbl").style.display = "none";
+						while (count > -1) {
+							elements[count].style.gridColumn = '1/5';
+							count = count - 1;
+						}
+						var count = base[0][5] - 1;
+						document.getElementById("dategiven").display = "block";
+						var elements = document.getElementsByClassName("given");
+						var count = elements.length - 1;
+						while (count > -1) {
+							elements[count].style.display = "none";
+							count = count - 1;
+						}
+						document.getElementById("giventbl").style.display = "none";
+						if (base[0][5] === 0) {
+							document.getElementById("none").style.display = 'block';
+						}
+					}
+
+					if (document.getElementById("dategiven").checked) {
+						clicktrue();
+					} else {
+						clickfalse();
+					}
+				}
+
+
+
+				// give all
+				document.getElementById("filter").addEventListener("change", changefilter);
+
+				function changefilter() {
+					switch (document.getElementById("filter").value) {
+						case "all":
+							// request info
+							document.getElementById("dategiven").checked = false;
+							giveall();
+							document.getElementById("fullyintegrated").value ? google.script.run.withSuccessHandler(receivedAllInfo).giveextra() : receivedAllInfo(giveall());
+							break;
+						case "undue":
+							updatehtml_nodg(JSON.parse(document.getElementById("initialvalues_info").value));
+							break;
+						case "tmr":
+							duetmr();
+							break;
+					}
+
+					function receivedAllInfo(values) {
+						updatehtml(values);
+						document.getElementById("allhw_info").value = JSON.stringify(values);
+						document.getElementById("currentvalues_info").value = JSON.stringify(values);
+					}
+
+					function duetmr() {
+						var listhw = JSON.parse(document.getElementById("initialvalues_info").value)[0];
+						var tomorrow = new Date();
+						tomorrow.setDate(tomorrow.getHours() > 8 ? tomorrow.getDate() + 1 : tomorrow); // get the next day's date if its past 9 o'clock - on wednesday we start at 830
+
+						//format date to be the same as human readable format
+						var lookforform = tomorrow.getDate() + "/" + (tomorrow.getMonth() + 1) + ", ";
+						console.log(lookforform);
+						// values - due, subject, name, description, submitter, dataLength
+						var copyoutlist = [
+							[],
+							[],
+							[],
+							[],
+							[]
+						];
+						var count = listhw[5] - 1;
+						while (count > -1) {
+							console.log(listhw[0][count].includes(lookforform));
+							if (listhw[0][count].includes(lookforform)) {
+								copyoutlist[0].push(listhw[0][count]);
+								copyoutlist[1].push(listhw[1][count]);
+								copyoutlist[2].push(listhw[2][count]);
+								copyoutlist[3].push(listhw[3][count]);
+								copyoutlist[4].push(listhw[4][count]);
+							}
+							count = count - 1;
+						}
+						copyoutlist.push(copyoutlist[0].length);
+						console.log(copyoutlist);
+						updatehtml_nodg([copyoutlist]);
+					}
+
+					function updatehtml_nodg(values) {
+						document.getElementById("currentvalues_info").value = JSON.stringify(values);
+						console.log(values);
+
+						function homework(stuff) {
+							// values - due, subject, name, description, submitter, dataLength
+							var count = stuff[5] - 1;
+							var stringitup = '';
+							document.getElementById("wrap").innerHTML = '<div class="submitter">submitter</div><div class="subject">subject</div><div class="piece">homework name</div><div class="description">description</div><div class="due">due date</div>' +
+								'<div class="linebreak spantbl"><hr></div><div class="loadingbar spantbl" id="load">Loading...</div><div class="none spantbl" id="none">There is either no homework under this filter or it has not been listed yet.</div><div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">lee_jia_hong_ansel@students.acsbr.org</a></div>';
+							while (count > -1) {
+								stringitup += '<div class="submitter">' + stuff[4][count] + '</div><div class="subject">' + stuff[1][count] + '</div><div class="piece">' + stuff[2][count] + '</div><div class="description">' + stuff[3][count] + '</div><div class="due">' + stuff[0][count] + '</div>';
+								count = count - 1;
+							}
+							if (stuff[5] === 0) {
+								document.getElementById("none").style.display = 'block';
+							}
+							document.getElementById("wrap").innerHTML += stringitup;
+							document.getElementById("load").style.display = 'none';
+						}
+
+						homework(values[0]);
+					}
+
+					function receivedAllInfo(values) {
+						updatehtml(values);
+						document.getElementById("allhw_info").value = JSON.stringify(values);
+						document.getElementById("currentvalues_info").value = JSON.stringify(values);
+					}
+
+					function updatehtml(values) {
+						document.getElementById("currentvalues_info").value = JSON.stringify(values);
+						console.log(values);
+
+						function homework(stuff) {
+							// values - due, subject, name, description, submitter, dataLength
+							var count = stuff[5] - 1;
+							var stringitup = '';
+							document.getElementById("wrap").innerHTML = '<div class="submitter">submitter</div><div class="subject">subject</div><div class="piece">homework name</div><div class="description">description</div><div class="due">due date</div>' +
+								'<div id="giventbl">date given</div><div class="linebreak spantbl"><hr></div><div class="loadingbar spantbl" id="load">Loading...</div><div class="none spantbl" id="none">There is either no homework or it has not been listed yet.</div><div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">lee_jia_hong_ansel@students.acsbr.org</a></div>';
+							while (count > -1) {
+								stringitup += '<div class="submitter">' + stuff[4][count] + '</div><div class="subject">' + stuff[1][count] + '</div><div class="piece">' + stuff[2][count] + '</div><div class="description">' + stuff[3][count] + '</div><div class="due">' + stuff[0][count] + '</div><div class="given">' + stuff[6][count] + '</div>';
+								count = count - 1;
+							}
+							if (stuff[5] === 0) {
+								document.getElementById("none").style.display = 'block';
+							}
+							document.getElementById("wrap").innerHTML += stringitup;
+							document.getElementById("load").style.display = 'none';
+						}
+
+						homework(values[0]);
+						var elements = document.getElementsByClassName("given");
+						var count = elements.length - 1;
+						while (count > -1) {
+							elements[count].style.display = "none";
+							count = count - 1;
+						}
+					}
+				}
+
+				document.getElementById("exportJSON").addEventListener("click", copyjsonstring);
+
+				function copyjsonstring() {
+					var objwithcomments = JSON.parse(document.getElementById("currentvalues_info").value)
+					console.log(objwithcomments)
+					document.getElementById("exportJSON").innerHTML = "copied!" + copy(document.getElementById("currentvalues_info").value);
+					setTimeout(aftercopying, 1500);
+
+					function aftercopying() {
+						document.getElementById("exportJSON").innerHTML = "Copy JSON string";
+					}
+				}
+
+			}
+			</script>
+
+
+
+
+
+
+
+
+
+
+
+			<script id="copyshare">
+			// share content
+			function sharecontent() {
+				initShare();
+				
+				function aftersharemsg(elm, msg){
+					var revert = elm.innerHTML;
+					console.log(revert);
+					elm.innerHTML = msg;
+					setTimeout(() => {elm.innerHTML = revert}, 1500);
+				}
+
+				function initShare() {
+					//add event listeners
+					document.getElementById("share").addEventListener("click", showopts);
+					document.getElementById("send_discord").addEventListener("click", disSend);
+					document.getElementById("copyplain").addEventListener("click", copytext);
+					document.getElementById("s_copy").addEventListener("click", copytext);
+
+					if (navigator.share) {
+						document.getElementById("s_share").addEventListener("click", sharetext);
+					} else {
+						// remove sharing if not available
+						document.getElementById("s_share").style.display = "none";
+					}
+
+					function showopts(e) {
+						if (document.getElementById("share_options").style.visibility == "visible" && e.currentTarget === e.target) {
+							document.getElementById("share_options").style.visibility = "hidden";
+							if (document.getElementById("send_discord_url").style.display = 'block') {
+								document.getElementById("send_discord_url").style.display = 'none';
+								document.getElementById("submit_discord_url").removeEventListener("click", disSend.postmessage);
+							}
+							return;
+						}
+						formtext();
+						document.getElementById("share_options").style.visibility = "visible";
+					}
+				}
+
+
+				function formtext() {
+					// form up the text
+					var items = [];
+					const homework = JSON.parse(document.getElementById("currentvalues_info").value)[0];
+					var count = homework[5] - 1;
+					while (count > -1) {
+						items.push(homework[1][count] + ": " + homework[2][count] + " - " + homework[3][count] + " <due " + homework[0][count] + ">");
+						count = count - 1;
+					}
+					var timetable = "\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n\n" + (document.getElementById("timetableEdit").innerHTML).replace("&amp;", "&");
+					var today = new Date();
+					var string = today.getDate() + "/" + (today.getMonth() + 1) + " homework\nalso on https://ansel-lee.github.io/homework\n\n" + items.join("\n\n") + timetable;
+					return string;
+				}
+				
+				async function sharetext() {
+					var sharethis = formtext();
+					try {
+						await navigator.share({
+							title: 'homework',
+							text: formtext(),
+							url: 'https://ansel-lee.github.io/homework',
+						});
+						aftersharemsg(document.getElementById("s_share"), "shared");
+					} catch (err) {
+						document.getElementById("errorlogs").innerHTML += "could not share. Error:" + err + "<br />";
+						if (err == "AbortError: Share canceled") {
+							aftersharemsg(document.getElementById("s_share"), "share canceled");
+						}
+					}
+				}
+
+
+				function disSend() {
+					disSend.postmessage = postmessage;
+					if (document.getElementById("send_discord_url").style.display === 'block') {
+						document.getElementById("send_discord_url").style.display = 'none';
+						document.getElementById("submit_discord_url").removeEventListener("click", postmessage);
+						return //stop the process, and hide the bottom fields
+					}
+					document.getElementById("send_discord_url").style.display = 'block';
+					document.getElementById("submit_discord_url").addEventListener("click", postmessage);
+
+					function postmessage() {					
+						//check URL
+						var sendURL = document.getElementById("send_discord_url_input").value
+						if (sendURL === "") {return;}
+						
+						document.getElementById("submit_discord_url").disabled = true;
+						setTimeout(undisablebutton, 500);
+						function undisablebutton() {
+							document.getElementById("submit_discord_url").disabled = false
+						}
+
+					
+						//homework
+						var initialdata = JSON.parse(document.getElementById("currentvalues_info").value);
+						var title = "homework";
+						var items = [];
+						while (count > -1) {
+							items.push(initialdata[0][1][count] + ": " + initialdata[0][2][count] + " - " + initialdata[0][3][count] + " <due " + initialdata[0][0][count] + ">");
+							count = count - 1;
+						}
+						var today = new Date();
+
+						//announcements
+						var announcefields = [];
+						var count = initialdata[1][4] - 2;
+						var stringitup = '';
+						while (count > -1) {
+							announcefields.push({
+								"name": "By " + initialdata[1][1][count],
+								"value": initialdata[1][2][count] +
+									'\n' + initialdata[1][0][count]
+							});
+							count = count - 1;
+						}
+						var colourcode = initialdata[1][3][initialdata[1][4] - 2].substring(1);
+						if (colourcode.length == 3) {
+							colourcode = colourcode[0] + colourcode[0] + colourcode[1] + colourcode[1] + colourcode[2] + colourcode[2];
+						}
+
+						//send parameters
+						var request = new XMLHttpRequest();
+						try {
+							request.open("POST", sendURL);
+						} catch(e) {
+							document.getElementById("errorlogs").innerHTML += "XMLHttpRequest (xhr) error on open: " + e + "<br />";
+							return;
+						}
+						
+						request.setRequestHeader('Content-type', 'application/json');
+						request.onload = function(e) {
+							if (request.readyState === 4) {
+								switch (request.status) {
+									case 200:
+									case 204:
+							 			console.log(request.responseText);
+										aftersharemsg(document.getElementById("submit_discord_url"), "sent!")
+										break;
+									case 404:
+										document.getElementById("send_discord_url_input").value = "";
+										console.log("not found error on xhr send");
+										document.getElementById("errorlogs").innerHTML += "XMLHttpRequest(xhr) send error " + request.status + " " + request.statusText + "<br />";
+										document.getElementById("discordsend404").style.display = "block";
+										document.getElementById("send_discord_url_input").addEventListener("input", () => document.getElementById("discordsend404").style.display = "none", {once: true});
+										break;
+									case 401:
+										console.log("401 unauthorized on xhr send");
+										console.log(request.responseText);
+										document.getElementById("errorlogs").innerHTML += "XMLHttpRequest (xhr) send error 401: " + request.responseText + "<br />";
+										document.getElementById("discordsend401").style.display = "block";
+										document.getElementById("discordsend401").innerHTML = "unautorized. Headers: " + request.responseText;
+										document.getElementById("send_discord_url_input").addEventListener("input", () => document.getElementById("discordsend401").style.display = "none", {once: true});
+										break;
+
+									default:
+										document.getElementById("errorlogs").innerHTML += "XMLHttpRequest(xhr) send error " + request.status + " " + request.statusText + "<br />";
+										if (request.status === 404) {
+											document.getElementById("discordsend404").style.display - "block";
+										}
+										break;
+								}
+							}
+						};
+						
+						request.onerror = function(e) {
+							document.getElementById("errorlogs").innerHTML += "An error occured in XMLHttpRequest(xhr) send <br />";
+						};
+						var params = {
+							"username": "homework",
+							"avatar_url": "",
+							"content": today.getDate() + "/" + today.getMonth() + " homework\nalso on https://ansel-lee.github.io/homework\n\n",
+							"embeds": [{
+								"title": "Homework",
+								"color": 16645526,
+								"description": items.join("\n\n")
+							}, {
+								"title": "What's tomorrow",
+								"color": 15658734,
+								"description": (document.getElementById("timetableEdit").innerHTML).replace("&amp;", "&")
+							}, {
+								"title": "announcements",
+								"color": parseInt(colourcode, 16),
+								"fields": announcefields
+							}]
+						};
+						request.send(JSON.stringify(params));
+					}
+				}
+				
+				
+
+				function copytext() {
+					var sharethis = formtext();
+					var promise = new Promise(() => copy(sharethis))
+					promise.then(aftersharemsg(document.getElementById("s_copy"), "copied!"));
+				}
+			}
+
+
+			//copy text vendor
+			function fallbackCopyTextToClipboard(text) {
+				var textArea = document.createElement("textarea");
+				textArea.value = text;
+
+				// Avoid scrolling to bottom
+				textArea.style.top = "0";
+				textArea.style.left = "0";
+				textArea.style.position = "fixed";
+
+				document.body.appendChild(textArea);
+				textArea.focus();
+				textArea.select();
+
+				try {
+					var successful = document.execCommand('copy');
+					var msg = successful ? 'successful' : 'unsuccessful';
+					console.log('Fallback: Copying text command was ' + msg);
+					if (!successful) {
+						document.getElementById("errorlogs").innerHTML += "Copying text was unsuccessful. No error was caught <br />"
+					}
+				} catch (err) {
+					console.error('Fallback: Oops, unable to copy', err);
+				}
+
+				document.body.removeChild(textArea);
+			}
+
+			function copy(text) {
+				if (!navigator.clipboard || !!window.chrome) {
+					fallbackCopyTextToClipboard(text);
+					return "";
+				}
+				navigator.clipboard.writeText(text).then(function() {
+					console.log('Async: Copying to clipboard was successful!');
+				}, function(err) {
+					console.error('Async: Could not copy text: ', err);
+				});
+				return "";
+			}
+
+		</script>
+		<script id="startup">
+			function init() {
+				sharecontent();
+				initTimetable();
+				hwlist_main();
+				document.getElementById("dategiven").checked = false;
+			}
+		</script>
+	</body>
+
+</html>
