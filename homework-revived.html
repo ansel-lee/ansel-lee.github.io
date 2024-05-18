@@ -358,7 +358,11 @@
 					<div class="error spantbl" id="err">We have encountered an error, please email me at <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">lee_jia_hong_ansel@students.acsbr.org</a></div>
 				</div>
 				<hr class="half">
-				<p>List more homework by submitting the form at <a href="https://docs.google.com/forms/d/e/1FAIpQLSd2qsOo6LK7laqOeBY8KeaA29PR4rC5bPBkLTDvVgweidyIsw/viewform?usp=sf_link" target="_blank">https://docs.google.com/forms/d/e/1FAIpQLSd2qsOo6LK7laqOeBY8KeaA29PR4rC5bPBkLTDvVgweidyIsw/viewform?usp=sf_link</a>; <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">email me</a> for a key.</p>
+				<p>
+					List more homework by submitting the form at 
+					<!--<a href="https://docs.google.com/forms/d/e/1FAIpQLSd2qsOo6LK7laqOeBY8KeaA29PR4rC5bPBkLTDvVgweidyIsw/viewform?usp=sf_link" target="_blank">https://docs.google.com/forms/d/e/1FAIpQLSd2qsOo6LK7laqOeBY8KeaA29PR4rC5bPBkLTDvVgweidyIsw/viewform?usp=sf_link</a>; <a href="mailto:lee_jia_hong_ansel@students.acsbr.org" target="_blank">email me</a> for a key.-->
+					[Please ask me personally for the link, since this project has become public]
+				</p>
 				<div id="share">
 					share
 					<div id="share_options">
@@ -443,8 +447,11 @@
 			'use strict'
 			// https://script.google.com/u/0/home/projects/18a6RaBCMyCh6sOV-ogjiAZl90WYEGD15ui-uEbI1H2qp-G3j9PKa2pKf/edit
 			// web app: https://script.google.com/macros/s/AKfycbwX0FRbXx_puZD6uMBkHLU1WyT2GDK94_X6A5_TNafiOzD1fSGlqUWewxz8nVyJ-N3q/exec
-			document.getElementById("appsscriptlink").value = "https://script.google.com/macros/s/AKfycbwX0FRbXx_puZD6uMBkHLU1WyT2GDK94_X6A5_TNafiOzD1fSGlqUWewxz8nVyJ-N3q/exec"
+			// document.getElementById("appsscriptlink").value = "https://script.google.com/macros/s/AKfycbwX0FRbXx_puZD6uMBkHLU1WyT2GDK94_X6A5_TNafiOzD1fSGlqUWewxz8nVyJ-N3q/exec"
 
+			// current web app (since students.acsbr.org still works):
+			// https://script.google.com/u/1/home/projects/1G9XDZHZ5vBKdjmd5dRH4QJ2yRV2z1B6uQi-Mm9mruhVknHyxj5DwUrOb/edit
+			document.getElementById("appsscriptlink").value = "https://script.google.com/macros/s/AKfycbxm7Llc6wJ5-HjU7WVr8_gsx4YHGGMRRHqjQrmF9J2vo9MRlUG_P4FmgqT-eUD4HzUGmg/exec"
 			document.getElementById("load").style.display = 'block'
 			window.setTimeout(longresponse, 10000);
 
@@ -570,6 +577,8 @@
 
 
 			// main - homework list and announcements
+			// I still have no idea why I didn't put my functions in global scope ://
+			// now its harder to debug (I can't call functions from console)
 			function hwlist_main() {
 				initMain();
 
@@ -581,7 +590,7 @@
 					document.getElementById("allhw_info").value = "";
 
 					// pass values to html and intialise info
-					document.getElementById("fullyintegrated").value ? reqServer(HTMLUpdate)
+					document.getElementById("fullyintegrated").value ? reqServer(0, HTMLUpdate)
 						// no internet connection or testing and building phase
 						:
 						setTimeout(
@@ -600,15 +609,16 @@
 					}
 				}
 
-				function reqServer(callback) {
+				function reqServer(context, callback) {
 					function reqListener() {
+						document.getElementById("currentvalues_info").value = JSON.stringify(this.responseText);
  						callback(JSON.parse(this.responseText));
 					}
 
 					var xhr = new XMLHttpRequest();
 					xhr.addEventListener("load", reqListener);
 					xhr.open("POST", document.getElementById("appsscriptlink").value);
-					xhr.send("giveinfo");
+					xhr.send(["giveinfo", "givendate", "giveextra"][context]);
 				}
 
 				function giveall() { //retrieves all info if in offline mode
@@ -722,10 +732,12 @@
 
 						if (document.getElementsByClassName("given").length === 0) {
 							if (document.getElementById("filter").value !== 'all') { //getting all homework has been called, and is the current mode
-								document.getElementById("fullyintegrated").value ? google.script.run.withSuccessHandler(first).givendate() : first([
-									["5/3, Friday", "5/3, Friday"],
-									[false, false]
-								]);
+								document.getElementById("fullyintegrated").value 
+									? reqServer(1, first) //google.script.run.withSuccessHandler(first).givendate() 
+									: first([
+										["5/3, Friday", "5/3, Friday"],
+										[false, false]
+									]);
 							} else {
 								reflowhtml();
 							}
@@ -775,7 +787,9 @@
 							// request info
 							document.getElementById("dategiven").checked = false;
 							giveall();
-							document.getElementById("fullyintegrated").value ? google.script.run.withSuccessHandler(receivedAllInfo).giveextra() : receivedAllInfo(giveall());
+							document.getElementById("fullyintegrated").value 
+								? reqServer(2, receivedAllInfo) //google.script.run.withSuccessHandler(receivedAllInfo).giveextra() 
+								: receivedAllInfo(giveall());
 							break;
 						case "undue":
 							updatehtml_nodg(JSON.parse(document.getElementById("initialvalues_info").value));
@@ -851,7 +865,6 @@
 					function receivedAllInfo(values) {
 						updatehtml(values);
 						document.getElementById("allhw_info").value = JSON.stringify(values);
-						document.getElementById("currentvalues_info").value = JSON.stringify(values);
 					}
 
 					function updatehtml(values) {
