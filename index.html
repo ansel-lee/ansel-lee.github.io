@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Ansel's Portfolio </title>
+		<link rel="stylesheet" href="portfolio.css">
+		<script src="portfolio.js"></script>
+		<link rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono">
+		<link rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Protest+Revolution">
+		<script>
+				/*to prevent Firefox FOUC, this must be here*/
+				let FF_FOUC_FIX;
+		</script>
+	</head>
+
+	<body class="custom-font" onload="init()"">
+		<div class="scroll-container">
+			<div id="cover" class="snap-start">
+				<div id="cover-headings">
+					<div class="slider">
+						<h1 class="big-heading cover-text">Hello there!</h1>
+						<div class="slider-div slider-hidden"></div>
+					</div>
+					<div class="slider">
+						<h3 class="big-heading cover-text">Thanks for coming</h3>
+						<div class="slider-div slider-hidden"></div>
+					</div>
+					<div class="slider">
+						<h1 class="big-heading cover-text" style="font-size: 4rem">
+							<!-- E-Portfolio of<br> -->
+							{ name:<p>Ansel Lee</p> }
+						</h1>
+						<div class="slider-div slider-hidden"></div>
+					</div>
+				</div>
+				<!-- <img src="https://interactive-examples.mdn.mozilla.net/media/examples/lizard.png"> -->
+				<div class="scroll-hint"
+					onclick="smoothTo('#projects');window.target = 'projects'">
+					<div></div>
+					<div></div>
+				</div>
+			</div>
+
+			<!-- Navigation -->
+			<header>
+				<ol class="nav-list">
+					<li class="slider">
+						<h3 id="nav-header">Navigation</h3>
+						<div class="nav-slider-div slider-hidden"></div>
+					</li>
+					<li class="nav-li slider">
+						<a class="a-nav" href="#cover">Top</a>
+						<div class="nav-slider-div slider-hidden"></div>
+					</li>
+					<li class="nav-li slider">
+						<a class="a-nav" href="#projects" onclick="return false;">Projects</a>
+						<div class="nav-slider-div slider-hidden"></div>
+					</li>
+					<li class="nav-li slider">
+						<a class="a-nav" href="#about-me">About me</a>
+						<div class="nav-slider-div slider-hidden"></div>
+					</li>
+					<li class="nav-li slider">
+						<a class="a-nav" href="#achievements">Achievements</a>
+						<div class="nav-slider-div slider-hidden"></div>
+					</li>
+					<li class="nav-li slider">
+						<a class="a-nav" href="#skills">Skills</a>
+						<div class="nav-slider-div slider-hidden"></div>
+					</li>
+					<!--li class="nav-li slider">
+						<a class="a-nav" href="#docs">Document Links</a>
+						<div class="nav-slider-div slider-hidden"></div>
+					</li-->
+				</ol>
+				<!-- <div class="row-of-items pad-left"> -->
+				<!--   <div class="header-element" -->
+				<!-- </div> -->
+			</header>
+
+			<div id="navhintfloat"><span></span></div>
+
+			<div id="projects" class="snap-start sectionMargin">
+				<div class="section">
+					<h5>Projects</h5>
+					<!--div class="overflow-container"-->
+					<div class="cardcontainer">
+						<div class="flex-col">
+							<h6>My portfolio</h6>
+							<p>
+								After being started in a random computing lesson on a Wednesday,
+								before recess,
+								Kevin Langner and I have worked on this site, (Kevin learnt HTML
+								just to help me with this :D)
+								This is the first time I experimaent with transitions, and
+								do a proper write-up for all my projects.
+							</p>
+							<br>&nbsp
+							<a class="openbutton"
+								href="https://github.com/A-gmaE-programmer/portfolioSite/tree/ansel"
+								target="_blank">
+								<p>Shared Repository</p>
+							</a>
+						</div>
+						<div class="flex-col">
+							<h6>Query System</h6>
+							<p>
+								This project was originally built for the ACSBR Science
+								Department to inform students of their shifts, with refernce
+								to their name. Over the years, I have added Sign In With Google
+								and password hashing. With the introduction of AllEars by MOE, this
+								project
+								sadly only was used once in 2023.
+							</p>
+							<br>&nbsp
+							<a class="openbutton" href="https://ansel-lee.github.io/querysystem"
+								target="_blank">
+								<p>Open</p>
+							</a><a class="openbutton"
+								href="https://github.com/ansel-lee/ansel-lee.github.io/tree/main/querysystem"
+								target="_blank">
+								<p>Repository</p>
+							</a><a class="openbutton"
+								href="https://docs.google.com/spreadsheets/d/1DlBwnURLAjjN7KXmJI8qJxoQ1X0FplzFFmkUX7SsOzg/edit?usp=sharing"
+								target="_blank">
+								<p>Data Sheet</p>
+							</a>
+						</div>
+						<div class="flex-col">
+							<h6>Homework Lister</h6>
+							<p>
+								My first big web development project! Written in 2021,
+								I created a one-stop shop for all reminders to my classmates
+								listing, all the homework, announcements and even a (hardcoded)
+								timetable for my class to refer to there. <br />
+								This is where I learnt that the Github + Google Apps Script + Google
+								Sheets "stack" can run my site for free!
+							</p>
+							<img src="img/homework-site.PNG" />
+							<br />&nbsp
+							<a class="openbutton"
+								href="https://ansel-lee.github.io/homework-revived"
+								target="_blank">
+								<p>Open</p>
+							</a><a class="openbutton"
+								href="https://github.com/ansel-lee/ansel-lee.github.io/blob/main/homework-revived.html"
+								target="_blank">
+								<p>Repository</p>
+							</a>
+						</div>
+						<div class="flex-col biggerflex">
+							<h6>Leading Robotics CCA VIA</h6>
+							<p>
+								Being the in-charge for my CCA's VIA, I planned and taught 12
+								(unrelated) students basic Spike Prime at MacPherson CC.
+								Despite the percieved difficulty teaching advanced concepts such as
+								line tracing without having them zone out, we pressed on and had a
+								fulfilling time!
+
+								<span class="morebutton nodisp">More...</span>
+								<span class="more"> <br />
+									Curriculum and slides were planned by me (hence the big comic sans)
+									and edited by Daniel. CCA Teachers were impressed,
+									and we managed to engage the learners throughout.
+								</span>
+								<img src="img\vlcsnap-2024-05-21-18h01m28s638.png" />
+							</p>
+							<br>&nbsp
+							<a class="openbutton"
+								href="https://docs.google.com/presentation/d/10Sixx4PNaFkWEr2Bp4HMqglnHrp_yVWFarNPphLXByc/edit?usp=sharing"
+								target="_blank">
+								<p>Slides (by request only)</p>
+							</a>
+						</div>
+						<div class="flex-col">
+							<h6>Booklist Project</h6>
+							<p>
+								My last coding project for my school, and my most complicated one yet.
+								Written at the end of 2023, this booklist listing system is specfically
+								programmed to accomodate three different systems. Namely, PG1, 2, 3
+								(Sec 1),
+								Lower Secondary Express, N(A), N(T) (Sec 2) and Upper Secondary Subject
+								Combinations (Sec 3 and Sec 4).
+								<span class="morebutton nodisp">More...</span>
+								<span class="more"><br />It doesn't show the price as my IT department
+									did not want to look like being biased to Pacific Bookstores, and from
+									this project I learnt that in the future I should use td and tr
+									instead of CSS Grid, as
+									merging cells are a pain (if you're curious, you can see the
+									mathematics in the JavaScript file in the Repository).</span>
+							</p>
+							<br>&nbsp
+							<a class="openbutton"
+								href="https://ansel-lee.github.io/booklist-project/"
+								target="_blank">
+								<p>Open</p>
+							</a><a class="openbutton"
+								href="https://github.com/ansel-lee/ansel-lee.github.io/tree/main/booklist-project"
+								target="_blank">
+								<p>Repository</p>
+							</a><a class="openbutton"
+								href="https://docs.google.com/spreadsheets/d/1te9p03f_50dk40_lmvGz-Yu1NOU6iHv4Q81-F0W_G6Y/edit?usp=sharing"
+								target="_blank">
+								<p>Data Sheet (by request only)</p>
+							</a>
+						</div>
+					</div>
+					<!--/div-->
+				</div>
+			</div>
+
+			<div id="about-me" class="snap-start sectionMargin">
+				<div class="section">
+					<h5>About Me</h5>
+					<!--
+						Side left | Side Right
+						img | text
+						text         | img
+
+						mobile:
+						text
+						img
+					-->
+					<div class="sidebyside">
+						<div class="onerow">
+							<p class="sideleft biggerside">
+								I enjoy programming, and thinking of how to solve problems. I find a
+								little bit of troubleshooting entertaining, just that it takes
+								a little too much of my study time.
+							</p>
+							<img class="sideright smallerside" src="img\code.png" /></div>
+						<div class="onerow">
+							<p class="sideright biggerside">
+								Other than coding software, I also enjoy building and coding robots.
+								Having done a little of NXT, EV3, EV3 Classroom and now Spike Prime,
+								oh how times have changed!
+								In 2019, I represented Singapore at the World Robot Olympiad in
+								Hungary. I feel that Robotics is more troubleshooting, keeping
+								your cool, lifting weights (computer and robots) and running back and
+								forth between playfields and workstations.
+								In my freetime during the pandemic, I built a lego lift (destroyed
+								by my little sister).
+								<br />
+								Here's a little google site that I made when I was young.
+								<br />
+								<br /><a class="openbutton"
+								href="https://sites.google.com/view/ansellee/computer-and-robotics/ev3"
+								target="_blank">
+								site
+								</a>
+							</p>
+							<img src="img\P5050845.JPG" class="sideleft smallerside">
+							
+						</div>
+						<div class="onerow">
+							<p class="sideleft biggerside">
+								I LOVE playing Cities: Skylines.
+								The splash/cover image for this site is Attractive District station.
+								Fixing traffic and optimising train interchanges are my favourite
+								activities. However, if more people take the trains, the roads will be 
+								less congested and there is less to fix :p.<br />
+								By the way, here's another of my city's cross-platform
+								train interchanges, aptly named Interchange Park (ES4/DX7).<br />
+								<span class="morebutton nodisp">More...</span>
+								<span class="more">
+									The Downtown Crossing Line (Spruce Hills DX1 to Ultra Ulu DX9) is blue,
+									Top-left to SR6/DX6 Art Museum and Bottom-Right to Lalaland (CC9/DX8).
+									The Southeast Express Line (Grapevine ES1 to NearTheTrees ES7) is
+									yellow. Left to hideout (ES5) and after a curve, Airport (NS8/ES3) is
+									on the top right.
+								</span>
+
+							</p>
+							<img class="sideright smallerside" src="img\Screenshot 1276.png"></div>
+						<div class="onerow" id="piano">
+							<p class="sideright biggerside">
+								When I'm frustrated with my code/homework, I can be found around my
+								piano (hopefully not screaming at my fingers). I have served in my
+								school's chapel band, and am going for Grade 5 ABRSM this year.
+							</p>
+							<img src="img\chapelband.JPEG" class="sideleft smallerside"></div>
+						<div class="onerow">
+							<p class="sideleft biggerside">
+								I started on video editing last year. Currently, I
+								display road, route or station information using inkscape, and add
+								tunes recorded on my piano to
+								my Cities: Skylines in-game footage.
+								<span class="morebutton">More...</span>
+								<span class="more">
+									Due to my computer's low performance and framerate, I also use
+									ffmpeg to
+									<a
+										href="https://stackoverflow.com/questions/37088517/remove-sequentially-duplicate-frames-when-using-ffmpeg">
+										drop duplicate frames.
+									</a><br />
+									I've recorded multiple videos, such as truck journeys on highway
+									viaducts and traffic on interchanges, but only fully edited
+									some. Of those, only a handful are published, as districts
+									and roads are usually named after my friends.
+									<br />
+								</span>
+							</p>
+							<a href="https://youtu.be/q9stTDcR8wE"><iframe width="600px"
+									height="300px"
+									src="https://www.youtube.com/embed/q9stTDcR8wE"
+									title="the train chimes in my Cities: Skylines town"
+									frameborder="0"
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+									referrerpolicy="strict-origin-when-cross-origin"
+									allowfullscreen>
+								</iframe></a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="achievements" class="snap-start sectionMargin">
+				<div class="section">
+					<h5>Achievements</h5>
+					<div class="cardcontainer rightscroll" tabindex="0">
+						<div class="flex-col">
+							<h6>NOI Bronze</h6>
+							<p>
+								In 2023, I learnt C++ just for this competition and 
+								the algorithms seem very interesting!
+							</p>
+							<img src="img/ansel_NOI.PNG">
+						</div>
+						<div class="flex-col">
+							<h6>Subject Excellence Prize 2023 - Computing</h6>
+							<p>Some friendly competition with Kevin (who I built this 
+								site with), for this prize :D.
+							</p>
+							<img src="img/ansel_SEP.JPEG">
+						</div>
+						<div class="flex-col">
+							<h6>Edusave Scholarship 2023</h6>
+							<img src="img/cert2.jpg">
+						</div>
+						<div class="flex-col">
+							<h6>ICAS Comepetition 2021 - Distinction</h6>
+							<p>One of my my medal certificates in math competitions.</p>
+							<img src="img/cert1.jpg">
+						</div>
+						<div class="flex-col">
+							<h6>...and many more!</h6>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="skills" class="snap-start sectionMargin">
+				<div class="section">
+					<div class="overflow-container">
+						<h5>Skills</h5>
+						<div class="minicontainer">
+							<div class="colors hov-float">
+								<h6 class="language-name">Python</h6>
+							</div>
+							<div class="colors hov-float">
+								<h6 class="language-name">HTML/CSS/JS</h6>
+							</div>
+							<div class="colors hov-float">
+								<h6 class="language-name">C++</h6>
+							</div>
+							<div class="colors hov-float">
+								<h6 class="language-name">LEGO Mindstorms</h6>
+							</div>
+							<div class="colors hov-float">
+								<h6 class="language-name">Scratch</h6>
+							</div>
+							<div class="colors hov-float">
+								<h6 class="language-name">Google Apps Script</h6>
+							</div>
+						</div>
+					</div>
+					<p>
+						+<i>Some</i>  communication skills (monitor for 3 years; VIA IC in my CCA)<br /><br />
+						For typed code (C++, Web Development), I use VSCode on Windows<br />
+						For server side operations, I run Google Apps Script that calls a Google Sheet database 
+						(with formulas to simplify code). This lets me run code for free (can see Querysystem
+						for details). The HTML will usually be sent as a file, hosted Github Pages or
+						embedded on Google Sites (easier for teachers to control access to data)<br /><br />
+						I've participated in Hack@AC, Sibberrsec, and will attend YCEP for exposure to 
+						cybersecurity
+					</p>
+				</div>
+			</div>
+
+			<!--<div id="docs" class="snap-start sectionMargin">
+				<div class="section">
+				<h5>Document Links</h5>
+				<p>
+					These documents may contain private information.
+					Thus, the links will only work if it was shared directly with you.
+					Most application portals accept document submission. Hence, this section
+					will most likely remain empty for now.
+				</p>
+				</div>
+			</div>-->
+
+			<div id="credits" class="snap-start">Made by Kevin Langner and Ansel
+				Lee</div>
+		</div>
+	</body>
+</html>
