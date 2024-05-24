@@ -702,9 +702,9 @@ button:active {
 	margin: auto;
 }
 
-#languages>div.cardcontainer>div {
-	object-fit: stretch;
-	max-width: 150px;
+#skills {
+	font-size: 1.3rem;
+	line-height: 1.6rem;
 }
 
 
@@ -820,6 +820,26 @@ button:active {
 		left: calc(100% + 2rem);
 		opacity: 0.5;
 	}
+}
+
+.contactcard {
+	border-radius: 5px;
+	padding: 5px;
+	background-color: white;
+	width: 32px;
+	height: 32px;
+	text-decoration: none;
+	border: 2px solid white;
+	display: inline-block;
+}
+
+.contactcard:hover {
+	cursor: pointer;
+	border: 2px solid yellow;
+}
+
+.contactcard img {
+	width: 32px;
 }
 
 #credits {
