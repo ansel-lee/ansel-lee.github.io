@@ -100,17 +100,12 @@ function shuffle(array) {
 // Shuffle css colors
 function shuffle_colors() {
     let colors = [
-        "#EFB5E8", "#EF9CEE",
-        "#B28BFF", "#D5AAFF",
-        "#FFBB44", "#FFE56A",
-        "#FFABAB", "#D35FA0",
-        "#6EB5FF", "#3E90FF",
-        "#85D3AF", "#90EE90"
+        "#EFB5E8", "#EF9CEE", "#B28BFF", "#D5AAFF",
+        "#FFBB44", "#FFE56A", "#FFABAB", "#D35FA0",
+        "#6EB5FF", "#3E90FF", "#85D3AF", "#90EE90"
     ]
     // https://www.color-hex.com/color-palette/109958
-    let darkercolors = [
-        "#997d84", "#927d99", "#7d8499", "#84997d", "#99927d"
-    ]
+    let darkercolors = ["#997d84", "#927d99", "#7d8499", "#84997d", "#99927d"];
     shuffle(colors);
     shuffle(darkercolors);
     let stylesheet = document.getElementById("colours");
@@ -172,29 +167,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // console.log(event);
         let cov_head = document.getElementById("cover-headings")
-        console.log(checkInView(cov_head, -0.25 * window.innerHeight))
+        //console.log(checkInView(cov_head, -0.25 * window.innerHeight))
         cov_head_watcher.update(checkInView(cov_head, -0.25 * window.innerHeight));
         nav_watcher.update(checkInView(nav));
     });
-
-    /*
-    // Apply smooth scrolling to navlist
-    let nav_lis = document.getElementsByClassName('nav-li')
-    for (let i = 0; i < nav_lis.length; i++) {
-        let children = nav_lis[i].children;
-        for (let j = 0; j < children.length; j++) {
-            let child = children[j];
-            if (child.tagName != 'A') { continue };
-            if (child.className != 'a-nav') { continue };
-            let target = child.href.split('#')[1];
-            let buttonElm = document.createElement('button');
-            buttonElm.className = 'a-nav';
-            buttonElm.setAttribute('onClick', `smoothTo('#${target}');window.target = '${target}'`);
-            buttonElm.innerHTML = child.innerHTML;
-            nav_lis[i].appendChild(buttonElm);
-            child.remove();
-        }
-    }*/
 })
 
 
