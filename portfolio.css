@@ -716,10 +716,10 @@ button:active {
 
 
 
-/* Scroll Snap */
+/* Scroll Snap 
 .snap-start {
 	scroll-snap-align: start;
-}
+}*/
 
 .scroll-container {
 	position: relative;
