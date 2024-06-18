@@ -240,8 +240,8 @@ function init() {
     // https://www.color-hex.com/color-palette/109958
     let darkercolors = ["#997d84", "#927d99", "#7d8499", "#84997d", "#99927d"]
     let colorStyle2 = "";
-    for (let i=0; i < darkercolors.length; i++) {
-        colorStyle2 += ` .onerow:nth-child(${i + 1}) { background-color: ${darkercolors[i]}; }`;
+    for (let i=0; i < document.getElementsByClassName("onerow").length; i++) {
+        colorStyle2 += ` .onerow:nth-child(${i + 1}) { background-color: ${darkercolors[i%darkercolors.length]}; }`;
     }
     let style2 = document.createElement("style");
     style2.id = "aboutme-tilecolor";
