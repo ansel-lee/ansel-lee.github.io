@@ -465,8 +465,8 @@ function saveCookie() {
 		document.cookie = "";
 	}
 	var count = window.usrSave.books.length;
-	let i = window.usrSave.miscList.length-1;
-	while (--i) {
+	let i = window.usrSave.miscList.length;
+	while (i--) {
 		count += window.usrSave.miscList[i][1]
 	}
 	document.getElementById("numItems").innerText = count;
