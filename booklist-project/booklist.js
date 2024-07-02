@@ -461,9 +461,11 @@ function saveCookie() {
 	document.getElementById("exportSelected").value = JSON.stringify(window.usrSave);
 	if (document.getElementById("cookiecheck").checked) {
 		document.cookie = "booklistPref=" + JSON.stringify(window.usrSave);
+	} else {
+		document.cookie = "";
 	}
 	var count = window.usrSave.books.length;
-	let i = window.usrSave.miscList.length;
+	let i = window.usrSave.miscList.length-1;
 	while (--i) {
 		count += window.usrSave.miscList[i][1]
 	}
@@ -603,6 +605,7 @@ function clearInfo() {
 	}
 	clearCookies();
 	document.getElementById("numItems").innerText = 0;
+	document.cookie = "";
 }
 
 function copyTextToClipboard(text) {
