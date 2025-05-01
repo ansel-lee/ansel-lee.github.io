@@ -247,4 +247,11 @@ function init() {
     style2.id = "aboutme-tilecolor";
     style2.appendChild(document.createTextNode(colorStyle2));
     head.appendChild(style2);
+
+    var vidDefer = document.getElementsByTagName("iframe");
+    for (var k=0; i < vidDefer.length; ++i) {
+        if (vidDefer[k].getAttribute("data-src")) {
+            vidDefer[k].setAttribute("src", vidDefer[k].getAttribute("data-src"))
+        }
+    }
 }
