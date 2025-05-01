@@ -170,6 +170,12 @@ h1, h2, h3, h4, h5, h6,p , div {
 	display: inline-block;
 }
 
+.ytdiv {
+	width: 600px;
+	height: 300px;
+	margin: auto;
+}
+
 
 /* --- navigation --- --------------------------------------------------*/
 .nav-list {
