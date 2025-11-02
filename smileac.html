@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmileACJC Photobooth</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom right, #fde047, #facc15, #fbbf24);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        h1 {
+            font-family: Impact, sans-serif;
+            font-size: 3rem;
+            color: #dc2626;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        p {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #374151;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+        }
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .camera-box, .preview-box {
+            width: auto;
+            height: auto;
+            background: white;
+            border: 8px solid #e5e7eb;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            padding: 2rem;
+        }
+
+        .preview-box {
+            border-radius: 12px;
+        }
+
+        .camera-box {
+            border-radius: calc(2rem + 10px);
+        }
+
+        .invis {
+            visibility: hidden;
+        }
+
+        #overlay.nodisp, .nodisp {
+            display: none;
+        }
+
+        video, canvas {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .button {
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mainbutton {
+            background-color: #facc15;
+            color: #111;
+        }
+        
+        .secondarybutton {
+            border: 2px solid oklch(70.7% 0.022 261.325);
+            background-color: oklch(92.8% 0.006 264.531);
+        }
+
+        .mainbutton:hover {
+            background: #fbbf24;
+        }
+
+        .secondarybutton:hover {
+            background-color: oklch(87.2% 0.01 258.338);
+        }
+
+        .mainbutton:disabled {
+            background-color: #b89711;
+        }
+
+        .mainbutton:disabled:hover {
+            cursor: default;
+        }
+
+        #controls {
+            margin: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #controls > * {
+            margin: 10px;
+        }
+
+        .strip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            background: white;
+            border: 8px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .strip img {
+            width: 180px;
+            border-radius: 8px;
+        }
+        .controls {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        #wrap2 {
+            background-color: #e5e7eb;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            height: 360px;
+        }
+
+        #overlay {
+            position: absolute;
+            background-color: rgba(50, 50, 50, 0.3);
+            width: 100%;
+            height: 100%;
+            text-align: center;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #countdown {
+            font-size: 5rem;
+        }
+
+        video#video {
+            position: absolute;
+            bottom: 0;
+        }
+
+        #placeholder {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: min(640px, 100vw);
+            height: 360px;
+        }
+
+        #placeholder > * {
+            margin: 10px auto;
+        }
+
+        #placeholder > svg {
+            width: 30%;
+            height: 30%;
+            color:  oklch(.852 .199 91.936);
+        }
+
+        @media (min-width: 768px) {
+            .section {
+                flex-direction: row;
+                justify-content: center;
+                align-items: flex-start;
+            }
+            .camera-box, .preview-box {
+                width: 600px;
+            }
+            .strip {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SmileACJC Photobooth</h1>
+        <p id="status-text">Click 'Start Camera' to begin your photo session</p>
+
+        <div class="section">
+            <div class="camera-box" id="camera-area" style="background-color: white;">
+                <div id="wrap2">
+                    <video id="video" autoplay="" playsinline="" style="display:none;"></video>
+                    <div id="overlay" class="nodisp">
+                        <div id="countdown">3</div>
+                    </div>
+                    <canvas id="canvas" style="display:none;"></canvas>
+                    <div id="placeholder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+                        class="" aria-hidden="true"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z">
+                        </path><circle cx="12" cy="13" r="3"></circle></svg>
+                        <p>Ready to create memories?</p>
+                        <button class="button mainbutton" id="start-btn">🎥 Start Camera</button>
+                    </div>
+                </div>
+                <div id="controls" class="invis">
+                    <button class="button mainbutton" id="snap">
+                        Take Picture
+                    </button>
+                    <button class="button secondarybutton" id="offcam">
+                        Turn off camera
+                    </button>
+                </div>
+            </div>
+            <div class="strip" id="photo-strip"></div>
+        </div>
+
+        <div class="controls">
+            <button class="button secondarybutton" id="restart-btn" style="display:none;">🔁 Start Over</button>
+        </div>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const photoStrip = document.getElementById('photo-strip');
+        const statusText = document.getElementById('status-text');
+        const placeholder = document.getElementById('placeholder');
+        let photos = [];
+        let stream;
+
+        async function startCamera() {
+            placeholder.style.display = 'none';
+            video.style.display = 'block';
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            document.getElementById("controls").classList.remove("invis");
+            //takeNextPhoto();
+        }
+
+        async function takeNextPhoto() {
+            document.getElementById("overlay").classList.remove("nodisp");
+            statusText.textContent = 'Photo " + photos.length + 1 + " of 4 - get ready!';
+            await new Promise(r => setTimeout(r, 2000)); // 3s countdown
+            // TODO: show on screen the 3 second countdown
+            const shutter = new Audio('https://actions.google.com/sounds/v1/camera/camera_shutter_click.ogg');
+            shutter.play();
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0);
+            const dataUrl = canvas.toDataURL('image/png');
+            photos.push(dataUrl);
+            renderStrip();
+
+            if (photos.length < 4) {
+                takeNextPhoto();
+            } else {
+                stopCamera();
+                statusText.textContent = "Your photo strip is ready!";
+                restartBtn.style.display = 'inline-block';
+            }
+        }
+
+        function counting(trigger, time) {
+
+        }
+
+        function stopCamera() {
+            video.style.display = 'none';
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        function renderStrip() {
+            photoStrip.innerHTML = '';
+            photos.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                photoStrip.appendChild(img);
+            });
+        }
+
+        function restart() {
+            photos = [];
+            statusText.textContent = "Click 'Start Camera' to begin your photo session";
+            photoStrip.innerHTML = '';
+            restartBtn.style.display = 'none';
+            placeholder.style.display = 'block';
+        }
+
+        startBtn.addEventListener('click', startCamera);
+        restartBtn.addEventListener('click', restart);
+        document.getElementById("offcam").addEventListener("click", stopCamera)
+        document.getElementById("snap").addEventListener("click", takeNextPhoto);
+    </script>
+</body>
+</html>
+
+
+
+
