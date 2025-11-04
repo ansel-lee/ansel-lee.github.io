@@ -117,15 +117,28 @@
             margin: 10px;
         }
 
-        .strip {
+        .stripcontainer {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1rem;
-            background: white;
-            border: 8px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 1rem;
+            background: #ffd42a;
+            border-radius: 1px;
+            padding: 2rem;
+            min-width: 200px;
+        }
+
+        .stripcontainer>img {
+            width: 100px;
+        }
+
+        .strip {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 1rem;
         }
 
         .strip img {
@@ -228,9 +241,13 @@
                     <button class="button secondarybutton" id="offcam">
                         Turn off camera
                     </button>
+                    <!--<button class="button mainbutton nodisp" id="download">Download</button>-->
                 </div>
             </div>
-            <div class="strip" id="photo-strip"></div>
+            <div class="stripcontainer">
+                <div class="strip" id="photo-strip"></div>
+                <img src="img/smileac.jpg">
+            </div>
         </div>
 
         <div class="controls">
@@ -289,13 +306,11 @@
             renderStrip();
             document.getElementById("overlay").classList.add("nodisp")
 
-            /*if (photos.length < 4) {
-                takeNextPhoto();
-            } else {
+            if (photos.length == 4) {
                 stopCamera();
                 statusText.textContent = "Your photo strip is ready!";
                 restartBtn.style.display = 'inline-block';
-            }*/
+            }
         }
 
 
@@ -323,10 +338,22 @@
             placeholder.style.display = 'block';
         }
 
+        function renderPrint() {
+            var ctx = canvas.getContext("2d")
+            const frame = document.getElementsByClassName("stripcontainer")[0];
+            ctx.drawImage(frame, 0, 0);
+            canvas.width = frame.offsetWidth;
+            canvas.height = frame.offsetHeight;
+            const dataUrl = frame.toDataURL('image/png');
+
+            window.location = hidden_canv.toDataURL(dataUrl);
+        }
+
         startBtn.addEventListener('click', startCamera);
         restartBtn.addEventListener('click', restart);
         document.getElementById("offcam").addEventListener("click", stopCamera)
         document.getElementById("snap").addEventListener("click", takeNextPhoto);
+        document.getElementById("download").addEventListener("click", renderPrint)
     </script>
 </body>
 </html>
