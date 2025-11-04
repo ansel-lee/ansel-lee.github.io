@@ -256,13 +256,28 @@
             stream = await navigator.mediaDevices.getUserMedia({ video: true });
             video.srcObject = stream;
             document.getElementById("controls").classList.remove("invis");
-            //takeNextPhoto();
         }
 
-        async function takeNextPhoto() {
+        function counting(n) {
+            document.getElementById("countdown").innerText = (3 - n)
+            console.log(n)
+
+            if (n < 3) {
+                setTimeout(() => {counting(n+1)}, 900);
+            } else {
+                snap();
+            }
+        }
+
+        function takeNextPhoto() {
+            statusText.textContent = 'Photo ' + (photos.length + 1) + ' of 4 - get ready!';
+            document.getElementById("countdown").innerText = 3;
             document.getElementById("overlay").classList.remove("nodisp");
-            statusText.textContent = 'Photo " + photos.length + 1 + " of 4 - get ready!';
-            await new Promise(r => setTimeout(r, 2000)); // 3s countdown
+            setTimeout(() => {counting(0)}, 1000)
+        }
+
+        function snap() {
+            //await new Promise(r => setTimeout(r, 2000)); // 3s countdown
             // TODO: show on screen the 3 second countdown
             const shutter = new Audio('https://actions.google.com/sounds/v1/camera/camera_shutter_click.ogg');
             shutter.play();
@@ -272,19 +287,17 @@
             const dataUrl = canvas.toDataURL('image/png');
             photos.push(dataUrl);
             renderStrip();
+            document.getElementById("overlay").classList.add("nodisp")
 
-            if (photos.length < 4) {
+            /*if (photos.length < 4) {
                 takeNextPhoto();
             } else {
                 stopCamera();
                 statusText.textContent = "Your photo strip is ready!";
                 restartBtn.style.display = 'inline-block';
-            }
+            }*/
         }
 
-        function counting(trigger, time) {
-
-        }
 
         function stopCamera() {
             video.style.display = 'none';
