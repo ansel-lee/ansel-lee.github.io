@@ -241,10 +241,10 @@
                     <button class="button secondarybutton" id="offcam">
                         Turn off camera
                     </button>
-                    <!--<button class="button mainbutton nodisp" id="download">Download</button>-->
+                    <button class="button mainbutton nodisp" id="download">Download</button>
                 </div>
             </div>
-            <div class="stripcontainer">
+            <div class="stripcontainer" id="savethis">
                 <div class="strip" id="photo-strip"></div>
                 <img src="img/smileac.jpg">
             </div>
@@ -255,6 +255,7 @@
         </div>
     </div>
 
+    <script src="files/html2canvas.js"></script>
     <script>
         const startBtn = document.getElementById('start-btn');
         const restartBtn = document.getElementById('restart-btn');
@@ -339,14 +340,24 @@
         }
 
         function renderPrint() {
-            var ctx = canvas.getContext("2d")
-            const frame = document.getElementsByClassName("stripcontainer")[0];
-            ctx.drawImage(frame, 0, 0);
-            canvas.width = frame.offsetWidth;
-            canvas.height = frame.offsetHeight;
-            const dataUrl = frame.toDataURL('image/png');
+            const frame = document.getElementById("savethis");
 
-            window.location = hidden_canv.toDataURL(dataUrl);
+            // Use html2canvas to render the HTML element to a canvas
+            html2canvas(frame, { scale: 2 }).then(canvas => {
+                // Convert the generated canvas to a Data URL
+                const dataUrl = canvas.toDataURL('image/png');
+
+                // Create a temporary link element for downloading
+                const downloadLink = document.createElement('a');
+                downloadLink.href = dataUrl;
+                downloadLink.download = 'smileacjc_photostrip.png'; // Set the file name
+
+                // Programmatically click the link to trigger the download
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            });
+
         }
 
         startBtn.addEventListener('click', startCamera);
