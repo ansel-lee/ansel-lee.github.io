@@ -186,11 +186,14 @@
 
         video#video {
             position: absolute;
+        }
+
+        video#video, .strip {
             bottom: 0;
             transform: scale(-1,1);
         }
         
-        video::-webkit-media-controls-panel {
+        video::-webkit-media-controls-panel, .strip {
             transform: scale(-1,1);
         }
 
