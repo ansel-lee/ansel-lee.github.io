@@ -69,6 +69,16 @@
             border-radius: 8px;
         }
 
+        /*canvas {
+            -moz-transform: scaleX(-1);
+            -o-transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
+            transform: scaleX(-1);
+            filter: FlipH;
+            ms-filter: "FlipH";
+
+        }*/
+
         .button {
             border: none;
             padding: 1rem 2rem;
@@ -177,6 +187,11 @@
         video#video {
             position: absolute;
             bottom: 0;
+            transform: scale(-1,1);
+        }
+        
+        video::-webkit-media-controls-panel {
+            transform: scale(-1,1);
         }
 
         #placeholder {
@@ -272,6 +287,10 @@
             placeholder.style.display = 'none';
             video.style.display = 'block';
             stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            /*let context = video
+            context.translate(720, 0)
+            context.scale(-1, 1)
+            context.drawImage(image, 0, 0, 1440, 720)*/
             video.srcObject = stream;
             document.getElementById("controls").classList.remove("invis");
         }
@@ -362,9 +381,9 @@
 
         startBtn.addEventListener('click', startCamera);
         restartBtn.addEventListener('click', restart);
-        document.getElementById("offcam").addEventListener("click", stopCamera)
+        document.getElementById("offcam").addEventListener("click", stopCamera);
         document.getElementById("snap").addEventListener("click", takeNextPhoto);
-        document.getElementById("download").addEventListener("click", renderPrint)
+        document.getElementById("download").addEventListener("click", renderPrint);
     </script>
 </body>
 </html>
