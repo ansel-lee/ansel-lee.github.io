@@ -8,6 +8,10 @@ html {
     color: #eee;
 }
 
+body {
+    margin: 0;
+}
+
 .centred {
     text-align: center;
 }
