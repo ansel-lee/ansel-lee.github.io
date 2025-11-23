@@ -1,0 +1,105 @@
+p {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 2em;
+    color: #eee;
+}
+
+.centred {
+    text-align: center;
+}
+
+.padme {
+    padding: min(5vw, 50px)
+}
+
+.bibleref {
+    padding-bottom: 1rem;
+}
+
+.mobileview {
+    max-width: 900px;
+    background-color: #00205C;
+}
+
+button.prev, button.next {
+    background-color: transparent;
+    width: 100px;
+    border-radius: 10px;
+    border: 2px solid black;
+}
+
+button.prev:hover, button.next:hover {
+    border: 2px solid gray;
+    background-color: rgba(0, 0, 0, 0.2)
+}
+
+
+/* banner and theme verse */
+.mobileview>.banner {
+    padding: 0;
+}
+
+.banner>img {
+    max-width: 100%;
+    display: block;
+}
+
+.themeverse {
+    background: linear-gradient(135deg, #4b66b5, #9e6fa0);
+}
+
+
+/* sessions and collage */
+.sidebyside {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.sidebyside > div {
+    width: 50%;
+}
+
+.sessionheader {
+    font-weight: 600;
+    border-radius: 10px;
+    text-align: center;
+    background: linear-gradient(135deg, #4b66b5, #9e6fa0);
+    padding: 10px;
+    margin: 20px min(20px, calc(100vw - 10em));
+}
+
+.collage {
+    position: relative;
+    min-height: 500px;
+    width: 0px;
+}
+
+.collage > img {
+    display: block;
+    position: absolute;
+    height: max(100%, 200px);
+    right: 0;
+}
+
+/* Landscape Carousel */
+
+
+/* Prayer and verse */
+
+@media screen and (min-width: 900px) {
+    .docpadding {
+        height: 100px;
+    }
+
+    .mobileview {
+        position: absolute;
+        right: 100px;
+        border-radius: 10px 10px 0 0;
+        outline: 5px solid gray;
+    }
+}
