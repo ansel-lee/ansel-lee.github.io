@@ -4,12 +4,26 @@ p {
 }
 
 html {
+    background-color: #eee;
     font-size: 2em;
-    color: #eee;
+    color: #000;
+    font-family: "Playfair Display", sans-serif;
+}
+
+p.textw, .textw {
+    color: #fff;
+}
+
+img {
+    max-width: 100vw;
 }
 
 body {
     margin: 0;
+}
+
+h1 {
+    font-size: 1.5rem;
 }
 
 .centred {
@@ -17,8 +31,13 @@ body {
 }
 
 .padme {
-    padding: min(5vw, 50px)
+    padding: min(8vw, 50px);
 }
+
+.nodisp {
+    display: none;
+}
+
 
 .bibleref {
     padding-bottom: 1rem;
@@ -26,23 +45,66 @@ body {
 
 .mobileview {
     max-width: 900px;
-    background-color: #00205C;
+    background-color: #eee;
+}
+
+
+.sectionheader {
+    text-align: center;
+    color: #000;
+    margin: 20px;
+    padding: 10px 30px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #3363e7, #fff7a5, #ba5555);
 }
 
 button.prev, button.next {
     background-color: transparent;
-    width: 100px;
+    width: 40px;
     border-radius: 10px;
     border: 2px solid black;
+    padding-top: 4px;
 }
 
-button.prev:hover, button.next:hover {
+button.prev:hover, button.next:hover,
+#imgcarousel button.prev:hover, #imgcarousel button.next:hover{
     border: 2px solid gray;
-    background-color: rgba(0, 0, 0, 0.2)
+    background-color: #fff;
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.copyicon {
+    width: 1rem;
+    border: 2px solid black;
+    background-color: #eee;
+    border-radius: 5px;
+}
+
+.copyicon:focus {
+    background-color: #aaa;
+}
+
+.copyicon:hover {
+    background-color: #aaa;
+    border: 2px solid #ccc;
+    cursor: pointer;
 }
 
 
 /* banner and theme verse */
+.banner {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bannertop, .bannerbottom {
+    max-height: 50vh;
+}
+
 .mobileview>.banner {
     padding: 0;
 }
@@ -56,8 +118,50 @@ button.prev:hover, button.next:hover {
     background: linear-gradient(135deg, #4b66b5, #9e6fa0);
 }
 
+/* sessions cards */
+.events {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 100px 50px;
+}
 
-/* sessions and collage */
+.events > * {
+    margin: auto;
+}
+
+.cardback {
+    background-color: #000;
+    margin: auto;
+    border-radius: 20px;
+    padding: 10px;
+
+    width: 340px;
+}
+
+.cardtl {
+    position: relative;
+    top: -20px;
+    left: -30px;
+    width: 320px;
+
+    transform: rotate(-2deg);
+    padding: 30px 15px;
+    border-radius: 20px;
+    vertical-align: middle;
+}
+
+#sessioncard .cardtl {
+    background-color: #d02030;
+}
+
+#eventcard .cardtl {
+    background-color: #ffc629;
+}
+
+/* unused
+ sessions and collage 
 .sidebyside {
     display: flex;
     flex-direction: row;
@@ -89,15 +193,92 @@ button.prev:hover, button.next:hover {
     height: max(100%, 200px);
     right: 0;
 }
+*/
 
 /* Landscape Carousel */
+#imgcarousel {
+    position: relative;
+}
 
+.carouselcontainer {
+    display: flex;
+    position: relative;
+    overflow: scroll;
+    scroll-snap-type: x proximity;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 0px;
+    width: 100%;
+}
+
+.carouselcontainer > img {
+    width: min(900px, 100vw);
+    scroll-snap-align: center;
+}
+
+#imgcarousel .prev, #imgcarousel .next {
+    position: absolute;
+    top: calc(50% - 32px);
+    z-index: 1;
+    background-color: #eee;
+    opacity: 0.4;
+}
+
+#imgcarousel .prev {
+    left: 1rem;
+}
+
+#imgcarousel .next {
+    right: 1rem;
+}
 
 /* Prayer and verse */
+#prayerverse {
+    background: linear-gradient(135deg, #3363e7, #fff7a5, #ba5555);
+}
+
+.prayercontent {
+    margin: 20px;
+    padding: 10px;
+    background-color: #fff;
+}
+
+/* instagram handoff */
+#igsidebysideflex {
+    display: flex;
+    flex-flow: row nowrap;
+    overflow: auto;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 20px;
+}
+
+.iglogo {
+    width: 2rem;
+}
+
+#igprofile {
+    display: grid;
+    place-items: center;
+}
+
+#igprofile>a>p { 
+    background: linear-gradient(135deg, #3363e7, #fff7a5, #ba5555);
+    border-radius: 15px;
+    padding: 20px;
+
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#igprofile>a{
+    text-decoration: none;
+    color: #000;
+}
 
 @media screen and (min-width: 900px) {
     .docpadding {
-        height: 100px;
+        height: 50px;
     }
 
     .mobileview {
