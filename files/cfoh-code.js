@@ -1,6 +1,8 @@
 // carousel next
 function carouselNavEvt(e) {
-    var addby = scrollby
+    var scrollby = Math.min(900, Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)); 
+    var addby = scrollby;
+    console.log(e.currentTarget);
     if (e.currentTarget.classList.contains("prev")) {
         addby = -scrollby;
     }
@@ -8,7 +10,7 @@ function carouselNavEvt(e) {
     //console.log(e.currentTarget.parentNode);
     targetbox.scrollTo({
         top: 0,
-        left: targetbox.scrollLeft - scrollby,
+        left: targetbox.scrollLeft + addby,
         behaviour: "smooth",
     });
 }
@@ -99,9 +101,7 @@ function init() {
     // add dots to carousel
 
     // add event listener to carousel; generalise later
-    const scrollby = Math.min(900, Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0));
-    console.log("scroll by " + scrollby);
-    document.getElementsByClassName("next")[0].addEventListener("click", carouselNavEvt);
+        document.getElementsByClassName("next")[0].addEventListener("click", carouselNavEvt);
     document.getElementsByClassName("prev")[0].addEventListener("click", carouselNavEvt);
 
     // enable copy and pasting for instagram 
