@@ -5,9 +5,9 @@ p {
 
 html {
     background-color: #eee;
-    font-size: 2em;
+    font-size: 1.2em;
     color: #000;
-    font-family: "Playfair Display", sans-serif;
+    font-family: sans-serif; /* todo! */
 }
 
 p.textw, .textw {
@@ -55,7 +55,15 @@ h1 {
     margin: 20px;
     padding: 10px 30px;
     border-radius: 20px;
-    background: linear-gradient(135deg, #3363e7, #fff7a5, #ba5555);
+    background-color: #8cc583;
+}
+
+#themehaeder {
+    background-color: #8cc583;
+}
+
+#aboutheader {
+    background-color: #196dab;
 }
 
 button.prev, button.next {
@@ -115,7 +123,7 @@ button.prev:hover, button.next:hover,
 }
 
 .themeverse {
-    background: linear-gradient(135deg, #4b66b5, #9e6fa0);
+    background-color: #ffeea4;
 }
 
 /* sessions cards */
@@ -132,12 +140,19 @@ button.prev:hover, button.next:hover,
 }
 
 .cardback {
-    background-color: #000;
     margin: auto;
     border-radius: 20px;
     padding: 10px;
 
     width: 340px;
+}
+
+#sessioncard > .cardback {
+    background-color: #bf3c26;
+}
+
+#eventcard > .cardback {
+    background-color: #e6c677;
 }
 
 .cardtl {
@@ -150,14 +165,15 @@ button.prev:hover, button.next:hover,
     padding: 30px 15px;
     border-radius: 20px;
     vertical-align: middle;
+    font-size: 1.4rem;
 }
 
 #sessioncard .cardtl {
-    background-color: #d02030;
+    background-color: #f26a54;
 }
 
 #eventcard .cardtl {
-    background-color: #ffc629;
+    background-color: #ffe4a2;
 }
 
 /* unused
@@ -234,13 +250,21 @@ button.prev:hover, button.next:hover,
 
 /* Prayer and verse */
 #prayerverse {
-    background: linear-gradient(135deg, #3363e7, #fff7a5, #ba5555);
+    background-color: #f26a54;
+    margin: 10px;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+#prayerverse h1 {
+  text-align: center;
 }
 
 .prayercontent {
     margin: 20px;
-    padding: 10px;
+    padding: 20px;
     background-color: #fff;
+    border-radius: 10px;
 }
 
 /* instagram handoff */
@@ -263,7 +287,7 @@ button.prev:hover, button.next:hover,
 }
 
 #igprofile>a>p { 
-    background: linear-gradient(135deg, #3363e7, #fff7a5, #ba5555);
+    /*background: linear-gradient(135deg, #3363e7, #fff7a5, #ba5555);*/
     border-radius: 15px;
     padding: 20px;
 
