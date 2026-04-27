@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun-O-Rama Prize Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="admin-gear" class="gear-icon hidden">⚙️</div>
+    
+    <div id="admin-menu" class="settings-menu hidden">
+        <h3>Admin Controls</h3>
+        <button id="view-hist-btn" class="btn-blue full-width">📋 View History</button>
+        <button id="exit-btn" class="btn-red full-width">End & Export</button>
+        <button id="clear-data-btn" class="btn-grey full-width">Clear Saved Data</button>
+    </div>
+
+    <div id="setup-container">
+        <h1>📦 Inventory Setup</h1>
+        <p>Upload your probability CSV to begin.</p>
+        <div class="input-wrapper">
+            <input id="csventer" type="file" accept=".csv" />
+        </div>
+        <div id="confirm-area" class="hidden">
+            <div class="table-scroll">
+                <table>
+                    <thead><tr><th>Item Name</th><th>Qty</th><th>Prob</th></tr></thead>
+                    <tbody id="inventory-body"></tbody>
+                </table>
+            </div>
+            <button id="start-game-btn" class="btn-green full-width">Confirm & Start Game</button>
+        </div>
+    </div>
+
+    <div id="maincontainer" class="nodisp">
+        
+        <div class="header-section">
+           </div>
+
+        <div class="game-area">
+            
+            <div id="scratch-phase">
+                <div class="game-content-flex">
+                    
+                    <div class="scratch-section">
+                        <div class="scratch-wrapper">
+                            <canvas id="overlay-canvas"></canvas>
+                            <div class="grid-container" id="grid-container"></div>
+                        </div>
+                    </div>
+
+                    <div id="decision-area" class="decision-section hidden">
+                        <div class="decision-box">
+                            <h3 class="flash-red">You Have Won:</h3>
+                            <!--p class="prize-announce">You have won a:</p-->
+                            <h2 id="found-item-name" class="item-highlight"></h2>
+                            
+                            <div class="btn-group">
+                                <button id="keep-btn" class="btn-dynamic">Start next game</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="history-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Session History</h3>
+            <div class="table-scroll">
+                <table id="live-history-table">
+                    <thead><tr><th>Time</th><th>Item</th></tr></thead>
+                    <tbody id="live-history-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="recovery-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>⚠️ Previous Session Found</h3>
+            <p>We found unsaved data from a previous session. What would you like to do?</p>
+            <button id="recover-download-btn" class="btn-green full-width">Download CSV & Start New</button>
+            <button id="recover-delete-btn" class="btn-red full-width">Delete & Start New</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <audio id="found" src="bell.mp3">
+    <audio id="loopthis" src="joyful-carnival.mp3" loop>
+</body>
+</html>

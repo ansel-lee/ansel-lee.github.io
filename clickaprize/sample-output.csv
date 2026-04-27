@@ -1,0 +1,25 @@
+--- SESSION LOG ---
+Time,Item Won,Quantity
+00:03:49,water bottle,1
+00:04:00,coaster,1
+00:04:03,jacket,1
+00:04:07,shirt,1
+00:04:09,trinkets,1
+00:04:12,pencil,1
+00:04:18,water bottle,1
+00:04:24,water bottle,1
+00:04:27,water bottle,1
+
+--- ENDING INVENTORY ---
+item name,qty,probability
+pen,100,0.191570881
+pencil,78,0.151340996
+bag,49,0.093869732
+clip,20,0.038314176
+water bottle,76,0.153256705
+jacket,49,0.095785441
+coaster,39,0.076628352
+trinkets,49,0.095785441
+mystery gift,15,0.0001
+frisbee,9,0.017241379
+shirt,29,0.057471264
